@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * Implements hook_tokens().
+ */
+function menupath_token_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $replacements = array();
+
+  if (!empty($tokens['menupath']) && !empty($data['node'])) {
+    if(!empty($options['sanitize'])) {
+       $sanitize = $options['sanitize'];
+    } else {
+      $sanitize = FALSE;
+    } 
+
+    $node = $data['node'];
+    $replacements[$tokens['menupath']] = $sanitize ? check_plain(menupath_token_get_parents($node)) : menupath_token_get_parents($node);
+  }
+
+  return $replacements;
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function menupath_token_token_info() {
+  $info['tokens']['node']['menupath'] = array(
+    'name' => t('Menupath'),
+    'description' => t('Custom menupath token.'),
+  );  
+
+  return $info;
+}
+
+function menupath_token_menu_link_load($mlid) {
+  static $cache = array();
+
+  if (!is_numeric($mlid)) {
+    return FALSE;
+  }
+
+  if (!isset($cache[$mlid])) {
+    $item = db_select('menu_links', 'ml');
+              $item->fields('ml');
+              $item->condition('ml.mlid', $mlid);
+              $item = $item->execute()->fetchAssoc();
+
+    $cache[$mlid] = $item;
+  }
+
+  return $cache[$mlid];
+}
+
+
+function menupath_token_link_get_parents_all($mlid) {
+  $parents = array();
+
+  while (!empty($mlid)) {
+    $link = menupath_token_menu_link_load($mlid);
+    array_unshift($parents, $link);
+    $mlid = $link['plid'];
+  }
+
+  return $parents;
+}
+
+function menupath_token_get_parents($node) {
+  module_load_include('inc','pathauto','pathauto');
+  menu_node_prepare($node);
+
+  $parents = menupath_token_link_get_parents_all($node->menu['mlid']);
+  $paths = array();
+
+  foreach ($parents as $parent) {
+    $paths[] = pathauto_cleanstring($parent['link_title']);
+  }
+
+  array_pop($paths);
+  $pathauto = implode('/', $paths);
+
+  return $pathauto;
+}

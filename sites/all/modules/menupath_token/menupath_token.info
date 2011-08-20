@@ -1,0 +1,5 @@
+name = Menupath Token
+description = Menupath token creates a path of parent menu names of a node in a menu
+core = 7.x
+
+dependencies[] = token
