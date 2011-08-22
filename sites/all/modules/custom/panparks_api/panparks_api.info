@@ -1,0 +1,6 @@
+name = Panparks API
+description = Api functions for panparks.org
+package = karaoke
+core = 7.x
+
+dependencies[] = node

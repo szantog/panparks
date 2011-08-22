@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ *   panparks_api.module
+ * Project:karaoke
+ *    Api functions for panparks.org
+ *
+ * @developers:
+ *    Gabor Szanto <hello@szantogabor.com>
+ *    http://szantogabor.com
+ *
+ */
+
