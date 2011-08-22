@@ -1,0 +1,6 @@
+name = Panparks hooks
+description = Overriden hooks for panparks.org
+package = Panparks
+core = 7.x
+
+dependencies[] = node
