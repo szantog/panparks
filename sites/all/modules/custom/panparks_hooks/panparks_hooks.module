@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ *   panparks_hooks.module
+ * Project:panparks
+ *    Overriden hooks for panparks.org
+ *
+ * @developers:
+ *    Gabor Szanto <hello@szantogabor.com>
+ *    http://szantogabor.com
+ *
+ */
+
+/*
+ * Implements hook_node_presave
+ */
+function panparks_hooks_node_presave($node) {
+  //
+  // Workaround for Feeds module setting text format to Plain Text instead of Full HTML or Filtered HTML
+  //
+  if ($node->type == 'transferred_blog_posts') {
+    $node->body['und'][0]['format'] = 'full_html';
+  }
+}
