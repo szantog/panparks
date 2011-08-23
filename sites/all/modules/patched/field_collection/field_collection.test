@@ -186,6 +186,7 @@ class FieldCollectionRulesIntegrationTestCase extends DrupalWebTestCase {
 
   function setUp() {
     parent::setUp(array('field_collection', 'rules'));
+    variable_set('rules_debug_log', 1);
   }
 
   protected function createFields($cardinality = 4) {
