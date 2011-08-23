@@ -851,7 +851,6 @@ function field_collection_field_widget_form(&$form, &$form_state, $field, $insta
       $field_parents = $element['#field_parents'];
       $field_name = $element['#field_name'];
       $language = $element['#language'];
-      $field_collection_item = field_collection_field_get_entity($items[$delta], $field_name);
 
       // Nest the field-collection-item entity form in a dedicated parent space,
       // by appending [field_name, langcode, delta] to the current parent space.
@@ -863,10 +862,17 @@ function field_collection_field_widget_form(&$form, &$form_state, $field, $insta
         '#parents' => $parents,
       );
 
-      // Put our entity in the form state, so FAPI callbacks can access it.
       $field_state = field_form_get_state($field_parents, $field_name, $language, $form_state);
-      $field_state['entity'][$delta] = $field_collection_item;
-      field_form_set_state($field_parents, $field_name, $language, $form_state, $field_state);
+      if (isset($field_state['entity'][$delta])) {
+        $field_collection_item = $field_state['entity'][$delta];
+      }
+      else {
+        $field_collection_item = field_collection_field_get_entity($items[$delta], $field_name);
+        
+        // Put our entity in the form state, so FAPI callbacks can access it.
+        $field_state['entity'][$delta] = $field_collection_item;
+        field_form_set_state($field_parents, $field_name, $language, $form_state, $field_state);
+      }
 
       field_attach_form('field_collection_item', $field_collection_item, $element, $form_state, $language);
 
