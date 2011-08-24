@@ -1,0 +1,3 @@
+[submodule "sites/all/modules/patched/media"]
+	path = sites/all/modules/patched/media
+	url = git://repos.szantogabor.com/panparks/media.git
