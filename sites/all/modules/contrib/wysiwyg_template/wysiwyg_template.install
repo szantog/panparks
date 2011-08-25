@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * Implementation of hook_schema().
+ */
+function wysiwyg_template_schema() {
+  $schema['wysiwyg_templates'] = array(
+    'fields' => array(
+      'tid' => array(
+        'description' => 'The primary identifier for the Wysiwyg template',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE),
+      'title' => array(
+        'description' => 'The title of the Wysiwyg template',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE),
+      'description' => array(
+        'description' => 'The description of the Wysiwyg template',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE),
+      'body' => array(
+        'description' => 'The Wysiwyg template HTML',
+        'type' => 'text'),
+    ),
+    'primary key' => array('tid'),
+  );
+  return $schema;
+}
