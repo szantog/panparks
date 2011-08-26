@@ -81,17 +81,17 @@
 
 
 /* Margin's defaults of the floated elements.*/
-@margin-left-default: 0 @font-size @font-size 0;
-@margin-right-default: 0 0 @font-size @font-size;
+@margin-left-default: 0 @grid-margin @grid-margin 0;
+@margin-right-default: 0 0 @grid-margin @grid-margin;
 
 /* If you use separator between nodes, or view rows, change this to the height of your separator element */
-@separator-height: @base-size / 2;
+@separator-height: @grid-margin;
 
 /* The default padding value for content-inner elements. Eg. view-content, .node .content, */
-@content-padding: @font-size;
+@content-padding: @grid-margin;
 
 /* The default background for content-inner elements. Eg. view-content, .node .content, */
-@content-background: @font-size;
+//@content-background: @font-size;
 
 /* Colors & backgrounds */
 @body: #fff; /* The body background, can be changed to background picture */
@@ -123,43 +123,43 @@
  *        .m-top // It makes a default size margin at the top
  */
 
-.margin(@num: @font-size;){
+.margin(@num: @grid-margin;){
   margin: @num;
 }
 
-.m-top(@num: @font-size;){
+.m-top(@num: @grid-margin;){
   margin-top: @num;
 }
 
-.m-bottom(@num: @font-size;) {
+.m-bottom(@num: @grid-margin;) {
   margin-bottom: @num;
 }
 
-.m-left(@num: @font-size;) {
+.m-left(@num: @grid-margin;) {
   margin-left: @num;
 }
 
-.m-right(@num: @font-size;) {
+.m-right(@num: @grid-margin;) {
   margin-right: @num;
 }
 
-.padding(@num: @font-size;) {
+.padding(@num: @grid-margin;) {
   padding: @num;
 }
 
-.p-top(@num: @font-size;) {
+.p-top(@num: @grid-margin;) {
   padding-top: @num;
 }
 
-.p-bottom(@num: @font-size;) {
+.p-bottom(@num: @grid-margin;) {
   padding-bottom: @num;
 }
 
-.p-left(@num: @font-size;) {
+.p-left(@num: @grid-margin;) {
   padding-left: @num;
 }
 
-.p-right(@num: @font-size;) {
+.p-right(@num: @grid-margin;) {
   padding-right: @num;
 }
 
