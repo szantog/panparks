@@ -1,6 +1,0 @@
-name = fieldgroup_menu
-description =
-package = panparks
-core = 7.x
-
-dependencies[] = field_group
