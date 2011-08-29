@@ -1,3 +1,6 @@
 [submodule "sites/all/modules/patched/media"]
 	path = sites/all/modules/patched/media
 	url = http://github.com/szantog/panparks-media.git
+[submodule "sites/all/modules/custom/fieldgroup_menu"]
+	path = sites/all/modules/custom/fieldgroup_menu
+	url = http://git.drupal.org/sandbox/szantog/1263502.git
