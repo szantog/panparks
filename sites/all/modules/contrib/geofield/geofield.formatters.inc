@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @file
+ * Drupal field formatter hooks and helper functions.
+ */
+
 /**
  * Implements hook_field_formatter_info().
  */
@@ -82,7 +88,7 @@ function _geofield_formatter_settings_data_options($formatter) {
 
 /**
  * Helper function for getting format options
-*/
+ */
 function _geofield_formatter_settings_format_options($formatter) {
   return array(
     'decimal_degrees' => t('Decimal degrees'),
@@ -100,12 +106,11 @@ function geofield_field_formatter_settings_form($field, $instance, $view_mode, $
 
   // Map preset formatter
   if ($display['type'] == 'geofield_openlayers' && module_exists('openlayers')) {
-    
     // Get preset options, filtered to those which have the GeoField placeholder layer
     $presets = openlayers_presets();
     $preset_options = array();
     foreach ($presets as $preset) {
-      if (in_array('geofield_formatter',$preset->data['layers'])) {
+      if (in_array('geofield_formatter', $preset->data['layers'])) {
         $preset_options[$preset->name] = $preset->title;
       }
     }
@@ -131,7 +136,7 @@ function geofield_field_formatter_settings_form($field, $instance, $view_mode, $
 
   if ($display['type'] == 'geofield_latlon' || $display['type'] == 'geofield_lat' || $display['type'] == 'geofield_lon') {
     $format_options = _geofield_formatter_settings_format_options($display['type']);
-  	$element['format'] = array(
+    $element['format'] = array(
       '#title' => t('Format'),
       '#type' => 'select',
       '#default_value' => $settings['format'] ? $settings['format'] : 'decimal_degrees',
@@ -141,7 +146,7 @@ function geofield_field_formatter_settings_form($field, $instance, $view_mode, $
   }
   
   if ($display['type'] == 'geofield_def_list' || $display['type'] == 'geofield_description') {
-  	$element['address'] = array(
+    $element['address'] = array(
       '#title' => t('Include reverse-geocoded address'),
       '#type' => 'checkbox',
       '#default_value' => $settings['address'] ? $settings['address'] : 0,
@@ -161,10 +166,6 @@ function geofield_field_formatter_settings_summary($field, $instance, $view_mode
   $summary = array();
 
   $data_options = _geofield_formatter_settings_data_options($display['type']);
-  
-  // TODO: Not sure if this unset is needed
-  // Unset possible 'No defined styles' option.
-  unset($data_options['']);
 
   // Styles could be lost because of enabled/disabled modules that defines
   // their styles in code.
@@ -206,15 +207,15 @@ function geofield_field_formatter_view($entity_type, $entity, $field, $instance,
     geofield_load_geophp();
     if ($display['settings']['data'] == 'centroid') {
       foreach ($items as $delta => $item) {
-        $centroid_wkt = 'POINT('.$item['lon'].' '.$item['lat'].')';
-        $centroid = geoPHP::load($centroid_wkt,'wkt');
+        $centroid_wkt = 'POINT(' . $item['lon'] . ' ' . $item['lat'] . ')';
+        $centroid = geoPHP::load($centroid_wkt, 'wkt');
         $items[$delta] = geofield_get_values_from_geometry($centroid);
       }
     }
     if ($display['settings']['data'] == 'bounding') {
       foreach ($items as $delta => $item) {
-        $envelope_wkt = 'POLYGON (('.$item['left'].' '.$item['top'].', '.$item['right'].' '.$item['top'].', '.$item['right'].' '.$item['bottom'].', '.$item['left'].' '.$item['bottom'].', '.$item['left'].' '.$item['top'].')))';
-        $envelope = geoPHP::load($envelope_wkt,'wkt');
+        $envelope_wkt = 'POLYGON ((' . $item['left'] . ' ' . $item['top'] . ', ' . $item['right'] . ' ' . $item['top'] . ', ' . $item['right'] . ' ' . $item['bottom'] . ', ' . $item['left'] . ' ' . $item['bottom'] . ', ' . $item['left'] . ' ' . $item['top'] . ')))';
+        $envelope = geoPHP::load($envelope_wkt, 'wkt');
         $items[$delta] = geofield_get_values_from_geometry($envelope);
       }
     }
@@ -224,8 +225,8 @@ function geofield_field_formatter_view($entity_type, $entity, $field, $instance,
   if (isset($display['settings']['format'])) {
     if ($display['settings']['format'] == 'degrees_minutes_seconds') {
       foreach ($items as $delta => $item) {
-        $items[$delta]['lat'] = geofield_latlon_DECtoDMS($item['lat'],'lat');
-        $items[$delta]['lon'] = geofield_latlon_DECtoDMS($item['lon'],'lon');
+        $items[$delta]['lat'] = geofield_latlon_DECtoDMS($item['lat'], 'lat');
+        $items[$delta]['lon'] = geofield_latlon_DECtoDMS($item['lon'], 'lon');
       }
     }
   }
@@ -234,8 +235,8 @@ function geofield_field_formatter_view($entity_type, $entity, $field, $instance,
   if (isset($display['settings']['format'])) {
     if ($display['settings']['format'] == 'ccs') {
       foreach ($items as $delta => $item) {
-        $items[$delta]['lat'] = geofield_latlon_DECtoCCS($item['lat'],'lat');
-        $items[$delta]['lon'] = geofield_latlon_DECtoCCS($item['lon'],'lon');
+        $items[$delta]['lat'] = geofield_latlon_DECtoCCS($item['lat'], 'lat');
+        $items[$delta]['lon'] = geofield_latlon_DECtoCCS($item['lon'], 'lon');
       }
     }
   }
@@ -249,7 +250,7 @@ function geofield_field_formatter_view($entity_type, $entity, $field, $instance,
     case 'geofield_geojson':
       geofield_load_geophp();
       foreach ($items as $delta => $item) {
-        $geometry = geoPHP::load($item['wkt'],'wkt');
+        $geometry = geoPHP::load($item['wkt'], 'wkt');
         $json = $geometry->out('json');
         $element[$delta] = array('#markup' => $json);
       }
@@ -257,7 +258,7 @@ function geofield_field_formatter_view($entity_type, $entity, $field, $instance,
     case 'geofield_kml':
       geofield_load_geophp();
       foreach ($items as $delta => $item) {
-        $geometry = geoPHP::load($item['wkt'],'wkt');
+        $geometry = geoPHP::load($item['wkt'], 'wkt');
         $kml = $geometry->out('kml');
         $element[$delta] = array('#markup' => $kml);
       }
@@ -265,14 +266,14 @@ function geofield_field_formatter_view($entity_type, $entity, $field, $instance,
     case 'geofield_gpx':
       geofield_load_geophp();
       foreach ($items as $delta => $item) {
-        $geometry = geoPHP::load($item['wkt'],'wkt');
+        $geometry = geoPHP::load($item['wkt'], 'wkt');
         $kml = $geometry->out('gpx');
         $element[$delta] = array('#markup' => $kml);
       }
       return $element;
     case 'geofield_latlon':
       foreach ($items as $delta => $item) {
-      	$output = t('Latitude: !latitude <br/>Longitude: !longitude', array('!latitude' => $item['lat'], '!longitude' => $item['lon']));
+        $output = t('Latitude: !latitude <br/>Longitude: !longitude', array('!latitude' => $item['lat'], '!longitude' => $item['lon']));
         $element[$delta] = array('#markup' => $output);
       }
       return $element;
@@ -292,8 +293,8 @@ function geofield_field_formatter_view($entity_type, $entity, $field, $instance,
       }
       return $element;
     case 'geofield_openlayers':
-      $preset_name = $display['settings']['map_preset'] ? $display['settings']['map_preset'] : 'geofield_formatter_map';
-      $element[0] = array('#markup' => _geofield_openlayers_formatter($preset_name, $items)); 
+      $map_name = $display['settings']['map_preset'] ? $display['settings']['map_preset'] : 'geofield_formatter_map';
+      $element[0] = array('#markup' => _geofield_openlayers_formatter($map_name, $items)); 
       return $element;
     case 'geofield_def_list':
       foreach ($items as $delta => $item) {
@@ -310,7 +311,7 @@ function geofield_field_formatter_view($entity_type, $entity, $field, $instance,
   return $element;
 }
 
-function _geofield_openlayers_formatter($preset_name, $items) {
+function _geofield_openlayers_formatter($map_name, $items) {
   $features = array();
 
   // Create array of $features
@@ -322,11 +323,11 @@ function _geofield_openlayers_formatter($preset_name, $items) {
   }
 
   // Get map preset
-  $preset = openlayers_preset_load($preset_name);
+  $preset = openlayers_preset_load($map_name);
   $map = openlayers_build_map($preset->data);
   
-  if (!$map['layers']['geofield_formatter']) {
-    drupal_set_error('Trying to render a geofield formatter on a map without the placeholder layer');
+  if (!isset($map['layers']['geofield_formatter'])) {
+    drupal_set_message(t('Trying to render a geofield formatter on a map without the placeholder layer'), 'error');
   }
   
   // Add the features to the placeholder layer
@@ -340,7 +341,7 @@ function _geofield_openlayers_formatter($preset_name, $items) {
     // Push map through theme function and return
     $output = theme('openlayers_map', array(
       'map' => $map,
-      'preset_name' => $preset_name
+      'map_name' => $map_name
     ));
   }
   return $output;
@@ -348,10 +349,10 @@ function _geofield_openlayers_formatter($preset_name, $items) {
 
 function _geofield_def_list_formatter($item, $settings) {
   geofield_load_geophp();
-  $geometry = geoPHP::load($item['wkt'],'wkt');
+  $geometry = geoPHP::load($item['wkt'], 'wkt');
   
   // Single types
-  $single_types = array('Point','LineStrnig','Polygon');
+  $single_types = array('Point', 'LineStrnig', 'Polygon');
     
   if (in_array($geometry->geometryType(), $single_types)) {
     $centroid = new Point($item['lon'], $item['lat']);
@@ -373,7 +374,7 @@ function _geofield_def_list_formatter($item, $settings) {
 function _geofield_def_list_formatter_dl($info) {
   $output = '<dl>';
   foreach ($info as $dt => $dd) {
-    $output .= '<dt>'.ucfirst($dt).'</dt><dd>'.$dd.'</dd>';
+    $output .= '<dt>' . drupal_ucfirst($dt) . '</dt><dd>' . $dd . '</dd>';
   }
   
   $output .= '</dl>';
@@ -383,10 +384,10 @@ function _geofield_def_list_formatter_dl($info) {
 
 function _geofield_description_formatter($item, $settings) {
   geofield_load_geophp();
-  $geometry = geoPHP::load($item['wkt'],'wkt');
+  $geometry = geoPHP::load($item['wkt'], 'wkt');
   
   // Single types
-  $single_types = array('Point','LineStrnig','Polygon');
+  $single_types = array('Point', 'LineStrnig', 'Polygon');
   
   if (in_array($geometry->geometryType(), $single_types)) {
     $centroid = new Point($item['lon'], $item['lat']);
@@ -399,7 +400,7 @@ function _geofield_description_formatter($item, $settings) {
     foreach ($geometry->getComponents() as $component) {
       $centroid = $component->centroid();
       $info = _geofield_formatter_get_info($component, $centroid, $settings['address']);
-      $output .= '<li>'._geofield_description_formatter_text($info).'</li>';
+      $output .= '<li>' . _geofield_description_formatter_text($info) . '</li>';
     }
     $output .= '</ol>';
     return $output;
@@ -408,23 +409,23 @@ function _geofield_description_formatter($item, $settings) {
 }
 
 function _geofield_description_formatter_text($info) {
-  $text = t('@shape with a center of latitude @lat and longitude @lon.',array('@shape' => $info['shape'], '@lat' => $info['latitude'], '@lon' => $info['longitude'])); 
+  $text = t('@shape with a center of latitude @lat and longitude @lon.', array('@shape' => $info['shape'], '@lat' => $info['latitude'], '@lon' => $info['longitude'])); 
   if (isset($info['address'])) {
-    $text .= t(' It has an approximate address of @address.', array('@address' => $info['address']));
+    $text .= ' ' . t('It has an approximate address of @address.', array('@address' => $info['address']));
   }
     
   if (isset($info['area'])) {
-    $text .= t(' It has an area of @area.', array('@area' => $info['area']));
+    $text .= ' ' . t('It has an area of @area.', array('@area' => $info['area']));
   }
   if (isset($info['length'])) {
-    $text .= t(' It has a length of @length.',array('@length' => $info['length']));
+    $text .= ' ' . t('It has a length of @length.', array('@length' => $info['length']));
   }
   return $text;
 }
 
 function _geofield_formatter_get_info($geometry, $centroid, $address = FALSE, $units = 'degrees') {
 
-  $info = array (
+  $info = array(
     'latitude' => $centroid->y(),
     'longitude' => $centroid->x(),
   );
