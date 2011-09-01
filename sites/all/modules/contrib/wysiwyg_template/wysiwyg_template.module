@@ -115,6 +115,7 @@ function wysiwyg_template_wysiwyg_plugin($editorName, $version) {
 	  'internal' => TRUE,
 	  'options' => array(
 	    'templates_files' => array(url('wysiwyg-templates/' . $editorName . '/list')), //load the javascript template list
+            'templates_replaceContent' => false,
 	  ),
 	  'load' => FALSE,
 	),
