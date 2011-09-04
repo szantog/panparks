@@ -23,3 +23,9 @@ function panparks_hooks_node_presave($node) {
     $node->body['und'][0]['format'] = 'full_html';
   }
 }
+/**
+ * Implementation of hook_form_alter().
+ */
+function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
+  //dsm($form);
+}
