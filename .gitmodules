@@ -4,3 +4,6 @@
 [submodule "sites/all/modules/custom/fieldgroup_menu"]
 	path = sites/all/modules/custom/fieldgroup_menu
 	url = http://git.drupal.org/sandbox/szantog/1263502.git
+[submodule "sites/all/modules/patched/geocode"]
+	path = sites/all/modules/patched/geocode
+	url = http://github.com/phayes/geocode.git
