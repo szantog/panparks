@@ -1,5 +1,4 @@
 <?php
-// $Id: transliteration.inc,v 1.12 2010/03/15 06:45:57 smk Exp $
 
 /**
  * @file
@@ -25,7 +24,7 @@
  * @return
  *   Transliterated text.
  */
-function transliteration_process($string, $unknown = '?', $source_langcode = NULL) {
+function _transliteration_process($string, $unknown = '?', $source_langcode = NULL) {
   // ASCII is always valid NFC! If we're only ever given plain ASCII, we can
   // avoid the overhead of initializing the decomposition tables by skipping
   // out early.

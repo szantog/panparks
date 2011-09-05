@@ -1,5 +1,4 @@
 <?php
-// $Id: x00.php,v 1.4 2009/06/10 15:04:27 smk Exp $
 
 $base = array(
   // Note: to save memory plain ASCII mappings have been left out.
