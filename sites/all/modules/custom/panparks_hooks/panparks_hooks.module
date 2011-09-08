@@ -23,9 +23,51 @@ function panparks_hooks_node_presave($node) {
     $node->body['und'][0]['format'] = 'full_html';
   }
 }
+
 /**
- * Implementation of hook_form_alter().
+ * Theme preprocess function for theme_field() and field.tpl.php.
+ *
+ * @see theme_field()
+ * @see field.tpl.php
  */
-function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
-  //dsm($form);
+function panparks_hooks_preprocess_field(&$variables, $hook) {
+  $element = $variables['element'];
+  if ($element['#formatter'] == 'image') {
+    foreach (element_children($element) as $item) {
+      $element[$item]['#prefix'] ='test';
+    }
+  $variables['element'] = $element;
+  //kpr(get_defined_vars());
+  }
+
+}
+
+function panparks_hooks_preprocess_node(&$variables, $hook) {
+  $content = $variables['content'];
+
+  foreach (element_children($content) as $key) {
+    if (isset($content[$key]['#field_type']) && $content[$key]['#field_type'] == 'image') {
+      foreach (element_children($content[$key]) as $delta) {
+        if (is_numeric($delta)) {
+          $path = 'media/' . $content[$key][0]['#item']['fid'] . '/edit';
+          $menu_item = menu_get_item($path);
+          if ($menu_item['access']) {
+          $link = array(
+            '#type' => 'link',
+            '#href' => $path,
+            '#title' => t('Edit image'),
+            '#options' => array(
+              'attributes' => array('class' => array('media-edit-link'), 'id' => 'cool-id'),
+              'html' => FALSE,
+            ),
+          );
+          $content[$key][$delta]['#prefix'] = drupal_render($link);
+          }
+        }
+      }
+
+    }
+  }
+  //kpr(get_defined_vars());
+  $variables['content'] = $content;
 }
