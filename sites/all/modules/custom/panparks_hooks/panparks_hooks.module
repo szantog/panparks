@@ -59,6 +59,7 @@ function panparks_hooks_preprocess_node(&$variables, $hook) {
             '#options' => array(
               'attributes' => array('class' => array('media-edit-link'), 'id' => 'cool-id'),
               'html' => FALSE,
+              'query' => array('destination' => $_GET['q']),
             ),
           );
           $content[$key][$delta]['#prefix'] = drupal_render($link);
@@ -67,6 +68,6 @@ function panparks_hooks_preprocess_node(&$variables, $hook) {
       }
     }
   }
-  kpr(get_defined_vars());
+  //kpr(get_defined_vars());
   $variables['content'] = $content;
 }
