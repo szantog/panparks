@@ -12,3 +12,11 @@
  *
  */
 
+//panparks_api_update_media($entity);
+function panparks_api_update_media($node) {
+  $fid = $node->field_media['und'][0]['fid'];
+  $media = file_load($fid);
+  $media->field_photographer['und'][0]['value'] = $node->field_tmp_photo['und'][0]['value'];
+  file_save($media);
+  dsm(get_defined_vars());
+}
