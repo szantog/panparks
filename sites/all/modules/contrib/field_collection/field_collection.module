@@ -83,11 +83,21 @@ function field_collection_field_name_load($arg) {
  * Loads a field-collection item.
  *
  * @return field_collection_item
- *   The field_collection_item object or FALSE.
+ *   The field-collection item entity or FALSE.
  */
-function field_collection_item_load($item_id) {
-  $result = entity_load('field_collection_item', array($item_id));
+function field_collection_item_load($item_id, $reset = FALSE) {
+  $result = field_collection_item_load_multiple(array($item_id), array(), $reset);
   return $result ? reset($result) : FALSE;
+}
+
+/**
+ * Loads field-collection items.
+ *
+ * @return
+ *   An array of field-collection item entities.
+ */
+function field_collection_item_load_multiple($ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('field_collection_item', $ids, $conditions, $reset);
 }
 
 /**
@@ -733,7 +743,7 @@ function field_collection_field_formatter_view($entity_type, $entity, $field, $i
 
     case 'field_collection_view':
 
-      $element['#attached']['css'][] = drupal_get_path('module', 'field_collection') . '/field_collection_view.css';
+      $element['#attached']['css'][] = drupal_get_path('module', 'field_collection') . '/field_collection.theme.css';
       foreach ($items as $delta => $item) {
         if ($field_collection = field_collection_field_get_entity($item)) {
           $element[$delta]['entity'] = $field_collection->view();
@@ -868,7 +878,7 @@ function field_collection_field_widget_form(&$form, &$form_state, $field, $insta
       }
       else {
         $field_collection_item = field_collection_field_get_entity($items[$delta], $field_name);
-        
+
         // Put our entity in the form state, so FAPI callbacks can access it.
         $field_state['entity'][$delta] = $field_collection_item;
         field_form_set_state($field_parents, $field_name, $language, $form_state, $field_state);
