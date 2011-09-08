@@ -49,7 +49,7 @@ function panparks_hooks_preprocess_node(&$variables, $hook) {
     if (isset($content[$key]['#field_type']) && ($content[$key]['#field_type'] == 'image' || $content[$key]['#field_type'] == 'media')) {
       foreach (element_children($content[$key]) as $delta) {
         if (is_numeric($delta)) {
-          $path = 'media/' . $content[$key][0]['#item']['fid'] . '/edit';
+          $path = 'media/' . $content[$key]['#items'][$delta]['fid'] . '/edit';
           $menu_item = menu_get_item($path);
           if ($menu_item['access']) {
           $link = array(
