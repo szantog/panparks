@@ -992,6 +992,12 @@ function field_collection_field_widget_embed_validate($element, &$form_state, $c
   if ($form_state['submitted'] && !form_get_errors()) {
 
     field_attach_submit('field_collection_item', $field_collection_item, $element, $form_state);
+
+    // Set the _weight if it is a multiple field.
+    if ($field['cardinality'] > 1 || $field['cardinality'] == FIELD_CARDINALITY_UNLIMITED) {
+      $item['_weight'] = $element['_weight']['#value'];
+    }
+
     // Put the field-collection item in $item['entity'], so it is saved with
     // the host entity via hook_field_presave() / field API if it is not empty.
     // @see field_collection_field_presave()
