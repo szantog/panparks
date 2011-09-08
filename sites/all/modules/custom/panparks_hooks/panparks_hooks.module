@@ -67,6 +67,6 @@ function panparks_hooks_preprocess_node(&$variables, $hook) {
       }
     }
   }
-  //kpr(get_defined_vars());
+  kpr(get_defined_vars());
   $variables['content'] = $content;
 }
