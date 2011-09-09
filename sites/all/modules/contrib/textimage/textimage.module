@@ -770,6 +770,7 @@ function textimage_get_presets() {
 
   if (!isset($presets)) {
     if (module_exists('ctools')) {
+      module_load_include('inc', 'ctools', 'includes/export');
       foreach (ctools_export_load_object('textimage_preset') as $preset) {
         if (isset($preset->in_code_only) && $preset->in_code_only) {
           module_load_include('inc', 'textimage', 'textimage.admin');
