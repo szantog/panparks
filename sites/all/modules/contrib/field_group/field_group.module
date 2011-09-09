@@ -374,23 +374,19 @@ function field_group_field_group_format_settings($group) {
       '#weight' => 2,
     );
   }
-  //if (isset($group->format_settings['instance_settings']['classes'])) {
-    $form['instance_settings']['classes'] = array(
-      '#title' => t('Extra CSS classes'),
-      '#type' => 'textfield',
-      '#default_value' => isset($group->format_settings['instance_settings']['classes']) ? $group->format_settings['instance_settings']['classes'] : (isset($formatter['instance_settings']['classes']) ? $formatter['instance_settings']['classes'] : ''),
-      '#weight' => 3,
-      '#element_validate' => array('field_group_validate_css_class'),
-    );
-  //}
-  //if (isset($group->format_settings['instance_settings']['description'])) {
-    $form['instance_settings']['description'] = array(
-      '#title' => t('Description'),
-      '#type' => 'textarea',
-      '#default_value' => isset($group->format_settings['instance_settings']['description']) ? $group->format_settings['instance_settings']['description'] : (isset($formatter['instance_settings']['description']) ? $formatter['instance_settings']['description'] : ''),
-      '#weight' => 0,
-    );
-  //}
+  $form['instance_settings']['classes'] = array(
+    '#title' => t('Extra CSS classes'),
+    '#type' => 'textfield',
+    '#default_value' => isset($group->format_settings['instance_settings']['classes']) ? $group->format_settings['instance_settings']['classes'] : (isset($formatter['instance_settings']['classes']) ? $formatter['instance_settings']['classes'] : ''),
+    '#weight' => 3,
+    '#element_validate' => array('field_group_validate_css_class'),
+  );
+  $form['instance_settings']['description'] = array(
+    '#title' => t('Description'),
+    '#type' => 'textarea',
+    '#default_value' => isset($group->format_settings['instance_settings']['description']) ? $group->format_settings['instance_settings']['description'] : (isset($formatter['instance_settings']['description']) ? $formatter['instance_settings']['description'] : ''),
+    '#weight' => 0,
+  );
 
   // Add optional instance_settings.
   switch ($group->format_type) {
