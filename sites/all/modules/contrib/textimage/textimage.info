@@ -1,0 +1,16 @@
+name = Textimage
+description = Provides text to image manipulations.
+core = 7.x
+
+files[] = textimage.install
+files[] = textimage.module
+files[] = textimage.utils.inc
+files[] = textimage.admin.inc
+configure = admin/config/media/textimage
+
+; Information added by drupal.org packaging script on 2011-09-09
+version = "7.x-2.x-dev"
+core = "7.x"
+project = "textimage"
+datestamp = "1315528119"
+
