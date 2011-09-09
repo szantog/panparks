@@ -7,3 +7,6 @@
 [submodule "sites/all/modules/patched/geocode"]
 	path = sites/all/modules/patched/geocode
 	url = http://github.com/phayes/geocode.git
+[submodule "sites/all/modules/patched/media_browser_plus"]
+	path = sites/all/modules/patched/media_browser_plus
+	url = git://github.com/Buesing-Sebastian/Drupal---Media-Browser-Plus.git
