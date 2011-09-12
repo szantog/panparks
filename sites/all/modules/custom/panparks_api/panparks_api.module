@@ -18,7 +18,17 @@ function panparks_api_action_info() {
     'type' => 'entity',
     'label' => t('Update media metadata'),
     'configurable' => FALSE,
-   );
+  );
+  $actions['panparks_api_fetch_img_id'] = array(
+    'type' => 'entity',
+    'label' => t('Fetch node id from img_assist code'),
+    'configurable' => FALSE,
+  );
+  $actions['panparks_api_set_main_picture'] = array(
+    'type' => 'entity',
+    'label' => t('Set main picture'),
+    'configurable' => FALSE,
+  );
   return $actions;
 }
 
@@ -54,4 +64,24 @@ function panparks_api_update_media($entity, $context) {
   else $media->field_folder['und'][0]['tid'] = 24;
   file_save($media);
   //dsm(get_defined_vars());
+}
+
+/*
+ * Helper function to get image nid from image assist code.
+ */
+
+function panparks_api_fetch_img_id($entity, $context) {
+  $source = $entity->field_tmp_imgtext['und'][0]['value'];
+  if (preg_match('/(nid=)([0-9]*)/', $source, $target)) {
+    $entity->field_tmp_img_nid['und'][0]['value'] = $target[2];
+    node_save($entity);
+  }
+}
+
+/*
+ * Helper function actualize media data after importing.
+ */
+
+function panparks_api_set_main_picture($entity, $context) {
+
 }
