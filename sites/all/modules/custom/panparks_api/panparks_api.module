@@ -29,7 +29,9 @@ function panparks_api_action_info() {
 function panparks_api_update_media($entity, $context) {
   $fid = $entity->field_image['und'][0]['fid'];
   $media = file_load($fid);
-  $media->media_title['und'][0]['value'] = $entity->title;
+  if ($entity->title != 'photo') {
+    $media->media_title['und'][0]['value'] = $entity->title;
+  }
   if (!empty($entity->field_photographer)) {
     //@todo: need more transform?
     $photographer = str_replace('Photo:', '', $entity->field_photographer['und'][0]['value']);
