@@ -14,9 +14,24 @@
 
 //panparks_api_update_media($entity);
 function panparks_api_update_media($node) {
-  $fid = $node->field_media['und'][0]['fid'];
+  $fid = $node->field_image['und'][0]['fid'];
   $media = file_load($fid);
-  $media->field_photographer['und'][0]['value'] = $node->field_tmp_photo['und'][0]['value'];
+  $media->title = $node->title;
+  $media->field_photographer['und'][0]['value'] = $node->field_photographer['und'][0]['value'];
+  if (!empty($node->field_old_gallery_nid)) {
+    $media->field_old_gallery_nid['und'][0]['value'] = $node->field_old_gallery_nid['und'][0]['value'];
+  }
+  if (!empty($node->field_old_tid)) {
+    $media->field_old_tid['und'][0]['value'] = $node->field_old_tid['und'][0]['value'];
+  }
+  $media->field_old_nid['und'][0]['value'] = $node->field_old_nid['und'][0]['value'];
+  if ($folder_term = taxonomy_get_term_by_name($node->field_old_term_name['und'][0]['value'])) {
+    foreach ($folder_term as $key => $value) {
+      $folder_tid = $key;
+    }
+    $media->field_folder['und'][0]['tid'] = $folder_tid;
+  }
+  else $media->field_folder['und'][0]['tid'] = 24;
   file_save($media);
   dsm(get_defined_vars());
 }
