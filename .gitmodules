@@ -10,3 +10,6 @@
 [submodule "sites/all/modules/patched/media_browser_plus"]
 	path = sites/all/modules/patched/media_browser_plus
 	url = http://github.com/szantog/panparks-media-browser-plus.git
+[submodule "sites/all/modules/custom/media_file_usage"]
+	path = sites/all/modules/custom/media_file_usage
+	url = http://git.drupal.org/sandbox/szantog/1277722.git
