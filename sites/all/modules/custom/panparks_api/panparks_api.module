@@ -79,9 +79,43 @@ function panparks_api_fetch_img_id($entity, $context) {
 }
 
 /*
- * Helper function actualize media data after importing.
+ * VBO operation function to set main picture
  */
-
 function panparks_api_set_main_picture($entity, $context) {
+  $entity_type = 'node';
+  $old_nid = $entity->field_old_nid[LANGUAGE_NONE][0]['value'];
+  $tmp_image = _panparks_api_get_tmp_main_picture_old_nid($old_nid, 'tmp_main_picture') ;
 
+  if ($tmp_image_nid = $tmp_image[0]->entity_id) {
+    $old_image = node_load($tmp_image_nid);
+    $image_old_nid = field_get_items($entity_type, $old_image, 'field_tmp_img_nid');
+    foreach ($image_old_nid as $delta => $value) {
+      $image_nid = _panparks_api_get_tmp_main_picture_old_nid($value, 'image') ;
+      $entity->field_image[$entity->language][0]['fid'] = $image_nid[0]->entity_id;
+    }
+    node_save($entity);
+  }
+  //dsm(get_defined_vars());
+}
+
+
+/*
+ * Helper function to get tmp_main_picture record, where old nid = original content's old_nid
+ */
+function _panparks_api_get_tmp_main_picture_old_nid($old_nid, $bundle) {
+  $result = db_select('field_data_field_old_nid', 'o')
+    ->fields('o', array('entity_id', 'entity_type', 'bundle', 'field_old_nid_value'))
+    ->condition('o.field_old_nid_value', $old_nid, '=')
+    ->condition(db_and()->condition('o.bundle', $bundle, '='));
+
+  //dsm($result->__toString());
+  $results = $result->execute();
+
+  if (!empty($results)) {
+    $return = array();
+    foreach ($results as $record) {
+      $return[] = $record;
+    }
+    return $return;
+  }
 }
