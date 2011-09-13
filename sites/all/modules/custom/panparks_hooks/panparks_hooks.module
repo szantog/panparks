@@ -12,6 +12,29 @@
  *
  */
 
+/**
+ * Implementation of hook_form_alter().
+ */
+function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
+  dsm($form_id);
+}
+
+/**
+ * Implementation of hook_form_media_add_upload_alter().
+ */
+function panparks_hooks_form_media_add_upload_alter(&$form, &$form_state) {
+  //If file does'nt exist, set default folder to Images
+  $types = array();
+  foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
+    foreach ($value as $type_key => $type) {
+      $types[] = $type;
+    }
+  }
+  if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
+    $form['field_folder']['#default_value'] = '24';
+  }
+}
+
 /*
  * Implements hook_node_presave
  */
