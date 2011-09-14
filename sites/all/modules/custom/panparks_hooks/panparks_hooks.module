@@ -25,7 +25,10 @@ function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
  */
 function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
   if (isset($form['media_title'])) {
-    $form['media_title'][LANGUAGE_NONE][0]['value']['#description'] = t('Title is used on colorbox, and in the alt/title attributes of image');
+    $form['media_title'][LANGUAGE_NONE][0]['value']['#description'] = t('Title is used on colorbox, and in the alt/title attributes of image.');
+  }
+  if (isset($form['media_description'])) {
+    $form['media_description'][LANGUAGE_NONE][0]['#description'] = t('Description appears under the image.');
   }
 }
 
