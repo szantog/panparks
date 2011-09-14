@@ -16,7 +16,17 @@
  * Implementation of hook_form_alter().
  */
 function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
- // dsm($form_id);
+  //dsm($form_id);
+}
+
+
+/**
+ * Implementation of hook_form_media_edit_alter().
+ */
+function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
+  if (isset($form['media_title'])) {
+    $form['media_title'][LANGUAGE_NONE][0]['value']['#description'] = t('Title is used on colorbox, and in the alt/title attributes of image');
+  }
 }
 
 /**
