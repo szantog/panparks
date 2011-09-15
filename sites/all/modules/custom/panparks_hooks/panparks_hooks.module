@@ -38,13 +38,15 @@ function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
 function panparks_hooks_form_media_add_upload_alter(&$form, &$form_state) {
   //If file does'nt exist, set default folder to Images
   $types = array();
-  foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
-    foreach ($value as $type_key => $type) {
-      $types[] = $type;
+  if ($form['#validators']['media_file_validate_types']) {
+    foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
+      foreach ($value as $type_key => $type) {
+        $types[] = $type;
+      }
     }
-  }
-  if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
-    $form['field_folder']['#default_value'] = '24';
+    if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
+      $form['field_folder']['#default_value'] = '24';
+    }
   }
 }
 
