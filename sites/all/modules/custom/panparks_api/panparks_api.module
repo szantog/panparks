@@ -127,7 +127,7 @@ function panparks_api_set_main_picture($entity, $context) {
         }
       }
     }
-    //dsm(get_defined_vars());
+    dsm(get_defined_vars());
     node_save($entity);
   }
 
