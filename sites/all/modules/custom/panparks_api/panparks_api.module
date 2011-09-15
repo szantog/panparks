@@ -102,7 +102,7 @@ function panparks_api_set_main_picture($entity, $context) {
     else {
       $image_old_nid = field_get_items($entity_type, $old_image, 'field_tmp_img_nid');
     }
-    if ($image_old_nid[$old_image->language][0] != 0) {
+    if ($image_old_nid[0] != 0) {
       foreach ($image_old_nid as $delta => $value) {
         $image_nid = _panparks_api_get_tmp_main_picture_old_nid($value, 'image') ;
         switch($entity->type) {
