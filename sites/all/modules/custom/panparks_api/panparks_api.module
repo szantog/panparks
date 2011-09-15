@@ -26,7 +26,7 @@ function panparks_api_action_info() {
   );
   $actions['panparks_api_set_main_picture'] = array(
     'type' => 'entity',
-    'label' => t('Set main picture'),
+    'label' => t('Set main picture or gallery'),
     'configurable' => FALSE,
   );
   return $actions;
@@ -86,9 +86,18 @@ function panparks_api_set_main_picture($entity, $context) {
   $old_nid = $entity->field_old_nid[LANGUAGE_NONE][0]['value'];
   $tmp_image = _panparks_api_get_tmp_main_picture_old_nid($old_nid, 'tmp_main_picture') ;
 
+  if (isset($entity->media_gallery_media[$entity->language])) {
+    $entity->media_gallery_media[$entity->language] = array();
+  }
+
   if ($tmp_image_nid = $tmp_image[0]->entity_id) {
     $old_image = node_load($tmp_image_nid);
-    $image_old_nid = field_get_items($entity_type, $old_image, 'field_tmp_img_nid');
+    if ($entity->type == 'media_gallery') {
+      $image_old_nid = field_get_items($entity_type, $old_image, 'field_tmp_galleries_pics');
+    }
+    else {
+      $image_old_nid = field_get_items($entity_type, $old_image, 'field_tmp_img_nid');
+    }
     foreach ($image_old_nid as $delta => $value) {
       $image_nid = _panparks_api_get_tmp_main_picture_old_nid($value, 'image') ;
       switch($entity->type) {
@@ -98,6 +107,16 @@ function panparks_api_set_main_picture($entity, $context) {
         case 'park':
           $entity->field_park_photo[$entity->language][0]['fid'] = $image_nid[0]->entity_id;
           break;
+        case 'media_gallery':
+          if (isset($old_image->field_tmp_galleries_pics[$old_image->language])) {
+            $image_nid = _panparks_api_get_tmp_main_picture_old_nid($value, 'image') ;
+            //foreach ($old_image->field_tmp_galleries_pics[$old_image->language] as $key => $new_img_nid) {
+            $entity->media_gallery_media[$entity->language][$delta]['fid'] = $image_nid[0]->entity_id;
+            //}
+            //dsm(get_defined_vars());
+          }
+
+          break;
 
         default:
           break;
@@ -105,7 +124,7 @@ function panparks_api_set_main_picture($entity, $context) {
     }
     node_save($entity);
   }
-  //dsm(get_defined_vars());
+
 }
 
 

@@ -16,7 +16,20 @@
  * Implementation of hook_form_alter().
  */
 function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
- // dsm($form_id);
+  //dsm($form_id);
+}
+
+
+/**
+ * Implementation of hook_form_media_edit_alter().
+ */
+function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
+  if (isset($form['media_title'])) {
+    $form['media_title'][LANGUAGE_NONE][0]['value']['#description'] = t('Title is used on colorbox, and in the alt/title attributes of image.');
+  }
+  if (isset($form['media_description'])) {
+    $form['media_description'][LANGUAGE_NONE][0]['#description'] = t('Description appears under the image.');
+  }
 }
 
 /**
@@ -25,13 +38,15 @@ function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
 function panparks_hooks_form_media_add_upload_alter(&$form, &$form_state) {
   //If file does'nt exist, set default folder to Images
   $types = array();
-  foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
-    foreach ($value as $type_key => $type) {
-      $types[] = $type;
+  if ($form['#validators']['media_file_validate_types']) {
+    foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
+      foreach ($value as $type_key => $type) {
+        $types[] = $type;
+      }
     }
-  }
-  if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
-    $form['field_folder']['#default_value'] = '24';
+    if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
+      $form['field_folder']['#default_value'] = '24';
+    }
   }
 }
 
