@@ -132,7 +132,6 @@ function panparks_hooks_form_taxonomy_overview_terms_alter(&$form, $form_state) 
  * Implementation of hook_menu_alter().
  */
 function panparks_hooks_menu_alter(&$items) {
-  dpm($items['taxonomy/term/%taxonomy_term/edit']);
   $items['taxonomy/term/%taxonomy_term/edit']['access callback'] = 'panparks_hooks_taxonomy_term_edit_access';
 }
 
