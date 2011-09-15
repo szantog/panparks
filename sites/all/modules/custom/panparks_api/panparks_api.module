@@ -101,7 +101,7 @@ function panparks_api_set_main_picture($entity, $context) {
     foreach ($image_old_nid as $delta => $value) {
       $image_nid = _panparks_api_get_tmp_main_picture_old_nid($value, 'image') ;
       switch($entity->type) {
-        case 'accomodation':
+        case 'accommodation':
           $entity->field_image[$entity->language][0]['fid'] = $image_nid[0]->entity_id;
           break;
         case 'park':
@@ -113,7 +113,6 @@ function panparks_api_set_main_picture($entity, $context) {
             //foreach ($old_image->field_tmp_galleries_pics[$old_image->language] as $key => $new_img_nid) {
             $entity->media_gallery_media[$entity->language][$delta]['fid'] = $image_nid[0]->entity_id;
             //}
-            //dsm(get_defined_vars());
           }
 
           break;
@@ -122,6 +121,7 @@ function panparks_api_set_main_picture($entity, $context) {
           break;
       }
     }
+    //dsm(get_defined_vars());
     node_save($entity);
   }
 
