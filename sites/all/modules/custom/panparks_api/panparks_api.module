@@ -90,6 +90,10 @@ function panparks_api_set_main_picture($entity, $context) {
     $entity->media_gallery_media[$entity->language] = array();
   }
 
+  if (isset($entity->field_image[$entity->language])) {
+    $entity->field_image[$entity->language] = array();
+  }
+
   if ($tmp_image_nid = $tmp_image[0]->entity_id) {
     $old_image = node_load($tmp_image_nid);
     if ($entity->type == 'media_gallery') {
@@ -98,30 +102,32 @@ function panparks_api_set_main_picture($entity, $context) {
     else {
       $image_old_nid = field_get_items($entity_type, $old_image, 'field_tmp_img_nid');
     }
-    foreach ($image_old_nid as $delta => $value) {
-      $image_nid = _panparks_api_get_tmp_main_picture_old_nid($value, 'image') ;
-      switch($entity->type) {
-        case 'accomodation':
-          $entity->field_image[$entity->language][0]['fid'] = $image_nid[0]->entity_id;
-          break;
-        case 'park':
-          $entity->field_park_photo[$entity->language][0]['fid'] = $image_nid[0]->entity_id;
-          break;
-        case 'media_gallery':
-          if (isset($old_image->field_tmp_galleries_pics[$old_image->language])) {
-            $image_nid = _panparks_api_get_tmp_main_picture_old_nid($value, 'image') ;
-            //foreach ($old_image->field_tmp_galleries_pics[$old_image->language] as $key => $new_img_nid) {
-            $entity->media_gallery_media[$entity->language][$delta]['fid'] = $image_nid[0]->entity_id;
-            //}
-            //dsm(get_defined_vars());
-          }
+    if ($image_old_nid[0]['value'] != '0') {
+      foreach ($image_old_nid as $delta => $value) {
+        $image_nid = _panparks_api_get_tmp_main_picture_old_nid($value, 'image') ;
+        switch($entity->type) {
+          case 'accommodation':
+            $entity->field_image[$entity->language][0]['fid'] = $image_nid[0]->entity_id;
+            break;
+          case 'park':
+            $entity->field_park_photo[$entity->language][0]['fid'] = $image_nid[0]->entity_id;
+            break;
+          case 'media_gallery':
+            if (isset($old_image->field_tmp_galleries_pics[$old_image->language])) {
+              $image_nid = _panparks_api_get_tmp_main_picture_old_nid($value, 'image') ;
+              //foreach ($old_image->field_tmp_galleries_pics[$old_image->language] as $key => $new_img_nid) {
+              $entity->media_gallery_media[$entity->language][$delta]['fid'] = $image_nid[0]->entity_id;
+              //}
+            }
 
-          break;
+            break;
 
-        default:
-          break;
+          default:
+            break;
+        }
       }
     }
+    dsm(get_defined_vars());
     node_save($entity);
   }
 
