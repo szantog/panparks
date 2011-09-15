@@ -109,3 +109,41 @@ function panparks_hooks_preprocess_node(&$variables, $hook) {
   //kpr(get_defined_vars());
   $variables['content'] = $content;
 }
+
+
+/**
+ * Implementation of hook_form_taxonomy_overview_terms_alter().
+ */
+function panparks_hooks_form_taxonomy_overview_terms_alter(&$form, $form_state) {
+  if ($form['#vocabulary']->machine_name === 'media_folders') {
+    foreach ($form AS $key => $item) {
+      if (substr($key,0, 4) === 'tid:') {
+        $form[$key]['edit']['#type'] = 'value';
+
+      }
+    }
+    $form['actions']['submit']['#type'] = 'value';
+    $form['actions']['reset_alphabetical']['#type'] = 'value';
+    $form['#submit'] = array();
+  }
+}
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function panparks_hooks_menu_alter(&$items) {
+  dpm($items['taxonomy/term/%taxonomy_term/edit']);
+  $items['taxonomy/term/%taxonomy_term/edit']['access callback'] = 'panparks_hooks_taxonomy_term_edit_access';
+}
+
+/**
+ * media_folders as term elements in block
+ */
+function panparks_hooks_taxonomy_term_edit_access($term) {
+  if ($term->vocabulary_machine_name === 'media_folders') {
+    return FALSE;
+  }
+  else {
+    return taxonomy_term_edit_access($term);
+  }
+}
