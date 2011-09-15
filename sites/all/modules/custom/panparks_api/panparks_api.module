@@ -90,6 +90,10 @@ function panparks_api_set_main_picture($entity, $context) {
     $entity->media_gallery_media[$entity->language] = array();
   }
 
+  if (isset($entity->field_image[$entity->language])) {
+    $entity->field_image[$entity->language] = array();
+  }
+
   if ($tmp_image_nid = $tmp_image[0]->entity_id) {
     $old_image = node_load($tmp_image_nid);
     if ($entity->type == 'media_gallery') {
