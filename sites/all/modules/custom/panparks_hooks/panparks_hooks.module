@@ -22,6 +22,7 @@ function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
 
 /**
  * Implementation of hook_form_media_edit_alter().
+ * Add some custom description
  */
 function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
   if (isset($form['media_title'])) {
@@ -47,6 +48,16 @@ function panparks_hooks_form_media_add_upload_alter(&$form, &$form_state) {
     if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
       $form['field_folder']['#default_value'] = '24';
     }
+  }
+}
+
+/**
+ * Implementation of hook_form_media_edit_alter().
+ * Change alt text field's title
+ */
+function panparks_hooks_form_media_format_form_alter(&$form, &$form_state) {
+  if (isset($form['options']['alt'])) {
+    $form['options']['alt']['#title'] = t('Alt');
   }
 }
 
@@ -82,7 +93,7 @@ function panparks_hooks_preprocess_field(&$variables, $hook) {
 
 function panparks_hooks_preprocess_node(&$variables, $hook) {
   $content = $variables['content'];
-
+  //Temporary solution to add own image edit link to media images.
   foreach (element_children($content) as $key) {
     if (isset($content[$key]['#field_type']) && ($content[$key]['#field_type'] == 'image' || $content[$key]['#field_type'] == 'media')) {
       foreach (element_children($content[$key]) as $delta) {
@@ -115,6 +126,7 @@ function panparks_hooks_preprocess_node(&$variables, $hook) {
  * Implementation of hook_form_taxonomy_overview_terms_alter().
  */
 function panparks_hooks_form_taxonomy_overview_terms_alter(&$form, $form_state) {
+  //Remove all edit links from Media Folders vocab term list page, because of media folders has own admin page
   if ($form['#vocabulary']->machine_name === 'media_folders') {
     foreach ($form AS $key => $item) {
       if (substr($key,0, 4) === 'tid:') {
@@ -136,9 +148,11 @@ function panparks_hooks_menu_alter(&$items) {
 }
 
 /**
- * media_folders as term elements in block
+ * Media_folders as term elements in block
+ * Disable access all term edit pages in media folders
  */
 function panparks_hooks_taxonomy_term_edit_access($term) {
+  //Never need to access media_folders term edit pages, because of media folder has own admin page.
   if ($term->vocabulary_machine_name === 'media_folders') {
     return FALSE;
   }
