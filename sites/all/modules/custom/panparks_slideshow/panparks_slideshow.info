@@ -1,0 +1,4 @@
+name = Panparks slideshow
+description = Front page slidehow entity
+package = Panparks
+core = 7.x

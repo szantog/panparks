@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * Implements hook_permission().
+ */
+function panparks_slideshow_permission() {
+  return array(
+    'administer panparks slideshow type' =>  array(
+      'title' => t('Administer panparks slideshow type'),
+      'restrict access' => TRUE,
+    ),
+    'administer panparks slideshow' =>  array(
+      'title' => t('Administer panparks slideshow'),
+      'restrict access' => TRUE,
+    ),
+    'access panparks slideshow' => array(
+      'title' => t('View panparks slideshow'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function panparks_slideshow_menu(){
+  $items['admin/structure/slideshow'] = array(
+    'title' => 'Panparks slideshow',
+    'description' => 'Manage panparks slideshow structure',
+    'page callback' => 'panparks_slideshow_overview_type',
+    'access arguments' => array('administer panparks slideshow type'),
+//    'file' => 'includes/panparks_slideshow.types.inc',
+  );
+  $items['admin/structure/slideshow/settings'] = array(
+    'title' => 'Settings',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $items['slideshow'] = array(
+    'title' => 'Panparks slideshow',
+    'description' => 'Manage panparks slideshow',
+    'page callback' => 'panparks_slideshow_overview_page',
+    'access arguments' => array('administer panparks slideshow'),
+//    'file' => 'includes/panparks_slideshow.pages.inc',
+  );
+  $items['slideshow/list'] = array(
+    'title' => 'List',
+    'weight' => -10,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
+  $items['slideshow/add'] = array(
+    'title' => 'Add panpark slideshow',
+    'page callback' => 'panparks_slideshow_add',
+    'access arguments' => array('administer panparks slideshow'),
+//    'file' => 'includes/panparks_slideshow.pages.inc',
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  $items['slideshow/%panparks_slideshow'] = array(
+    'title' => 'Edit panparks slideshow',
+    'page callback' => 'panparks_slideshow_edit',
+    'page arguments' => array(1),
+    'access arguments' => array('administer panparks slideshow'),
+//    'file' => 'includes/panparks_slideshow.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['slideshow/%panparks_slideshow/delete'] = array(
+    'title' => 'Deleted panparks slideshow',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('panparks_slideshow_delete_confirm', 1),
+    'access arguments' => array('administer panparks slideshow'),
+//    'file' => 'includes/panparks_slideshow.pages.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+
+
+
+
+
