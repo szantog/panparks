@@ -15,4 +15,4 @@
 	url = http://git.drupal.org/sandbox/szantog/1277722.git
 [submodule "sites/all/modules/custom/convert_to_media"]
 	path = sites/all/modules/custom/convert_to_media
-	url = szantog@git.drupal.org:sandbox/szantog/1281826.git
+	url = http://git.drupal.org/sandbox/szantog/1281826.git
