@@ -183,3 +183,22 @@ function panparks_hooks_taxonomy_access($access, $vocabulary) {
   }
 }
 
+function panparks_hooks_ctm_img_assist_change_token_alter($tag, $vars) {
+  //dsm(get_defined_vars());
+  return $tag;
+}
+
+function panparks_hooks_ctm_img_assist_fetch_alter(&$fetched, &$entity) {
+  foreach ($fetched as $key => &$value) {
+    $image = _panparks_api_get_tmp_main_picture_old_nid($value['nid'], 'image');
+    $value['nid'] = $image[0]->entity_id;
+    if ($value['title'] == 'Photo') {
+      $value['photo'] = $value['title'] . ': ' . $value['alt'];
+    }
+    else {
+      $value['description'] = $value['title'] . ' ' . $value['alt'];
+    }
+    $value['alt'] = $entity->title;
+    $value['title'] = $entity->title;
+  }
+}
