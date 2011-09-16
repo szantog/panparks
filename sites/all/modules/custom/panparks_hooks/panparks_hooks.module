@@ -146,8 +146,11 @@ function panparks_hooks_form_taxonomy_overview_terms_alter(&$form, $form_state) 
 function panparks_hooks_menu_alter(&$items) {
   $items['taxonomy/term/%taxonomy_term/edit']['access callback'] = 'panparks_hooks_taxonomy_term_edit_access';
 
-  $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access callback'] = 'panparks_hooks_taxonomy_term_add_access';
+  $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access callback'] = 'panparks_hooks_taxonomy_access';
   $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access arguments'][] = 3;
+
+  $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access callback'] = 'panparks_hooks_taxonomy_access';
+  $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access arguments'][] = 4;
 
 }
 
@@ -168,8 +171,9 @@ function panparks_hooks_taxonomy_term_edit_access($term) {
 /**
  * Media_folders as term elements in block
  * Disable access add term in media folders
+ * Disabled taxonomy manager in media_folders
  */
-function panparks_hooks_taxonomy_term_add_access($access, $vocabulary) {
+function panparks_hooks_taxonomy_access($access, $vocabulary) {
   //Never need to access media_folders term edit pages, because of media folder has own admin page.
   if ($vocabulary->machine_name === 'media_folders') {
     return FALSE;
@@ -178,3 +182,4 @@ function panparks_hooks_taxonomy_term_add_access($access, $vocabulary) {
     return user_access($access);
   }
 }
+
