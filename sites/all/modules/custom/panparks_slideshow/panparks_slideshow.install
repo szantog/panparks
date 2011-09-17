@@ -22,6 +22,9 @@ function panparks_slideshow_install() {
         'weight' => 0,
         'settings' => array('rows' => 2),
       ),
+      'settings' => array(
+        'text_processing' => 1,
+      ),
       'required' => TRUE,
       'description' => '',
 
@@ -56,6 +59,9 @@ function panparks_slideshow_install() {
         'type' => 'text_textarea',
         'weight' => 3,
         'settings' => array('rows' => 4),
+      ),
+      'settings' => array(
+        'text_processing' => 1,
       ),
       'required' => TRUE,
       'description' => '',
