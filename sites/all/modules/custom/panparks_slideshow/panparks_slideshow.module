@@ -246,6 +246,51 @@ function panparks_slideshow_save($slideshow) {
   }
 }
 
+/**
+ * Delete a slideshow.
+ *
+ * @param $slid
+ *   A slideshow ID.
+ */
+function panparks_slideshow_delete($slid) {
+  panparks_slideshow_delete_multiple(array($slid));
+}
+
+/**
+ * Delete multiple slidshows.
+ *
+ * @param $slids
+ *   An array of slidshow IDs.
+ */
+function panparks_slideshow_delete_multiple($slids) {
+  $transaction = db_transaction();
+  if (!empty($slids)) {
+    $slidshows = panparks_slideshow_load_multiple($slids);
+
+    try {
+      foreach ($slidshows as $slid => $slideshow) {
+        // Call the slideshow-specific callback (if any):
+        module_invoke_all('panparks_slideshow_delete', $slideshow);
+        module_invoke_all('entity_delete', $slideshow, 'panparks_slideshow');
+        field_attach_delete('panparks_slideshow', $slideshow);
+      }
+
+      // Delete after calling hooks so that they can query hai_domain tables as needed.
+      db_delete('panparks_slideshow')
+        ->condition('slid', $slids, 'IN')
+        ->execute();
+    }
+    catch (Exception $e) {
+      $transaction->rollback();
+      watchdog_exception('panparks_slideshow', $e);
+      throw $e;
+    }
+
+    // Clear the page and block and haidomain_load_multiple caches.
+    entity_get_controller('panparks_slideshow')->resetCache();
+  }
+}
+
 function panparks_slideshow_overview_type() {
   return t('Manage panparks slideshow structure.');
 }

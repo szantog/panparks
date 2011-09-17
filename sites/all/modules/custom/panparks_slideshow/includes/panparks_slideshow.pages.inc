@@ -156,3 +156,46 @@ function panparks_slideshow_form_submit($form, &$form_state) {
   // Clear the page and block caches.
   cache_clear_all();
 }
+
+function panparks_slideshow_form_delete_submit($form, &$form_state) {
+  $destination = array();
+  if (isset($_GET['destination'])) {
+    $destination = drupal_get_destination();
+    unset($_GET['destination']);
+  }
+  $form_state['redirect'] = array('slideshow/' . $form_state['values']['slid'] . '/delete', array('query' => $destination));
+}
+
+/**
+ * Menu callback -- ask for confirmation of slideshow deletion
+ */
+function panparks_slideshow_delete_confirm($form, &$form_state, $slideshow = NULL) {
+  $form['#domain'] = $slideshow;
+  // Always provide entity id in the same form key as in the entity edit form.
+  $form['slid'] = array(
+    '#type' => 'value',
+    '#value' => $slideshow->slid
+  );
+
+  return confirm_form($form,
+    t('Are you sure you want to delete #%slid?', array('%slid' => $slideshow->slid)),
+    'slideshow/' . $slideshow->slid,
+    t('This action cannot be undone.'),
+    t('Delete'),
+    t('Cancel')
+  );
+}
+
+/**
+ * Execute domain deletion
+ */
+function panparks_slideshow_delete_confirm_submit($form, &$form_state) {
+  if ($form_state['values']['confirm']) {
+    panparks_slideshow_delete($form_state['values']['slid']);
+    watchdog('panparks_slideshow', 'Slideshow deleted #%slid.', array('%slid' => $form_state['values']['slid']));
+    drupal_set_message(t('Slideshow #%slid has been deleted.', array('%slid' => $form_state['values']['slid'])));
+  }
+
+  $form_state['redirect'] = 'slideshow';
+}
+
