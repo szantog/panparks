@@ -78,8 +78,102 @@ function panparks_slideshow_menu(){
   return $items;
 }
 
+/**
+ * Implements hook_entity_info().
+ */
+function panparks_slideshow_entity_info() {
+  return array(
+    'panparks_slideshow' => array(
+      'label' => t('Panparks slideshow'),
+      'controller class' => 'panparksSlideshowController',
+      'base table' => 'panparks_slideshow',
+      'uri callback' => 'panparks_slideshow_uri',
+      'fieldable' => TRUE,
+      'entity keys' => array(
+        'id' => 'slid',
+      ),
+      'bundles' => array(
+        'slideshow' => array(
+          'label' => t('Panparks slideshow'),
+          'admin' => array(
+            'path' => 'admin/structure/slideshow',
+            'access arguments' => array('administer panparks slideshow type'),
+          ),
+        ),
+      ),
+      'view modes' => array(
+        'full' => array(
+          'label' => t('Full slideshow'),
+          'custom settings' =>  FALSE,
+        ),
+      ),
+    ),
+  );
+}
 
+class panparksSlideshowController extends DrupalDefaultEntityController {
 
+}
 
+/**
+ * Implements hook_uri().
+ * @param $slideshow
+ * @return array
+ */
+function panparks_slideshow_uri($slideshow) {
+  return array(
+    'path' => 'slideshow/' . $slideshow->slid,
+  );
+}
 
+/**
+ * Load a panparks slideshow object from the database.
+ *
+ * @param $slid
+ *   The slideshow ID.
+ * @param $reset
+ *   Whether to reset the slideshow_load_multiple cache.
+ *
+ * @return
+ *   A fully-populated panparks slideshow object.
+ */
+function panparks_slideshow_load($slid = NULL, $reset = FALSE) {
+  $slids = (isset($slid) ? array($slid) : array());
+
+  $slideshow = haidomain_load_multiple($slids, $reset);
+  return $slideshow ? reset($slideshow) : FALSE;
+}
+
+/**
+ * Load panparks slideshow entities from the database.
+ *
+ * This function should be used whenever you need to load more than one slideshow
+ * from the database. Slideshows are loaded into memory and will not require
+ * database access if loaded again during the same page request.
+ *
+ * @see entity_load()
+ * @see EntityFieldQuery
+ *
+ * @param $slids
+ *   An array of panparks slideshow IDs.
+ * @param $conditions
+ *   An associative array of conditions on the {panparks_slideshow}
+ *   table, where the keys are the database fields and the values are the
+ *   values those fields must have. Instead, it is preferable to use
+ *   EntityFieldQuery to retrieve a list of entity IDs loadable by
+ *   this function.
+ * @param $reset
+ *   Whether to reset the internal panparks_slideshow_load cache.
+ *
+ * @return
+ *   An array of domain objects indexed by slid.
+ */
+function haidomain_load_multiple($slids = array(), $reset = FALSE) {
+  $conditions = array();
+  return entity_load('panparks_slideshow', $slids, $conditions, $reset);
+}
+
+function panparks_slideshow_overview_type() {
+  return t('Manage panparks slideshow structure.');
+}
 
