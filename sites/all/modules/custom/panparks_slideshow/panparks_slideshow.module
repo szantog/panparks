@@ -140,7 +140,7 @@ function panparks_slideshow_uri($slideshow) {
 function panparks_slideshow_load($slid = NULL, $reset = FALSE) {
   $slids = (isset($slid) ? array($slid) : array());
 
-  $slideshow = haidomain_load_multiple($slids, $reset);
+  $slideshow = panparks_slideshow_load_multiple($slids, $reset);
   return $slideshow ? reset($slideshow) : FALSE;
 }
 
@@ -166,9 +166,9 @@ function panparks_slideshow_load($slid = NULL, $reset = FALSE) {
  *   Whether to reset the internal panparks_slideshow_load cache.
  *
  * @return
- *   An array of domain objects indexed by slid.
+ *   An array of slideshow objects indexed by slid.
  */
-function haidomain_load_multiple($slids = array(), $reset = FALSE) {
+function panparks_slideshow_load_multiple($slids = array(), $reset = FALSE) {
   $conditions = array();
   return entity_load('panparks_slideshow', $slids, $conditions, $reset);
 }
