@@ -28,8 +28,8 @@ function panparks_slideshow_menu(){
     'description' => 'Manage panparks slideshow structure',
     'page callback' => 'panparks_slideshow_overview_type',
     'access arguments' => array('administer panparks slideshow type'),
-//    'file' => 'includes/panparks_slideshow.types.inc',
   );
+
   $items['admin/structure/slideshow/settings'] = array(
     'title' => 'Settings',
     'type' => MENU_DEFAULT_LOCAL_TASK,
@@ -41,8 +41,9 @@ function panparks_slideshow_menu(){
     'description' => 'Manage panparks slideshow',
     'page callback' => 'panparks_slideshow_overview_page',
     'access arguments' => array('administer panparks slideshow'),
-//    'file' => 'includes/panparks_slideshow.pages.inc',
+    'file' => 'includes/panparks_slideshow.pages.inc',
   );
+
   $items['slideshow/list'] = array(
     'title' => 'List',
     'weight' => -10,
@@ -53,7 +54,7 @@ function panparks_slideshow_menu(){
     'title' => 'Add panpark slideshow',
     'page callback' => 'panparks_slideshow_add',
     'access arguments' => array('administer panparks slideshow'),
-//    'file' => 'includes/panparks_slideshow.pages.inc',
+    'file' => 'includes/panparks_slideshow.pages.inc',
     'type' => MENU_LOCAL_TASK,
   );
 
@@ -62,7 +63,7 @@ function panparks_slideshow_menu(){
     'page callback' => 'panparks_slideshow_edit',
     'page arguments' => array(1),
     'access arguments' => array('administer panparks slideshow'),
-//    'file' => 'includes/panparks_slideshow.pages.inc',
+    'file' => 'includes/panparks_slideshow.pages.inc',
     'type' => MENU_CALLBACK,
   );
 
@@ -71,7 +72,7 @@ function panparks_slideshow_menu(){
     'page callback' => 'drupal_get_form',
     'page arguments' => array('panparks_slideshow_delete_confirm', 1),
     'access arguments' => array('administer panparks slideshow'),
-//    'file' => 'includes/panparks_slideshow.pages.inc',
+    'file' => 'includes/panparks_slideshow.pages.inc',
     'type' => MENU_CALLBACK,
   );
 
@@ -91,6 +92,7 @@ function panparks_slideshow_entity_info() {
       'fieldable' => TRUE,
       'entity keys' => array(
         'id' => 'slid',
+        'bundle' => 'type',
       ),
       'bundles' => array(
         'slideshow' => array(
@@ -140,7 +142,7 @@ function panparks_slideshow_uri($slideshow) {
 function panparks_slideshow_load($slid = NULL, $reset = FALSE) {
   $slids = (isset($slid) ? array($slid) : array());
 
-  $slideshow = panparks_slideshow_load_multiple($slids, $reset);
+  $slideshow = panparks_slideshow_load_multiple($slids, array(), $reset);
   return $slideshow ? reset($slideshow) : FALSE;
 }
 
@@ -168,9 +170,80 @@ function panparks_slideshow_load($slid = NULL, $reset = FALSE) {
  * @return
  *   An array of slideshow objects indexed by slid.
  */
-function panparks_slideshow_load_multiple($slids = array(), $reset = FALSE) {
-  $conditions = array();
+function panparks_slideshow_load_multiple($slids = array(), $conditions = array(), $reset = FALSE) {
   return entity_load('panparks_slideshow', $slids, $conditions, $reset);
+}
+
+/**
+ * Save changes to a slideshow or add a new slideshow.
+ *
+ * @param $slideshow
+ *   The $slideshow object to be saved. If $slideshow->slid is
+ *   omitted (or $slideshow->is_new is TRUE), a new slideshow will be added.
+ */
+function panparks_slideshow_save($slideshow) {
+  $transaction = db_transaction();
+
+  try {
+    // Load the stored entity, if any.
+    if (!empty($slideshow->slid) && !isset($slideshow->original)) {
+      $slideshow->original = entity_load_unchanged('panparks_slideshow', $slideshow->slid);
+    }
+
+    field_attach_presave('panparks_slideshow', $slideshow);
+
+    // Determine if we will be inserting a new slideshow.
+    if (!isset($slideshow->is_new)) {
+      $slideshow->is_new = empty($slideshow->slid);
+    }
+
+    // Set the timestamp fields.
+    if (empty($slideshow->created)) {
+      $slideshow->created = REQUEST_TIME;
+    }
+    // The changed timestamp is always updated.
+    $slideshow->changed = REQUEST_TIME;
+
+    // Let modules modify the slideshow before it is saved to the slideshow.
+    module_invoke_all('panparks_slideshow_presave', $slideshow);
+    module_invoke_all('entity_presave', $slideshow, 'panparks_slideshow');
+
+    // Save the slideshow.
+    if ($slideshow->is_new) {
+      // For new slideshows, save new records for both the slideshow itself.
+      drupal_write_record('panparks_slideshow', $slideshow);
+      $op = 'insert';
+    }
+    else {
+      // For existing slideshows, update the slideshow record which matches the value of
+      drupal_write_record('panparks_slideshow', $slideshow, 'slid');
+      $op = 'update';
+    }
+
+    // Save fields.
+    $function = "field_attach_$op";
+    $function('panparks_slideshow', $slideshow);
+
+    module_invoke_all('panparks_slideshow_' . $op, $slideshow);
+    module_invoke_all('entity_' . $op, $slideshow, 'panparks_slideshow');
+
+    $delete = $op == 'update';
+
+    // Clear internal properties.
+    unset($slideshow->is_new);
+    unset($slideshow->original);
+    // Clear the static loading cache.
+    entity_get_controller('panparks_slideshow')->resetCache(array($slideshow->slid));
+
+    // Ignore slave server temporarily to give time for the
+    // saved slideshow to be propagated to the slave.
+    db_ignore_slave();
+  }
+  catch (Exception $e) {
+    $transaction->rollback();
+    watchdog_exception('panparks_slideshow', $e);
+    throw $e;
+  }
 }
 
 function panparks_slideshow_overview_type() {

@@ -5,3 +5,5 @@ core = 7.x
 
 dependencies[] = link
 dependencies[] = image
+
+files[] = includes/panparks_slideshow.pages.inc
