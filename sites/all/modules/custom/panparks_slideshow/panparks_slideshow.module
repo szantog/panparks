@@ -117,6 +117,16 @@ class panparksSlideshowController extends DrupalDefaultEntityController {
 
 }
 
+/*
+ * Implements hook_views_api().
+ */
+function panparks_slideshow_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'panparks_slideshow') . '/views',
+  );
+}
+
 /**
  * Implements hook_uri().
  * @param $slideshow
@@ -294,4 +304,5 @@ function panparks_slideshow_delete_multiple($slids) {
 function panparks_slideshow_overview_type() {
   return t('Manage panparks slideshow structure.');
 }
+
 
