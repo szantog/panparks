@@ -39,7 +39,7 @@ function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
 function panparks_hooks_form_media_add_upload_alter(&$form, &$form_state) {
   //If file does'nt exist, set default folder to Images
   $types = array();
-  if ($form['#validators']['media_file_validate_types']) {
+  if (!empty($form['#validators']['media_file_validate_types'])) {
     foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
       foreach ($value as $type_key => $type) {
         $types[] = $type;
@@ -48,6 +48,72 @@ function panparks_hooks_form_media_add_upload_alter(&$form, &$form_state) {
     if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
       $form['field_folder']['#default_value'] = '24';
     }
+  }
+  if (!isset($form['media_title'])) {
+    $form['media_title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+      '#description' => t('Title is used on colorbox, and in the alt/title attributes of image.'),
+    );
+  }
+  if (!isset($form['media_description'])) {
+    $form['media_description'] = array(
+      '#title' => t('Description'),
+      '#type' => 'textarea',
+      //'#type' => 'text_format',
+      //'#format' => 'editor',
+      '#description' => t('Description appears under the image.'),
+    );
+  }
+  if (!isset($form['field_photographer'])) {
+    $form['field_photographer'] = array(
+      //'#prefix' => '<div style="float: left;">',
+      //'#suffix' => '</div>',
+      '#type' => 'textfield',
+      '#title' => t('Photographer'),
+    );
+  }
+}
+
+/**
+ * Implementation of hook_form_media_internet_add_alter().
+ */
+function panparks_hooks_form_media_internet_add_alter(&$form, &$form_state) {
+  //If file does'nt exist, set default folder to Images
+  $types = array();
+  if (!empty($form['#validators']['media_file_validate_types'])) {
+    foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
+      foreach ($value as $type_key => $type) {
+        $types[] = $type;
+      }
+    }
+    if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
+      $form['field_folder']['#default_value'] = '24';
+    }
+  }
+  if (!isset($form['media_title'])) {
+    $form['media_title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+      '#description' => t('Title is used on colorbox, and in the alt/title attributes of image.'),
+    );
+  }
+  if (!isset($form['media_description'])) {
+    $form['media_description'] = array(
+      '#title' => t('Description'),
+      '#type' => 'textarea',
+      //'#type' => 'text_format',
+      //'#format' => 'editor',
+      '#description' => t('Description appears under the image.'),
+    );
+  }
+  if (!isset($form['field_photographer'])) {
+    $form['field_photographer'] = array(
+      //'#prefix' => '<div style="float: left;">',
+      //'#suffix' => '</div>',
+      '#type' => 'textfield',
+      '#title' => t('Photographer'),
+    );
   }
 }
 
@@ -200,5 +266,21 @@ function panparks_hooks_ctm_img_assist_fetch_alter(&$fetched, &$entity) {
     }
     $value['alt'] = $entity->title;
     $value['title'] = $entity->title;
+  }
+}
+
+function panparks_hooks_media_file_build_alter(&$file, &$context) {
+  $values = $context['form_state_values'];
+  if (!empty($values['media_title'])) {
+    $file->media_title[LANGUAGE_NONE][0]['value'] = $values['media_title'];
+  }
+  if (!empty($values['media_description'])) {
+    $file->media_description[LANGUAGE_NONE][0] = array(
+      'value' => $values['media_description'],
+      'format' => 'editor',
+    );
+  }
+  if (!empty($values['field_photographer'])) {
+    $file->field_photographer[LANGUAGE_NONE][0]['value'] = $values['field_photographer'];
   }
 }
