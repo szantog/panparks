@@ -1,4 +1,7 @@
 <?php
+/**
+ * Implements hook_install().
+ */
 function panparks_slideshow_install() {
   // Add slideshow title field
   $field = field_info_field('slideshow_title');
@@ -115,7 +118,7 @@ function panparks_slideshow_install() {
     $instance = field_create_instance($instance);
   }
 
-  // Add slideshow link field
+  // Add slideshow picture field
   $field = field_info_field('slideshow_picture');
   $instance = field_info_instance('panparks_slideshow', 'slideshow_picture', 'slideshow');
   if (empty($field)) {
@@ -161,6 +164,42 @@ function panparks_slideshow_install() {
     );
     $instance = field_create_instance($instance);
   }
+
+  // Create slideshow_small image style
+  $style = array(
+    'name' => 'slideshow_small',
+    'storage' => 1,
+  );
+  image_style_save($style);
+
+  $style = image_style_load('slideshow_small');
+
+  $style['effects'][] = array(
+    'name' => 'image_scale_and_crop',
+    'data' => array(
+      'width' => 70,
+      'height' => 60,
+    ),
+  );
+  image_default_style_save($style);
+
+  // Create slideshow_big image style
+  $style = array(
+    'name' => 'slideshow_big',
+    'storage' => 1,
+  );
+  image_style_save($style);
+
+  $style = image_style_load('slideshow_big');
+
+  $style['effects'][] = array(
+    'name' => 'image_scale_and_crop',
+    'data' => array(
+      'width' => 645,
+      'height' => 300,
+    ),
+  );
+  image_default_style_save($style);
 }
 
 /**
