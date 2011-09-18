@@ -51,7 +51,7 @@ function panparks_slideshow_menu(){
   );
 
   $items['slideshow/add'] = array(
-    'title' => 'Add panpark slideshow',
+    'title' => 'Add slideshow item',
     'page callback' => 'panparks_slideshow_add',
     'access arguments' => array('administer panparks slideshow'),
     'file' => 'includes/panparks_slideshow.pages.inc',
