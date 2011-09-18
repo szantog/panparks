@@ -59,6 +59,9 @@ function panparks_hooks_form_media_format_form_alter(&$form, &$form_state) {
   if (isset($form['options']['alt'])) {
     $form['options']['alt']['#title'] = t('Alt');
   }
+  if (isset($form['options']['format']['#options']['token'])) {
+    unset($form['options']['format']['#options']['token']);
+  }
 }
 
 /*
