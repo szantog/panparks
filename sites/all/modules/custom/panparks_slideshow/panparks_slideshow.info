@@ -5,6 +5,7 @@ core = 7.x
 
 dependencies[] = link
 dependencies[] = image
+dependencies[] = views_slideshow_cycle
 
 files[] = includes/panparks_slideshow.pages.inc
 files[] = views/panparks_slideshow.views.inc
