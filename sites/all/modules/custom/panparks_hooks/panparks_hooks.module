@@ -277,6 +277,9 @@ function panparks_hooks_media_file_build_alter(&$file, &$context) {
   if (!empty($values['media_title'])) {
     $file->media_title[LANGUAGE_NONE][0]['value'] = $values['media_title'];
   }
+  else {
+    $file->media_title[LANGUAGE_NONE][0]['value'] = _media_gallery_get_media_title($file);
+  }
   if (!empty($values['media_description'])) {
     $file->media_description[LANGUAGE_NONE][0] = array(
       'value' => $values['media_description'],
