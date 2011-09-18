@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Export Drupal Commerce products to Views.
+ * Export Panpark slideshow to Views.
  */
 
 /**
@@ -97,6 +97,18 @@ function panparks_slideshow_views_data() {
     'filter' => array(
       'handler' => 'views_handler_filter_boolean_operator',
       'type' => 'yes-no',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+
+  $data['panparks_slideshow']['weight'] = array(
+    'title' => t('Weight'),
+    'help' => t('The weight of the panpark slideshow.'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+      'click sortable' => TRUE,
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',

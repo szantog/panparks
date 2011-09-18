@@ -117,6 +117,29 @@ class panparksSlideshowController extends DrupalDefaultEntityController {
 
 }
 
+/**
+ * Implements hook_field_extra_fields().
+ */
+function panparks_slideshow_field_extra_fields() {
+  $extra['panparks_slideshow']['slideshow'] = array(
+    'form' => array(
+      'weight' => array(
+        'label' => 'Weight',
+        'description' => t('Slideshow weight.'),
+        'weight' => 12,
+      ),
+      'status' => array(
+        'label' => 'Status',
+        'description' => t('Boolean indicating whether the slideshow is published (visible to non-administrators).'),
+        'weight' => 15,
+      ),
+    ),
+//    'display' => array(
+//    ),
+  );
+  return $extra;
+}
+
 /*
  * Implements hook_views_api().
  */

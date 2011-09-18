@@ -75,6 +75,20 @@ function panparks_slideshow_form($form, &$form_state, $slideshow) {
     $slideshow = $form_state['slideshow'];
   }
 
+  $form['weight'] = array(
+    '#type' => 'weight',
+    '#title' => t('Weight'),
+    '#default_value' => isset($slideshow->weight) ? $slideshow->weight : 0,
+    '#delta' => 10,
+  );
+
+  $form['status'] = array(
+    '#type' => 'radios',
+    '#title' => t('Status'),
+    '#default_value' => isset($slideshow->status) ? $slideshow->status : 1,
+    '#options' => array(0 => t('Disabled'), 1 => t('Enabled')),
+  );
+
   // Basic slideshow information.
   // These elements are just values so they are not even sent to the client.
   foreach (array('slid', 'uid', 'created', 'type') as $key) {

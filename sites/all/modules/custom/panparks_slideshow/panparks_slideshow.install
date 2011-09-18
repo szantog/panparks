@@ -185,16 +185,24 @@ function panparks_slideshow_schema() {
       ),
 
       'type' => array(
-        'description' => 'Domain type',
+        'description' => 'Slideshow type',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => 'slideshow',
       ),
 
-      'status' => array(
-        'description' => 'Boolean indicating whether the slideshow is published (visible to non-administrators).',
+      'weight' => array(
+        'description' => 'Slideshow element weight.',
         'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+
+      'status' => array(
+        'description' => 'Boolean indicating whether the slideshow is published.',
+        'type' => 'int',
+        'size' => 'tiny',
         'not null' => TRUE,
         'default' => 1,
       ),
@@ -231,9 +239,3 @@ function panparks_slideshow_schema() {
 
   return $schema;
 }
-
-
-
-
-
-
