@@ -203,6 +203,43 @@ function panparks_slideshow_install() {
 }
 
 /**
+ * Implements hook_uninstall().
+ */
+function panparks_slideshow_uninstall() {
+  // Delete slideshow title field
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_title', 'slideshow');
+  if (!empty($instance)) {
+    field_delete_instance($instance, TRUE);
+  }
+
+  // Delete slideshow body field
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_body', 'slideshow');
+  if (!empty($instance)) {
+    field_delete_instance($instance, TRUE);
+  }
+
+  // Delete slideshow link field
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_link', 'slideshow');
+  if (!empty($instance)) {
+    field_delete_instance($instance, TRUE);
+  }
+
+  // Delete slideshow picture field
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_picture', 'slideshow');
+  if (!empty($instance)) {
+    field_delete_instance($instance, TRUE);
+  }
+
+  // Delete slideshow_small image style
+  $style = image_style_load('slideshow_small');
+  image_style_delete($style);
+
+  // Delete slideshow_big image style
+  $style = image_style_load('slideshow_big');
+  image_style_delete($style);
+}
+
+/**
  * Implements hook_schema().
  */
 function panparks_slideshow_schema() {
