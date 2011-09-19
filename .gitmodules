@@ -16,3 +16,6 @@
 [submodule "sites/all/modules/custom/convert_to_media"]
 	path = sites/all/modules/custom/convert_to_media
 	url = http://git.drupal.org/sandbox/szantog/1281826.git
+[submodule "sites/all/modules/patched/menu_position"]
+	path = sites/all/modules/patched/menu_position
+	url = http://github.com/szantog/panparks-menu-position.git
