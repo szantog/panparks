@@ -135,6 +135,9 @@ function panparks_hooks_form_media_format_form_alter(&$form, &$form_state) {
     if (isset($form['options']['format']['#options']['media_large'])) {
       unset($form['options']['format']['#options']['media_large']);
     }
+    if (isset($form['options']['format']['#options']['media_link'])) {
+      unset($form['options']['format']['#options']['media_link']);
+    }
     $form['options']['format']['#options'] = array_reverse($form['options']['format']['#options'], TRUE);
   }
 }
