@@ -135,9 +135,6 @@ function panparks_hooks_form_media_format_form_alter(&$form, &$form_state) {
     if (isset($form['options']['format']['#options']['media_large'])) {
       unset($form['options']['format']['#options']['media_large']);
     }
-    if (isset($form['options']['format']['#options']['media_link'])) {
-      unset($form['options']['format']['#options']['media_link']);
-    }
     $form['options']['format']['#options'] = array_reverse($form['options']['format']['#options'], TRUE);
   }
 }
@@ -324,4 +321,17 @@ function panparks_hooks_media_file_build_alter(&$file, &$context) {
 function panparks_hooks_entity_info_alter(&$entity_info) {
   $entity_info['file']['view modes']['panparks_fit'] = array('label' => t('Normal fit'), 'custom settings' => TRUE);
   $entity_info['file']['view modes']['panparks_fill'] = array('label' => t('Normal fill'), 'custom settings' => TRUE);
+}
+
+function panparks_hooks_file_displays_alter(&$displays, &$file, $view_mode) {
+  $file->override['media_title'] = field_view_field('file', $file, 'media_title');
+  $file->override['title'] = 'hahó';
+  $file->override['attributes']['title'] = 'hahó';
+  foreach ($displays as &$display) {
+    $display['settings']['attributes'] = array(
+      'alt' => 'alt',
+      'title' => 'title',
+    );
+  }
+  //dsm(get_defined_vars());
 }
