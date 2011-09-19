@@ -160,6 +160,19 @@ function panparks_hooks_preprocess_field(&$variables, $hook) {
 
 }
 
+/*
+ * Preprocess variables for page.tpl.php
+ */
+function panparks_hooks_preprocess_page(&$variables, $hook) {
+  //Change the register page title
+  if (arg(0) == 'user' && arg(1) == 'register' && !arg(2)) {
+    drupal_set_title(t('Join now'));
+  }
+}
+
+/*
+ * Preprocess variables for node.tpl.php
+ */
 function panparks_hooks_preprocess_node(&$variables, $hook) {
   $content = $variables['content'];
   //Temporary solution to add own image edit link to media images.
@@ -189,7 +202,6 @@ function panparks_hooks_preprocess_node(&$variables, $hook) {
   //kpr(get_defined_vars());
   $variables['content'] = $content;
 }
-
 
 /**
  * Implementation of hook_form_taxonomy_overview_terms_alter().
@@ -221,6 +233,7 @@ function panparks_hooks_menu_alter(&$items) {
   $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access callback'] = 'panparks_hooks_taxonomy_access';
   $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access arguments'][] = 4;
 
+  $items['user/register']['title'] = t('Join now');
 }
 
 /**
