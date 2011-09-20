@@ -206,9 +206,9 @@ class eva_plugin_display_entity extends views_plugin_display {
    * Node content views use exposed widgets only if AJAX is set.
    */
   function uses_exposed() {
-    //if ($this->use_ajax()) {
+    if ($this->use_ajax()) {
       return parent::uses_exposed();
-    //}
+    }
     return FALSE;
   }
 
