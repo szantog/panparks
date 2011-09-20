@@ -30,10 +30,10 @@
 @line-height: 16px;
 
 @h1-font: 2em;
-@h2-font: 1.5em;
-@h3-font: 1.3em;
-@h4-font: 1.1em;
-@h5-font: @h4-font;
+@h2-font: 1.75em;
+@h3-font: 1.5em;
+@h4-font: 1.312em;
+@h5-font: 1.125em;
 @h6-font: @h5-font;
 
 /* The following font family declarations are based on the Microsoft core web
@@ -61,7 +61,7 @@
 /*
  * Grid system variables
  */
-@grid-count: 16; /* 12, 16, or 24 */
+@grid-count: 24; /* 12, 16, or 24 */
 @width: 960px;
 @grid-margin: 10px; /* 12 and 16 columns margin */
 //@grid-margin: 5px; /* 24 colums grid margin, uncomment it, and comment the previous, if you use this */
@@ -94,20 +94,20 @@
 //@content-background: @font-size;
 
 /* Colors & backgrounds */
-@body: #fff; /* The body background, can be changed to background picture */
+@body: #e7e7e7; /* The body background, can be changed to background picture */
 @page: #fff; /* The page wrapper background, can be changed to background picture */
-@text: #202020; /* The default text color */
-@h1: @text; /* By default h1 inherits the text color */
-@h2: @h1; /* By default h2 inherits the h1 color */
-@h3: @h2; /* By default h3 inherits the h2 color */
-@h4: @h3; /* By default h4 inherits the h3 color */
-@h5: @h4; /* By default h5 inherits the h4 color */
+@text: #000; /* The default text color */
+@h1: #f04e2a; /* By default h1 inherits the text color */
+@h2: #78a648; /* By default h2 inherits the h1 color */
+@h3: #8f7b52; /* By default h3 inherits the h2 color */
+@h4: #606060; /* By default h4 inherits the h3 color */
+@h5: #000; /* By default h5 inherits the h4 color */
 @h6: @h5; /* By default h6 inherits the h5 color */
 
-@link: #0000EE;
-@link-visited: #551A8B;
+@link: #006857;
+@link-visited: #006857;
 @link-hover: @link;
-@link-active: #551A8B;
+@link-active: #006857;
 
 @content: @page; /* The content wrapper background, can be changed to background picture */
 
@@ -458,7 +458,7 @@
  * It can contains background image, or border
  */
 .separator {
-  background: url(../images/row-separator.png) no-repeat bottom center;
+  border: 1px solid #e7e7e7
 }
 
 /*
@@ -555,7 +555,7 @@
  */
 .h1 {
   color: @h1;
-  font-size: 2em;
+  font-size: @h1-font;
   line-height: 1.3em;
   margin-top: 0;
   margin-bottom: @font-size;
@@ -564,28 +564,30 @@
 .h2 {
   .h1;
   color: @h2;
-  font-size: 1.5em;
+  font-size: @h2-font;
   margin-top: @font-size;
 }
 
 .h3 {
   .h2;
   color: @h3;
-  font-size: 1.3em;
+  font-size: @h3-font;
 }
 
 .h4 {
   .h3;
   color: @h4;
-  font-size: 1.1em;
+  font-size: @h4-font;
 }
 
 .h5 {
   .h4;
   color: @h5;
+  font-size: @h5-font;
 }
 
 .h6 {
   .h4;
   color: @h6;
+  font-size: @h6-font;
 }
