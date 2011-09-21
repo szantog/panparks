@@ -158,7 +158,8 @@ function panparks_hooks_node_presave($node) {
  * Implements hook_node_update
  */
 function panparks_hooks_node_update($node) {
-  $mp_ct = array('park', 'accommodation');
+  // set menu position this content type
+  $mp_ct = array('park', 'accommodation', 'tours_and_holdiays');
 
   if (in_array($node->type, $mp_ct)) {
     if (!isset($node->menu)) {
@@ -171,7 +172,7 @@ function panparks_hooks_node_update($node) {
       ),
       'pages' => array(
         'pages' => empty($node->path['alias']) ? 'node/' . $node->nid : $node->path['alias'],
-      ),
+    ),
     );
 
     if ($node->type == 'park') {
@@ -188,8 +189,9 @@ function panparks_hooks_node_update($node) {
       'plid'        => $node->menu['mlid'],
     );
 
-    if ($node->type == 'accommodation') {
-      $park_id = field_get_items('node', $node, 'field_park');
+    if ($node->type == 'accommodation' || $node->type == 'tours_and_holdiays') {
+      $park_field = ($node->type == 'tours_and_holdiays') ? 'field_parks' : 'field_park';
+      $park_id = field_get_items('node', $node, $park_field);
       $park = node_load($park_id['0']['nid']);
       menu_node_prepare($park);
 
@@ -223,7 +225,8 @@ function panparks_hooks_node_update($node) {
  * Implements hook_node_insert
  */
 function panparks_hooks_node_insert($node) {
-  $mp_ct = array('park', 'accommodation');
+  // set menu position this content type
+  $mp_ct = array('park', 'accommodation', 'tours_and_holdiays');
 
   if (in_array($node->type, $mp_ct)) {
     if (!isset($node->menu)) {
@@ -254,8 +257,9 @@ function panparks_hooks_node_insert($node) {
     );
 
 
-    if ($node->type == 'accommodation') {
-      $park_id = field_get_items('node', $node, 'field_park');
+    if ($node->type == 'accommodation' || $node->type == 'tours_and_holdiays') {
+      $park_field = ($node->type == 'tours_and_holdiays') ? 'field_parks' : 'field_park';
+      $park_id = field_get_items('node', $node, $park_field);
       $park = node_load($park_id['0']['nid']);
       menu_node_prepare($park);
 
