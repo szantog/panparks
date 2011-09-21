@@ -154,6 +154,81 @@ function panparks_hooks_node_presave($node) {
   }
 }
 
+/*
+ * Implements hook_node_update
+ */
+function panparks_hooks_node_update($node) {
+  if ($node->type == 'park' && isset($node->menu)) {
+    $conditions = array(
+      'content_type' => array(
+        'content_type' => array('member' => $node->type)
+      ),
+      'pages' => array(
+        // TODO: lecserelni az path-ra.
+        'pages' => 'node/' . $node->nid . '/*',
+      ),
+    );
+
+    // set menu position rule
+    $rule = array(
+      'admin_title' => $node->type . ' nid: ' . $node->nid . ' title: '. $node->title,
+      'conditions'  => serialize($conditions),
+      'menu_name'   => $node->menu['menu_name'],
+      'plid'        => $node->menu['mlid'],
+    );
+
+    // rule id is loaded
+    $rid = db_select('menu_position_rules', 'mp')
+    ->fields('mp', array('rid'))
+    ->condition('admin_title', $rule['admin_title'], '=')
+    ->execute()
+    ->fetchField();
+
+    if ($rid) {
+      // update menu position rule
+      $rule['rid'] = $rid;
+      module_load_include('inc', 'menu_position', 'menu_position.admin');
+      menu_position_edit_rule($rule);
+    }
+    else {
+      // create menu position rule
+      module_load_include('inc', 'menu_position', 'menu_position.admin');
+      menu_position_add_rule($rule);
+    }
+  }
+}
+
+/*
+ * Implements hook_node_insert
+ */
+function panparks_hooks_node_insert($node) {
+  if ($node->type == 'park' && isset($node->menu)) {
+//    dpm($node);
+//    dpm(path_load('node/' . $node->nid));
+    $conditions = array(
+      'content_type' => array(
+        'content_type' => array('member' => $node->type)
+      ),
+      'pages' => array(
+        // TODO: lecserelni az path-ra.
+        'pages' => 'node/' . $node->nid . '/*',
+      ),
+    );
+
+    // set menu position rule
+    $rule = array(
+      'admin_title' => $node->type . ' nid: ' . $node->nid . ' title: '. $node->title,
+      'conditions'  => serialize($conditions),
+      'menu_name'   => $node->menu['menu_name'],
+      'plid'        => $node->menu['mlid'],
+    );
+
+    // create menu position rule
+    module_load_include('inc', 'menu_position', 'menu_position.admin');
+    menu_position_add_rule($rule);
+  }
+}
+
 /**
  * Theme preprocess function for theme_field() and field.tpl.php.
  *
