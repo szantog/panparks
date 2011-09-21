@@ -489,14 +489,16 @@ function panparks_hooks_entity_info_alter(&$entity_info) {
 }
 
 function panparks_hooks_file_displays_alter(&$displays, &$file, $view_mode) {
-  $file->override['media_title'] = field_view_field('file', $file, 'media_title');
-  $file->override['title'] = 'hahó';
-  $file->override['attributes']['title'] = 'hahó';
-  foreach ($displays as &$display) {
-    $display['settings']['attributes'] = array(
-      'alt' => 'alt',
-      'title' => 'title',
-    );
+  if ($file->type == 'image') {
+    $file->override['media_title'] = field_view_field('file', $file, 'media_title');
+    $file->override['title'] = 'hahó';
+    $file->override['attributes']['title'] = 'hahó';
+    foreach ($displays as &$display) {
+      $display['settings']['attributes'] = array(
+        'alt' => 'alt',
+        'title' => 'title',
+      );
+    }
   }
   //dsm(get_defined_vars());
 }
