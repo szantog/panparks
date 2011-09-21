@@ -249,6 +249,7 @@ function panparks_hooks_menu_alter(&$items) {
   $items['get-involved/join-now'] = $items['user/register'];
   $items['get-involved/join-now']['type'] = MENU_NORMAL_ITEM;
   $items['get-involved/join-now']['weight'] = -20;
+  $items['get-involved/join-now']['title'] = t('Join now');
 
   $items['get-involved/join-now/register'] = $items['user/register'];
   $items['get-involved/join-now/register']['type'] = MENU_DEFAULT_LOCAL_TASK;
