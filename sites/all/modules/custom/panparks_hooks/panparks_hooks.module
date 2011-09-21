@@ -158,16 +158,27 @@ function panparks_hooks_node_presave($node) {
  * Implements hook_node_update
  */
 function panparks_hooks_node_update($node) {
-  if ($node->type == 'park' && isset($node->menu)) {
+  $mp_ct = array('park', 'accommodation');
+
+  if (in_array($node->type, $mp_ct)) {
+    if (!isset($node->menu)) {
+      menu_node_prepare($node);
+    }
+
     $conditions = array(
       'content_type' => array(
         'content_type' => array('member' => $node->type)
       ),
       'pages' => array(
-        // TODO: lecserelni az path-ra.
-        'pages' => 'node/' . $node->nid . '/*',
+        'pages' => empty($node->path['alias']) ? 'node/' . $node->nid : $node->path['alias'],
       ),
     );
+
+    if ($node->type == 'park') {
+      // TODO: torolni ha elmult a path para
+      $conditions['pages']['pages'] = 'node/' . $node->nid;
+      $conditions['pages']['pages'] .= '/*';
+    }
 
     // set menu position rule
     $rule = array(
@@ -176,6 +187,16 @@ function panparks_hooks_node_update($node) {
       'menu_name'   => $node->menu['menu_name'],
       'plid'        => $node->menu['mlid'],
     );
+
+    if ($node->type == 'accommodation') {
+      $park_id = field_get_items('node', $node, 'field_park');
+      $park = node_load($park_id['0']['nid']);
+      menu_node_prepare($park);
+
+      // set menu position rule
+      $rule['menu_name'] = $park->menu['menu_name'];
+      $rule['plid'] = $park->menu['mlid'];
+    }
 
     // rule id is loaded
     $rid = db_select('menu_position_rules', 'mp')
@@ -202,18 +223,27 @@ function panparks_hooks_node_update($node) {
  * Implements hook_node_insert
  */
 function panparks_hooks_node_insert($node) {
-  if ($node->type == 'park' && isset($node->menu)) {
-//    dpm($node);
-//    dpm(path_load('node/' . $node->nid));
+  $mp_ct = array('park', 'accommodation');
+
+  if (in_array($node->type, $mp_ct)) {
+    if (!isset($node->menu)) {
+      menu_node_prepare($node);
+    }
+
     $conditions = array(
       'content_type' => array(
         'content_type' => array('member' => $node->type)
       ),
       'pages' => array(
-        // TODO: lecserelni az path-ra.
-        'pages' => 'node/' . $node->nid . '/*',
+        'pages' => empty($node->path['alias']) ? 'node/' . $node->nid : $node->path['alias'],
       ),
     );
+
+    if ($node->type == 'park') {
+      // TODO: torolni ha elmult a path para
+      $conditions['pages']['pages'] = 'node/' . $node->nid;
+      $conditions['pages']['pages'] .= '/*';
+    }
 
     // set menu position rule
     $rule = array(
@@ -222,6 +252,17 @@ function panparks_hooks_node_insert($node) {
       'menu_name'   => $node->menu['menu_name'],
       'plid'        => $node->menu['mlid'],
     );
+
+
+    if ($node->type == 'accommodation') {
+      $park_id = field_get_items('node', $node, 'field_park');
+      $park = node_load($park_id['0']['nid']);
+      menu_node_prepare($park);
+
+      // set menu position rule
+      $rule['menu_name'] = $park->menu['menu_name'];
+      $rule['plid'] = $park->menu['mlid'];
+    }
 
     // create menu position rule
     module_load_include('inc', 'menu_position', 'menu_position.admin');
