@@ -19,3 +19,6 @@
 [submodule "sites/all/modules/patched/menu_position"]
 	path = sites/all/modules/patched/menu_position
 	url = http://github.com/szantog/panparks-menu-position.git
+[submodule "sites/all/themes/panparks"]
+	path = sites/all/themes/panparks
+	url = http://github.com/szantog/panparks-theme.git
