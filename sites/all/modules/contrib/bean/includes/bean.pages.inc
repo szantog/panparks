@@ -72,7 +72,7 @@ function bean_list() {
 
   $destination = drupal_get_destination();
 
-  $beans = $beans ?: array();
+  $beans = $beans ? $beans : array();
 
   foreach($beans as $bean) {
     $rows[$bean->bid] = array (
