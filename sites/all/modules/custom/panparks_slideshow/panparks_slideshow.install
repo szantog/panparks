@@ -1,0 +1,317 @@
+<?php
+/**
+ * Implements hook_install().
+ */
+function panparks_slideshow_install() {
+  // Add slideshow title field
+  $field = field_info_field('slideshow_title');
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_title', 'slideshow');
+  if (empty($field)) {
+    $field = array(
+      'field_name' => 'slideshow_title',
+      'type' => 'text_long',
+      'entity_types' => array('panparks_slideshow'),
+    );
+    $field = field_create_field($field);
+  }
+  if (empty($instance)) {
+    $instance = array(
+      'field_name' => 'slideshow_title',
+      'entity_type' => 'panparks_slideshow',
+      'bundle' => 'slideshow',
+      'label' => t('Title'),
+      'widget' => array(
+        'type' => 'text_textarea',
+        'weight' => 0,
+        'settings' => array('rows' => 2),
+      ),
+      'settings' => array(
+        'text_processing' => 1,
+      ),
+      'required' => TRUE,
+      'description' => '',
+
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+          'type' => 'text_default',
+        ),
+      ),
+    );
+    $instance = field_create_instance($instance);
+  }
+
+  // Add slideshow body field
+  $field = field_info_field('slideshow_body');
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_body', 'slideshow');
+  if (empty($field)) {
+    $field = array(
+      'field_name' => 'slideshow_body',
+      'type' => 'text_long',
+      'entity_types' => array('panparks_slideshow'),
+    );
+    $field = field_create_field($field);
+  }
+  if (empty($instance)) {
+    $instance = array(
+      'field_name' => 'slideshow_body',
+      'entity_type' => 'panparks_slideshow',
+      'bundle' => 'slideshow',
+      'label' => t('Body'),
+      'widget' => array(
+        'type' => 'text_textarea',
+        'weight' => 3,
+        'settings' => array('rows' => 4),
+      ),
+      'settings' => array(
+        'text_processing' => 1,
+      ),
+      'required' => TRUE,
+      'description' => '',
+
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+          'type' => 'text_default',
+        ),
+      ),
+    );
+    $instance = field_create_instance($instance);
+  }
+
+  // Add slideshow link field
+  $field = field_info_field('slideshow_link');
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_link', 'slideshow');
+  if (empty($field)) {
+    $field = array(
+      'field_name' => 'slideshow_link',
+      'type' => 'link_field',
+      'entity_types' => array('panparks_slideshow'),
+    );
+    $field = field_create_field($field);
+  }
+
+  if (empty($instance)) {
+    $instance = array(
+      'field_name' => 'slideshow_link',
+      'entity_type' => 'panparks_slideshow',
+      'bundle' => 'slideshow',
+      'label' => t('Link'),
+      'widget' => array(
+        'type' => 'link_field',
+        'weight' => 6,
+      ),
+      'settings' => array(
+        'title' => 'none',
+        'enable_tokens' => 0,
+      ),
+      'required' => TRUE,
+      'description' => '',
+
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+          'type' => 'default',
+        ),
+      ),
+    );
+    $instance = field_create_instance($instance);
+  }
+
+  // Add slideshow picture field
+  $field = field_info_field('slideshow_picture');
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_picture', 'slideshow');
+  if (empty($field)) {
+    $field = array(
+      'field_name' => 'slideshow_picture',
+      'type' => 'image',
+      'entity_types' => array('panparks_slideshow'),
+    );
+    $field = field_create_field($field);
+  }
+
+  if (empty($instance)) {
+    $instance = array(
+      'field_name' => 'slideshow_picture',
+      'entity_type' => 'panparks_slideshow',
+      'bundle' => 'slideshow',
+      'label' => t('Picture'),
+      'widget' => array(
+        'type' => 'image_image',
+        'weight' => 9,
+        'settings' => array(
+          'field_sources' => array(
+            'remote' => 0,
+            'reference' => 0,
+            'attach' => 0,
+          ),
+        ),
+      ),
+      'settings' => array(
+        'file_directory' => 'slideshow',
+        'max_filesize' => '50 MB',
+        'max_resolution' => '1920x1920',
+      ),
+      'required' => TRUE,
+      'description' => '',
+
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+          'type' => 'image',
+        ),
+      ),
+    );
+    $instance = field_create_instance($instance);
+  }
+
+  // Create slideshow_small image style
+  $style = array(
+    'name' => 'slideshow_small',
+    'storage' => 1,
+  );
+  image_style_save($style);
+
+  $style = image_style_load('slideshow_small');
+
+  $style['effects'][] = array(
+    'name' => 'image_scale_and_crop',
+    'data' => array(
+      'width' => 70,
+      'height' => 60,
+    ),
+  );
+  image_default_style_save($style);
+
+  // Create slideshow_big image style
+  $style = array(
+    'name' => 'slideshow_big',
+    'storage' => 1,
+  );
+  image_style_save($style);
+
+  $style = image_style_load('slideshow_big');
+
+  $style['effects'][] = array(
+    'name' => 'image_scale_and_crop',
+    'data' => array(
+      'width' => 645,
+      'height' => 300,
+    ),
+  );
+  image_default_style_save($style);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function panparks_slideshow_uninstall() {
+  // Delete slideshow title field
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_title', 'slideshow');
+  if (!empty($instance)) {
+    field_delete_instance($instance, TRUE);
+  }
+
+  // Delete slideshow body field
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_body', 'slideshow');
+  if (!empty($instance)) {
+    field_delete_instance($instance, TRUE);
+  }
+
+  // Delete slideshow link field
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_link', 'slideshow');
+  if (!empty($instance)) {
+    field_delete_instance($instance, TRUE);
+  }
+
+  // Delete slideshow picture field
+  $instance = field_info_instance('panparks_slideshow', 'slideshow_picture', 'slideshow');
+  if (!empty($instance)) {
+    field_delete_instance($instance, TRUE);
+  }
+
+  // Delete slideshow_small image style
+  $style = image_style_load('slideshow_small');
+  image_style_delete($style);
+
+  // Delete slideshow_big image style
+  $style = image_style_load('slideshow_big');
+  image_style_delete($style);
+}
+
+/**
+ * Implements hook_schema().
+ */
+function panparks_slideshow_schema() {
+  $schema['panparks_slideshow'] = array(
+    'description' => 'Database containing the settings of panparks slideshow.',
+    'fields' => array(
+      'slid' => array(
+        'description' => 'Panparks slideshow id',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+
+      'uid' => array(
+        'description' => 'User id',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+
+      'type' => array(
+        'description' => 'Slideshow type',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'slideshow',
+      ),
+
+      'weight' => array(
+        'description' => 'Slideshow element weight.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+
+      'status' => array(
+        'description' => 'Boolean indicating whether the slideshow is published.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+
+      'created' => array(
+        'description' => 'Created time',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+
+      'changed' => array(
+        'description' => 'Last changed time',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+
+    ),
+
+    'primary key' => array(
+      'slid'
+    ),
+
+    'foreign keys' => array(
+      'slideshow_author' => array(
+        'table' => 'users',
+        'columns' => array('uid' => 'uid'),
+      ),
+    ),
+  );
+
+  return $schema;
+}

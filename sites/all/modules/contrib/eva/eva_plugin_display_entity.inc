@@ -27,6 +27,10 @@ class eva_plugin_display_entity extends views_plugin_display {
 
     $categories['entity_view'] = array(
       'title' => t('Entity content settings'),
+      'column' => 'second',
+      'build' => array(
+        '#weight' => -10,
+      ),
     );
 
     if ($entity_type = $this->get_option('entity_type')) {
@@ -70,7 +74,7 @@ class eva_plugin_display_entity extends views_plugin_display {
   function options_form(&$form, &$form_state) {
     // It is very important to call the parent function here:
     parent::options_form($form, $form_state);
-    
+
     $entity_info = entity_get_info();
     $entity_type = $this->get_option('entity_type');
 
@@ -86,7 +90,7 @@ class eva_plugin_display_entity extends views_plugin_display {
         $form['entity_type'] = array(
           '#type' => 'radios',
           '#required' => TRUE,
-          '#title' => t("Attache this display to the following entity type"),
+          '#title' => t("Attach this display to the following entity type"),
           '#options' => $entity_names,
           '#default_value' => $this->get_option('entity_type'),
         );
@@ -99,7 +103,7 @@ class eva_plugin_display_entity extends views_plugin_display {
         $form['#title'] .= t('Bundles');
         $form['bundles'] = array(
           '#type' => 'checkboxes',
-          '#title' => t("Attache this display to the following bundles"),
+          '#title' => t("Attach this display to the following bundles"),
           '#options' => $options,
           '#default_value' => $this->get_option('bundles'),
         );
@@ -155,7 +159,7 @@ class eva_plugin_display_entity extends views_plugin_display {
           // only one on the new type, we can select it automatically. Otherwise
           // we need to wipe the options and start over.
           $new_entity_info = entity_get_info($new_entity);
-          
+
           $new_bundle_keys = array_keys($new_entity_info['bundles']);
           $new_bundles = array();
           if (count($new_bundle_keys) == 1) {
@@ -199,16 +203,6 @@ class eva_plugin_display_entity extends views_plugin_display {
   }
 
   /**
-   * Node content views use exposed widgets only if AJAX is set.
-   */
-  function uses_exposed() {
-    if ($this->use_ajax()) {
-      return parent::uses_exposed();
-    }
-    return FALSE;
-  }
-
-  /**
    * We have to run token replacement before the arguments are used.
    */
   function pre_execute() {
@@ -219,7 +213,7 @@ class eva_plugin_display_entity extends views_plugin_display {
       $entity = $this->view->current_entity;
       $entity_type = $this->view->display_handler->get_option('entity_type');
       $entity_info = entity_get_info($entity_type);
-  
+
       $arg_mode = $this->view->display_handler->get_option('argument_mode');
       if ($arg_mode == 'token') {
         if ($token_string = $this->view->display_handler->get_option('default_argument')) {
@@ -230,7 +224,7 @@ class eva_plugin_display_entity extends views_plugin_display {
           foreach ($token_values as $key => $value) {
             $new_args[$key] = $value;
           }
-  
+
           $this->view->args = $new_args;
         }
       }

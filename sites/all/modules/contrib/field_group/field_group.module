@@ -223,51 +223,51 @@ function field_group_field_group_formatter_info() {
         'label' => t('Div'),
         'description' => t('This fieldgroup renders the inner content in a simple div with the titel as legend.'),
         'format_types' => array('open', 'collapsible', 'collapsed'),
-        'instance_settings' => array('show_label' => 1, 'label_element' => 'h3', 'effect' => 'none', 'speed' => 'fast', 'classes' => '', 'required_fields' => 1),
+        'instance_settings' => array('description' => '', 'required_fields' => '', 'show_label' => 1, 'label_element' => 'h3', 'effect' => 'none', 'speed' => 'fast', 'classes' => '', 'required_fields' => 1),
         'default_formatter' => 'open',
       ),
       'fieldset' => array(
         'label' => t('Fieldset'),
         'description' => t('This fieldgroup renders the inner content in a fieldset with the titel as legend.'),
         'format_types' => array('open', 'collapsible', 'collapsed'),
-        'instance_settings' => array('classes' => '', 'required_fields' => 1),
+        'instance_settings' => array('description' => '', 'classes' => '', 'required_fields' => 1),
         'default_formatter' => 'collapsible',
       ),
       'tabs' => array(
         'label' => t('Vertical tabs group'),
         'description' => t('This fieldgroup renders child groups in its own vertical tabs wrapper.'),
-        'instance_settings' => array('classes' => ''),
+        'instance_settings' => array('description' => '', 'required_fields' => '', 'classes' => ''),
       ),
       'tab' => array(
         'label' => t('Vertical tab'),
         'description' => t('This fieldgroup renders the content in a fieldset, part of vertical tabs group.'),
         'format_types' => array('open', 'closed'),
-        'instance_settings' => array('classes' => '', 'required_fields' => 1),
+        'instance_settings' => array('description' => '', 'classes' => '', 'required_fields' => 1),
         'default_formatter' => 'closed',
       ),
       'htabs' => array(
         'label' => ('Horizontal tabs group'),
         'description' => t('This fieldgroup renders child groups in its own horizontal tabs wrapper.'),
-        'instance_settings' => array('classes' => ''),
+        'instance_settings' => array('description' => '', 'required_fields' => '', 'classes' => ''),
       ),
       'htab' => array(
         'label' => t('Horizontal tab item'),
         'format_types' => array('open', 'closed'),
         'description' => t('This fieldgroup renders the content in a fieldset, part of horizontal tabs group.'),
         'default_formatter' => 'closed',
-        'instance_settings' => array('classes' => '', 'required_fields' => 1),
+        'instance_settings' => array('description' => '', 'classes' => '', 'required_fields' => 1),
       ),
       'multipage-group' => array(
         'label' => ('Multipage group'),
         'description' => t('This fieldgroup renders groups on separate pages.'),
-        'instance_settings' => array('classes' => '', 'page_header' => 3, 'move_additional' => 1, 'page_counter' => 1, 'move_button' => 0),
+        'instance_settings' => array('description' => '', 'required_fields' => '', 'classes' => '', 'page_header' => 3, 'move_additional' => 1, 'page_counter' => 1, 'move_button' => 0),
       ),
       'multipage' => array(
         'label' => t('Multipage'),
         'format_types' => array('start', 'no-start'),
         'description' => t('This fieldgroup renders the content in a page.'),
         'default_formatter' => 'no-start',
-        'instance_settings' => array('classes' => '', 'required_fields' => 1),
+        'instance_settings' => array('description' => '', 'classes' => '', 'required_fields' => 1),
       ),
       'accordion' => array(
         'label' => t('Accordion group'),
@@ -279,7 +279,7 @@ function field_group_field_group_formatter_info() {
         'format_types' => array('open', 'closed'),
         'description' => t('This fieldgroup renders the content in a div, part of accordion group.'),
         'default_formatter' => 'closed',
-        'instance_settings' => array('classes' => '', 'required_fields' => 1),
+        'instance_settings' => array('description' => '', 'classes' => '', 'required_fields' => 1),
       ),
     ),
     'display' => array(
@@ -287,38 +287,38 @@ function field_group_field_group_formatter_info() {
         'label' => t('Div'),
         'description' => t('This fieldgroup renders the inner content in a simple div with the titel as legend.'),
         'format_types' => array('open', 'collapsible', 'collapsed'),
-        'instance_settings' => array('show_label' => 1, 'label_element' => 'h3', 'effect' => 'none', 'speed' => 'fast', 'classes' => ''),
+        'instance_settings' => array('description' => '', 'show_label' => 1, 'label_element' => 'h3', 'effect' => 'none', 'speed' => 'fast', 'classes' => ''),
         'default_formatter' => 'collapsible',
       ),
       'fieldset' => array(
         'label' => t('Fieldset'),
         'description' => t('This fieldgroup renders the inner content in a fieldset with the titel as legend.'),
         'format_types' => array('open', 'collapsible', 'collapsed'),
-        'instance_settings' => array('classes' => ''),
+        'instance_settings' => array('description' => '', 'classes' => ''),
         'default_formatter' => 'collapsible',
       ),
       'tabs' => array(
         'label' => t('Vertical tabs group'),
         'description' => t('This fieldgroup renders child groups in its own vertical tabs wrapper.'),
-        'instance_settings' => array('classes' => ''),
+        'instance_settings' => array('description' => '', 'classes' => ''),
       ),
       'tab' => array(
         'label' => t('Vertical tab'),
         'description' => t('This fieldgroup renders the content in a fieldset, part of vertical tabs group.'),
         'format_types' => array('open', 'closed'),
-        'instance_settings' => array('classes' => ''),
+        'instance_settings' => array('description' => '', 'classes' => ''),
         'default_formatter' => 'closed',
       ),
       'htabs' => array(
         'label' => ('Horizontal tabs group'),
         'description' => t('This fieldgroup renders child groups in its own horizontal tabs wrapper.'),
-        'instance_settings' => array('classes' => ''),
+        'instance_settings' => array('description' => '', 'classes' => ''),
       ),
       'htab' => array(
         'label' => t('Horizontal tab item'),
         'format_types' => array('open', 'closed'),
         'description' => t('This fieldgroup renders the content in a fieldset, part of horizontal tabs group.'),
-        'instance_settings' => array('classes' => ''),
+        'instance_settings' => array('description' => '', 'classes' => ''),
         'default_formatter' => 'closed',
       ),
       'accordion' => array(
@@ -330,7 +330,7 @@ function field_group_field_group_formatter_info() {
         'label' => t('Accordion item'),
         'format_types' => array('open', 'closed'),
         'description' => t('This fieldgroup renders the content in a div, part of accordion group.'),
-        'instance_settings' => array('classes' => ''),
+        'instance_settings' => array('description' => '', 'classes' => ''),
         'default_formatter' => 'closed',
       ),
     ),
@@ -366,15 +366,17 @@ function field_group_field_group_format_settings($group) {
       '#weight' => 1,
     );
   }
-  if ($mode == 'form') {
-    $form['instance_settings']['required_fields'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Mark group for required fields.'),
-      '#default_value' => isset($group->format_settings['instance_settings']['required_fields']) ? $group->format_settings['instance_settings']['required_fields'] : (isset($formatter['instance_settings']['required_fields']) ? $formatter['instance_settings']['required_fields'] : ''),
-      '#weight' => 2,
-    );
+  if (isset($formatter['instance_settings']['required_fields'])) {
+    if ($mode == 'form') {
+      $form['instance_settings']['required_fields'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Mark group for required fields.'),
+        '#default_value' => isset($group->format_settings['instance_settings']['required_fields']) ? $group->format_settings['instance_settings']['required_fields'] : (isset($formatter['instance_settings']['required_fields']) ? $formatter['instance_settings']['required_fields'] : ''),
+        '#weight' => 2,
+      );
+    }
   }
-  //if (isset($group->format_settings['instance_settings']['classes'])) {
+  if (isset($formatter['instance_settings']['classes'])) {
     $form['instance_settings']['classes'] = array(
       '#title' => t('Extra CSS classes'),
       '#type' => 'textfield',
@@ -382,16 +384,15 @@ function field_group_field_group_format_settings($group) {
       '#weight' => 3,
       '#element_validate' => array('field_group_validate_css_class'),
     );
-  //}
-  //if (isset($group->format_settings['instance_settings']['description'])) {
+  }
+  if (isset($formatter['instance_settings']['description'])) {
     $form['instance_settings']['description'] = array(
       '#title' => t('Description'),
       '#type' => 'textarea',
       '#default_value' => isset($group->format_settings['instance_settings']['description']) ? $group->format_settings['instance_settings']['description'] : (isset($formatter['instance_settings']['description']) ? $formatter['instance_settings']['description'] : ''),
       '#weight' => 0,
     );
-  //}
-
+  }
   // Add optional instance_settings.
   switch ($group->format_type) {
     case 'div':
@@ -458,11 +459,6 @@ function field_group_field_group_format_settings($group) {
     case 'tabs':
     case 'htabs':
     case 'accordion':
-      unset($form['instance_settings']['description']);
-      if (isset($form['instance_settings']['required_fields'])) {
-        unset($form['instance_settings']['required_fields']);
-      }
-      break;
     case 'multipage':
       break;
     case 'tab':

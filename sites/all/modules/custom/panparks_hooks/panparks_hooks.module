@@ -12,6 +12,136 @@
  *
  */
 
+/**
+ * Implementation of hook_form_alter().
+ */
+function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
+  //dsm($form);
+}
+
+
+/**
+ * Implementation of hook_form_media_edit_alter().
+ * Add some custom description
+ */
+function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
+  if (isset($form['media_title'])) {
+    $form['media_title'][LANGUAGE_NONE][0]['value']['#description'] = t('Title is used on colorbox, and in the alt/title attributes of image.');
+  }
+  if (isset($form['media_description'])) {
+    $form['media_description'][LANGUAGE_NONE][0]['#description'] = t('Description appears under the image.');
+  }
+}
+
+/**
+ * Implementation of hook_form_media_add_upload_alter().
+ */
+function panparks_hooks_form_media_add_upload_alter(&$form, &$form_state) {
+  //If file does'nt exist, set default folder to Images
+  $types = array();
+  if (!empty($form['#validators']['media_file_validate_types'])) {
+    foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
+      foreach ($value as $type_key => $type) {
+        $types[] = $type;
+      }
+    }
+    if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
+      $form['field_folder']['#default_value'] = '24';
+    }
+  }
+  if (!isset($form['media_title'])) {
+    $form['media_title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+      '#description' => t('Title is used on colorbox, and in the alt/title attributes of image.'),
+    );
+  }
+  if (!isset($form['media_description'])) {
+    $form['media_description'] = array(
+      '#title' => t('Description'),
+      '#type' => 'textarea',
+      //'#type' => 'text_format',
+      //'#format' => 'editor',
+      '#description' => t('Description appears under the image.'),
+    );
+  }
+  if (!isset($form['field_photographer'])) {
+    $form['field_photographer'] = array(
+      //'#prefix' => '<div style="float: left;">',
+      //'#suffix' => '</div>',
+      '#type' => 'textfield',
+      '#title' => t('Photographer'),
+    );
+  }
+}
+
+/**
+ * Implementation of hook_form_media_internet_add_alter().
+ */
+function panparks_hooks_form_media_internet_add_alter(&$form, &$form_state) {
+  //If file does'nt exist, set default folder to Images
+  $types = array();
+  if (!empty($form['#validators']['media_file_validate_types'])) {
+    foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
+      foreach ($value as $type_key => $type) {
+        $types[] = $type;
+      }
+    }
+    if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
+      $form['field_folder']['#default_value'] = '24';
+    }
+  }
+  if (!isset($form['media_title'])) {
+    $form['media_title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+      '#description' => t('Title is used on colorbox, and in the alt/title attributes of image.'),
+    );
+  }
+  if (!isset($form['media_description'])) {
+    $form['media_description'] = array(
+      '#title' => t('Description'),
+      '#type' => 'textarea',
+      //'#type' => 'text_format',
+      //'#format' => 'editor',
+      '#description' => t('Description appears under the image.'),
+    );
+  }
+  if (!isset($form['field_photographer'])) {
+    $form['field_photographer'] = array(
+      //'#prefix' => '<div style="float: left;">',
+      //'#suffix' => '</div>',
+      '#type' => 'textfield',
+      '#title' => t('Photographer'),
+    );
+  }
+}
+
+/**
+ * Implementation of hook_form_media_edit_alter().
+ * Change alt text field's title
+ */
+function panparks_hooks_form_media_format_form_alter(&$form, &$form_state) {
+  if (isset($form['options']['alt'])) {
+    $form['options']['alt']['#title'] = t('Alt');
+  }
+  if (isset($form['options']['format']['#options']['token'])) {
+    unset($form['options']['format']['#options']['token']);
+  }
+  if ($form['#media']->type == 'image') {
+    if (isset($form['options']['format']['#options']['media_preview'])) {
+      unset($form['options']['format']['#options']['media_preview']);
+    }
+    if (isset($form['options']['format']['#options']['media_large'])) {
+      unset($form['options']['format']['#options']['media_large']);
+    }
+    if (isset($form['options']['format']['#options']['media_link'])) {
+      unset($form['options']['format']['#options']['media_link']);
+    }
+    $form['options']['format']['#options'] = array_reverse($form['options']['format']['#options'], TRUE);
+  }
+}
+
 /*
  * Implements hook_node_presave
  */
@@ -21,6 +151,153 @@ function panparks_hooks_node_presave($node) {
   //
   if ($node->type == 'transferred_blog_posts') {
     $node->body['und'][0]['format'] = 'full_html';
+  }
+}
+
+/*
+ * Implements hook_node_update
+ */
+function panparks_hooks_node_update($node) {
+  // set menu position this content type
+  $mp_ct = array('park', 'accommodation', 'tours_and_holdiays');
+
+  if (in_array($node->type, $mp_ct)) {
+    if (!isset($node->menu)) {
+      menu_node_prepare($node);
+    }
+    try {
+      $conditions = array(
+        'content_type' => array(
+          'content_type' => array('member' => $node->type)
+        ),
+        'pages' => array(
+          'pages' => empty($node->path['alias']) ? 'node/' . $node->nid : $node->path['alias'],
+        ),
+      );
+
+      if ($node->type == 'park') {
+        // TODO: torolni ha elmult a path para
+        $conditions['pages']['pages'] = 'node/' . $node->nid;
+        $conditions['pages']['pages'] .= '/*';
+        if (!isset($node->menu)) {
+          throw new Exception('Park is not included in the menu.');
+        }
+      }
+
+      // set menu position rule
+      $rule = array(
+        'admin_title' => $node->type . ' nid: ' . $node->nid . ' title: '. $node->title,
+        'conditions'  => serialize($conditions),
+        'menu_name'   => $node->menu['menu_name'],
+        'plid'        => $node->menu['mlid'],
+      );
+
+      if ($node->type == 'accommodation' || $node->type == 'tours_and_holdiays') {
+        $park_field = ($node->type == 'tours_and_holdiays') ? 'field_parks' : 'field_park';
+        $park_id = field_get_items('node', $node, $park_field);
+        if (empty($park_id)) {
+          throw new Exception('No reference to park.');
+        }
+        $park = node_load($park_id['0']['nid']);
+        menu_node_prepare($park);
+        if (!isset($park->menu)) {
+          throw new Exception('Park reference is not included in the menu.');
+        }
+
+        // set menu position rule
+        $rule['menu_name'] = $park->menu['menu_name'];
+        $rule['plid'] = $park->menu['mlid'];
+      }
+
+      // rule id is loaded
+      $rid = db_select('menu_position_rules', 'mp')
+        ->fields('mp', array('rid'))
+        ->condition('admin_title', $rule['admin_title'], '=')
+        ->execute()
+        ->fetchField();
+
+      if ($rid) {
+        // update menu position rule
+        $rule['rid'] = $rid;
+        module_load_include('inc', 'menu_position', 'menu_position.admin');
+        menu_position_edit_rule($rule);
+      }
+      else {
+        // create menu position rule
+        module_load_include('inc', 'menu_position', 'menu_position.admin');
+        menu_position_add_rule($rule);
+      }
+    }
+    catch (Exception $e) {
+      watchdog_exception('panparks_hook', $e);
+    }
+  }
+}
+
+/*
+ * Implements hook_node_insert
+ */
+function panparks_hooks_node_insert($node) {
+  // set menu position this content type
+  $mp_ct = array('park', 'accommodation', 'tours_and_holdiays');
+
+  if (in_array($node->type, $mp_ct)) {
+    if (!isset($node->menu)) {
+      menu_node_prepare($node);
+    }
+
+    try {
+      $conditions = array(
+        'content_type' => array(
+          'content_type' => array('member' => $node->type)
+        ),
+        'pages' => array(
+          'pages' => empty($node->path['alias']) ? 'node/' . $node->nid : $node->path['alias'],
+        ),
+      );
+
+      if ($node->type == 'park') {
+        // TODO: torolni ha elmult a path para
+        $conditions['pages']['pages'] = 'node/' . $node->nid;
+        $conditions['pages']['pages'] .= '/*';
+        if (!isset($node->menu)) {
+          throw new Exception('Park is not included in the menu.');
+        }
+      }
+
+      // set menu position rule
+      $rule = array(
+        'admin_title' => $node->type . ' nid: ' . $node->nid . ' title: '. $node->title,
+        'conditions'  => serialize($conditions),
+        'menu_name'   => $node->menu['menu_name'],
+        'plid'        => $node->menu['mlid'],
+      );
+
+
+      if ($node->type == 'accommodation' || $node->type == 'tours_and_holdiays') {
+        $park_field = ($node->type == 'tours_and_holdiays') ? 'field_parks' : 'field_park';
+        $park_id = field_get_items('node', $node, $park_field);
+        if (empty($park_id)) {
+          throw new Exception('No reference to park.');
+        }
+        $park = node_load($park_id['0']['nid']);
+        menu_node_prepare($park);
+        if (!isset($park->menu)) {
+          throw new Exception('Park reference is not included in the menu.');
+        }
+
+        // set menu position rule
+        $rule['menu_name'] = $park->menu['menu_name'];
+        $rule['plid'] = $park->menu['mlid'];
+      }
+
+      // create menu position rule
+      module_load_include('inc', 'menu_position', 'menu_position.admin');
+      menu_position_add_rule($rule);
+    }
+    catch (Exception $e) {
+      watchdog_exception('panparks_hook', $e);
+    }
   }
 }
 
@@ -42,9 +319,22 @@ function panparks_hooks_preprocess_field(&$variables, $hook) {
 
 }
 
+/*
+ * Preprocess variables for page.tpl.php
+ */
+function panparks_hooks_preprocess_page(&$variables, $hook) {
+  //Change the register page title
+  if (arg(0) == 'user' && arg(1) == 'register' && !arg(2)) {
+    drupal_set_title(t('Join now'));
+  }
+}
+
+/*
+ * Preprocess variables for node.tpl.php
+ */
 function panparks_hooks_preprocess_node(&$variables, $hook) {
   $content = $variables['content'];
-
+  //Temporary solution to add own image edit link to media images.
   foreach (element_children($content) as $key) {
     if (isset($content[$key]['#field_type']) && ($content[$key]['#field_type'] == 'image' || $content[$key]['#field_type'] == 'media')) {
       foreach (element_children($content[$key]) as $delta) {
@@ -70,4 +360,173 @@ function panparks_hooks_preprocess_node(&$variables, $hook) {
   }
   //kpr(get_defined_vars());
   $variables['content'] = $content;
+}
+
+/**
+ * Implementation of hook_form_taxonomy_overview_terms_alter().
+ */
+function panparks_hooks_form_taxonomy_overview_terms_alter(&$form, $form_state) {
+  //Remove all edit links from Media Folders vocab term list page, because of media folders has own admin page
+  if ($form['#vocabulary']->machine_name === 'media_folders') {
+    foreach ($form AS $key => $item) {
+      if (substr($key,0, 4) === 'tid:') {
+        $form[$key]['edit']['#type'] = 'value';
+
+      }
+    }
+    $form['actions']['submit']['#type'] = 'value';
+    $form['actions']['reset_alphabetical']['#type'] = 'value';
+    $form['#submit'] = array();
+  }
+}
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function panparks_hooks_menu_alter(&$items) {
+  $items['taxonomy/term/%taxonomy_term/edit']['access callback'] = 'panparks_hooks_taxonomy_term_edit_access';
+
+  $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access callback'] = 'panparks_hooks_taxonomy_access';
+  $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access arguments'][] = 3;
+
+  $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access callback'] = 'panparks_hooks_taxonomy_access';
+  $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access arguments'][] = 4;
+
+  // move user menu path
+  $items['get-involved/join-now'] = $items['user/register'];
+  $items['get-involved/join-now']['type'] = MENU_NORMAL_ITEM;
+  $items['get-involved/join-now']['weight'] = -10;
+  $items['get-involved/join-now']['title'] = t('Join now');
+
+  $items['get-involved/join-now/register'] = $items['user/register'];
+  $items['get-involved/join-now/register']['type'] = MENU_DEFAULT_LOCAL_TASK;
+  $items['get-involved/join-now/register']['weight'] = -10;
+  $items['get-involved/join-now/register']['title'] = t('Join now');
+
+  $items['get-involved/join-now/password'] = $items['user/password'];
+
+  $items['get-involved/join-now/login'] = $items['user'];
+  $items['get-involved/join-now/login']['title'] = 'Log in';
+  $items['get-involved/join-now/login']['access callback'] = 'user_is_anonymous';
+  $items['get-involved/join-now/login']['type'] = MENU_LOCAL_TASK;
+  $items['get-involved/join-now/login']['weight'] = 5;
+  unset($items['get-involved/join-now/login']['title callback']);
+  unset($items['get-involved/join-now/login']['menu_name']);
+
+
+  // Redirect /user paths.
+  $items['user']['page callback'] = 'panparks_hooks_user_goto';
+  $items['user']['page arguments'] = array('get-involved/join-now');
+
+  $items['user/login']['page callback'] = 'drupal_goto';
+  $items['user/login']['page arguments'] = array('get-involved/join-now/login');
+
+  $items['user/register']['page callback'] = 'drupal_goto';
+  $items['user/register']['page arguments'] = array('get-involved/join-now/register');
+
+  $items['user/password']['page callback'] = 'drupal_goto';
+  $items['user/password']['page arguments'] = array('get-involved/join-now/password');
+}
+
+function panparks_hooks_user_goto($uri) {
+  if ($GLOBALS['user']->uid) {
+    return user_page();
+  }
+  else {
+    drupal_goto($uri);
+  }
+}
+
+/**
+ * Media_folders as term elements in block
+ * Disable access all term edit pages in media folders
+ */
+function panparks_hooks_taxonomy_term_edit_access($term) {
+  //Never need to access media_folders term edit pages, because of media folder has own admin page.
+  if ($term->vocabulary_machine_name === 'media_folders') {
+    return FALSE;
+  }
+  else {
+    return taxonomy_term_edit_access($term);
+  }
+}
+
+/**
+ * Media_folders as term elements in block
+ * Disable access add term in media folders
+ * Disabled taxonomy manager in media_folders
+ */
+function panparks_hooks_taxonomy_access($access, $vocabulary) {
+  //Never need to access media_folders term edit pages, because of media folder has own admin page.
+  if ($vocabulary->machine_name === 'media_folders') {
+    return FALSE;
+  }
+  else {
+    return user_access($access);
+  }
+}
+
+function panparks_hooks_ctm_img_assist_change_token_alter($tag, $vars) {
+  //dsm(get_defined_vars());
+  return $tag;
+}
+
+function panparks_hooks_ctm_img_assist_fetch_alter(&$fetched, &$entity) {
+  foreach ($fetched as $key => &$value) {
+    $image = _panparks_api_get_tmp_main_picture_old_nid($value['nid'], 'image');
+    $value['nid'] = $image[0]->entity_id;
+    if ($value['title'] == 'Photo') {
+      $value['photo'] = $value['title'] . ': ' . $value['alt'];
+    }
+    else {
+      $value['description'] = $value['title'] . ' ' . $value['alt'];
+    }
+    $value['alt'] = $entity->title;
+    $value['title'] = $entity->title;
+  }
+}
+
+function panparks_hooks_media_file_build_alter(&$file, &$context) {
+  $values = $context['form_state_values'];
+  if (!empty($values['media_title'])) {
+    $file->media_title[LANGUAGE_NONE][0]['value'] = $values['media_title'];
+  }
+  else {
+    $file->media_title[LANGUAGE_NONE][0]['value'] = _media_gallery_get_media_title($file);
+  }
+  if (!empty($values['media_description'])) {
+    $file->media_description[LANGUAGE_NONE][0] = array(
+      'value' => $values['media_description'],
+      'format' => 'editor',
+    );
+  }
+  if (!empty($values['field_photographer'])) {
+    $file->field_photographer[LANGUAGE_NONE][0]['value'] = $values['field_photographer'];
+  }
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ *
+ * Add view modes to the file entity type, appropriate for displaying media.
+ */
+function panparks_hooks_entity_info_alter(&$entity_info) {
+  $entity_info['file']['view modes']['panparks_fit'] = array('label' => t('Normal fit'), 'custom settings' => TRUE);
+  $entity_info['file']['view modes']['panparks_fill'] = array('label' => t('Normal fill'), 'custom settings' => TRUE);
+  $entity_info['file']['view modes']['panparks_square'] = array('label' => t('Square thumbnail'), 'custom settings' => TRUE);
+}
+
+function panparks_hooks_file_displays_alter(&$displays, &$file, $view_mode) {
+  if ($file->type == 'image') {
+    $file->override['media_title'] = field_view_field('file', $file, 'media_title');
+    $file->override['title'] = 'hahó';
+    $file->override['attributes']['title'] = 'hahó';
+    foreach ($displays as &$display) {
+      $display['settings']['attributes'] = array(
+        'alt' => 'alt',
+        'title' => 'title',
+      );
+    }
+  }
+  //dsm(get_defined_vars());
 }

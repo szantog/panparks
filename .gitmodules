@@ -7,3 +7,18 @@
 [submodule "sites/all/modules/patched/geocode"]
 	path = sites/all/modules/patched/geocode
 	url = http://github.com/phayes/geocode.git
+[submodule "sites/all/modules/patched/media_browser_plus"]
+	path = sites/all/modules/patched/media_browser_plus
+	url = http://github.com/szantog/panparks-media-browser-plus.git
+[submodule "sites/all/modules/custom/media_file_usage"]
+	path = sites/all/modules/custom/media_file_usage
+	url = http://git.drupal.org/sandbox/szantog/1277722.git
+[submodule "sites/all/modules/custom/convert_to_media"]
+	path = sites/all/modules/custom/convert_to_media
+	url = http://git.drupal.org/sandbox/szantog/1281826.git
+[submodule "sites/all/modules/patched/menu_position"]
+	path = sites/all/modules/patched/menu_position
+	url = http://github.com/szantog/panparks-menu-position.git
+[submodule "sites/all/themes/panparks"]
+	path = sites/all/themes/panparks
+	url = http://github.com/szantog/panparks-theme.git
