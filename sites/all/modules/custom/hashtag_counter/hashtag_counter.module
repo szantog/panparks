@@ -1,0 +1,122 @@
+<?php
+
+define('HASHTAG_COUNTER_SEARCH_STRING', "#onemilliontweet");
+define('HASHTAG_COUNTER_DISPLAY_TWEETS_LIMIT', 4);
+
+function hashtag_counter_block_info()
+{
+    $block['hashtag_count'] = array(
+        'info' => t('Hashtag count'),
+    );
+    
+    $block['hashtag_recent_tweets'] = array(
+        'info' => t('Recent tweets with hashtag'),
+    );
+
+    return $block;
+}
+
+function hashtag_counter_block_view($delta = '')
+{
+    $block = array();
+
+    switch ($delta) {
+        case 'hashtag_count':
+            $block['subject'] = t('Hashtag count');
+            $block['content'] = _get_hashtag_count();
+        break;
+        case 'hashtag_recent_tweets':
+            $block['subject'] = t('Recent tweets with hashtag');
+            $block['content'] = theme('hashtag_counter_recent_tweets', array('tweets' => _get_recent_tweets()));
+        break;
+    }
+
+    return $block;
+}
+
+function hashtag_counter_theme($tweets)
+{
+    return array(
+        'hashtag_counter_recent_tweets' => array(
+            'arguments' => array('tweets' => $tweets), 'template' => 'hashtag-recent-tweets-block'
+         )
+  );
+}
+
+function _get_hashtag_count() {
+    $result = db_query('SELECT COUNT(*) AS hashtag_count FROM {hashtag_counter}');
+    foreach ($result as $record) {
+        return $record->hashtag_count;
+    }
+}
+
+function _get_recent_tweets() {
+    $result = db_query_range('SELECT tweet FROM {hashtag_counter} ORDER BY created_at DESC', 0, HASHTAG_COUNTER_DISPLAY_TWEETS_LIMIT);
+    $tweets = array();
+    foreach ($result as $record) {
+        $tweets[] = unserialize($record->tweet);
+    }
+    return $tweets;
+}
+
+function hashtag_counter_cron()
+{
+    count_hashtags();
+}
+
+function hashtag_counter_menu() {
+    $items['hashtag-counter'] = array(
+        'page callback' => 'count_hashtags',
+        'access callback' => 'hashtag_counter_access',
+    );
+    return $items;
+}
+
+function count_hashtags() {
+    
+    $last_tweet_id = _get_last_tweet_id();
+    $a = array();
+    for ($i = 1; $i <= 15; $i++) {
+        $querystring = http_build_query(array(
+            'q' => HASHTAG_COUNTER_SEARCH_STRING,
+            'since_id' => $last_tweet_id,
+            'result_type' => 'recent',
+            'rpp' => 100,
+            'page' => $i
+        ));
+        
+        $curlhandle = curl_init();
+        curl_setopt($curlhandle, CURLOPT_URL, "http://search.twitter.com/search.json?" . $querystring);
+        curl_setopt($curlhandle, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($curlhandle);
+        curl_close($curlhandle);
+
+        $json = json_decode($response);
+        if (empty($json->results)) break;
+        $query = db_insert('hashtag_counter')->fields(
+            array('tweet_id', 'username', 'text', 'tweet', 'created_at')
+        );
+        foreach ($json->results as $tweet)
+        {
+            $query->values(array(
+                'tweet_id' => $tweet->id_str,
+                'username' => $tweet->from_user,
+                'text'     => $tweet->text,
+                'tweet'    => serialize($tweet),
+                'created_at' => date('Y-m-d H:i:s', strtotime($tweet->created_at)),
+            ));        
+            $query->execute();
+      }
+    }
+}
+
+function hashtag_counter_access() {
+    return true;
+}
+
+function _get_last_tweet_id() {
+    $result = db_query_range('SELECT tweet_id FROM {hashtag_counter} ORDER BY created_at DESC', 0, 1);
+    foreach ($result as $record) {
+        return $record->tweet_id;
+    }
+}

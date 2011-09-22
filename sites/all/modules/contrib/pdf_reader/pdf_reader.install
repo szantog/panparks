@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Install file for PDF Reader project.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function pdf_reader_uninstall(){
+    //TODO
+}

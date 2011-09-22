@@ -1,0 +1,39 @@
+<?php
+
+function hashtag_counter_schema() {
+    $schema['hashtag_counter'] = array(
+        'description' => 'The table to store tweets',
+        'fields' => array(
+            'id' => array(
+                'type'     => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'tweet_id' => array(
+                'type'     => 'varchar',
+                'length'   => 32,
+                'not null' => TRUE,
+            ),
+            'username' => array(
+                'type'   => 'varchar',
+                'length' => '50',
+            ),
+            'text' => array(
+                'type'   => 'varchar',
+                'length' => '255',
+            ),
+            'tweet' => array(
+                'type' => 'text',
+            ),
+            'created_at' => array(
+                'mysql_type' => 'DATETIME',
+                'not null' => TRUE,
+            ),
+        ),
+        'primary key' => array(
+            'id',
+        ),
+    );
+    
+    return $schema;
+}

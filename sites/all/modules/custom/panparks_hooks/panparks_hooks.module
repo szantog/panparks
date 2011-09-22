@@ -513,6 +513,7 @@ function panparks_hooks_media_file_build_alter(&$file, &$context) {
 function panparks_hooks_entity_info_alter(&$entity_info) {
   $entity_info['file']['view modes']['panparks_fit'] = array('label' => t('Normal fit'), 'custom settings' => TRUE);
   $entity_info['file']['view modes']['panparks_fill'] = array('label' => t('Normal fill'), 'custom settings' => TRUE);
+  $entity_info['file']['view modes']['panparks_square'] = array('label' => t('Square thumbnail'), 'custom settings' => TRUE);
 }
 
 function panparks_hooks_file_displays_alter(&$displays, &$file, $view_mode) {
