@@ -142,6 +142,25 @@ function panparks_hooks_form_media_format_form_alter(&$form, &$form_state) {
   }
 }
 
+/**
+ * Implementation of hook_menu().
+ *
+ * @return An array of menu items.
+ */
+function panparks_hooks_menu() {
+  $items = array();
+
+  $items['home'] = array(
+    'description' => 'description',
+    'page callback' => 'panparks_hooks_page_home',
+    'access arguments' => array('view content'),
+  );
+
+  return $items;
+}
+function panparks_hooks_page_home(){
+  return '';
+}
 /*
  * Implements hook_node_presave
  */
