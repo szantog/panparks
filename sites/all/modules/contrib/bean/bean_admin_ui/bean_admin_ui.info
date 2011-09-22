@@ -1,0 +1,15 @@
+; $Id:$
+name = Bean Admin UI
+description = Add the ability to create Block Types in the UI
+core = 7.x
+files[] = bean_admin_ui.module
+dependencies[] = bean
+files[] = plugins/custom.inc
+files[] = includes/features.inc
+
+; Information added by drupal.org packaging script on 2011-09-21
+version = "7.x-1.0-beta3"
+core = "7.x"
+project = "bean"
+datestamp = "1316637400"
+

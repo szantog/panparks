@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * Implementation of hook_schema
+ */
+function bean_schema() {
+   $schema['bean'] = array(
+    'description' => 'Stores bean items.',
+    'fields' => array(
+      'bid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique bean item ID.',
+      ),
+      'label' => array(
+        'description' => 'The Displays in the Admin page.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'title' => array(
+        'description' => 'The human-readable name of this bean.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'type' => array(
+        'description' => 'The {bean_type}.type of this bean.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'data' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+        'description' => 'A serialized array of additional data related to this bean.',
+      ),
+    ),
+    'foreign keys' => array(
+      'type' => array(
+        'table' => 'bean_type',
+        'columns' => array('type' => 'type'),
+      ),
+    ),
+    'primary key' => array('bid'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Update Registry to implement new Code Interface
+ */
+function bean_update_7001() {
+  registry_rebuild();
+  return t('Registry has been rebuilt');
+}

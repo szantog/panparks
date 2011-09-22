@@ -1,0 +1,19 @@
+; $Id:$
+name = Bean
+description = Create Bean (Block Entities)
+core = 7.x
+files[] = bean.module
+files[] = bean.test
+files[] = includes/bean.core.inc
+files[] = includes/bean.info.inc
+files[] = includes/bean.pages.inc
+dependencies[] = block
+dependencies[] = entity
+dependencies[] = ctools
+
+; Information added by drupal.org packaging script on 2011-09-21
+version = "7.x-1.0-beta3"
+core = "7.x"
+project = "bean"
+datestamp = "1316637400"
+
