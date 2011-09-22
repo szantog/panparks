@@ -1,0 +1,4 @@
+name = Hashtag counter
+description = Count tweets with a given hashtag.
+core = 7.x
+php = 5.2
