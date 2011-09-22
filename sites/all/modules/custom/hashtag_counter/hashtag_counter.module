@@ -1,6 +1,6 @@
 <?php
 
-define('HASHTAG_COUNTER_SEARCH_STRING', "#drupal");
+define('HASHTAG_COUNTER_SEARCH_STRING', "#onemilliontweet");
 define('HASHTAG_COUNTER_DISPLAY_TWEETS_LIMIT', 4);
 
 function hashtag_counter_block_info()
