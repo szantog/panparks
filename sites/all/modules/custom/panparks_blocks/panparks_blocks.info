@@ -1,0 +1,6 @@
+name = Panparks Block
+description = Blocks for panparks.org
+package = Panparks
+core = 7.x
+
+dependencies[] = block

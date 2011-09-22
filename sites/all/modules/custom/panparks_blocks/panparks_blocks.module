@@ -1,0 +1,76 @@
+<?php
+/**
+ * Implements hook_block_info().
+ */
+function panparks_blocks_block_info() {
+  global $user;
+
+  $blocks['join_now']['info'] = t('Join now');
+  // Not worth caching.
+  $blocks['join_now']['cache'] = DRUPAL_NO_CACHE;
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function panparks_blocks_block_configure($delta = '') {
+  switch ($delta) {
+    case 'join_now':
+      $form['block_body'] = array(
+        '#type' => 'text_format',
+        '#base_type' => 'textarea',
+        '#title' => t('Body'),
+        '#format' => variable_get('panparks_blocks_join_now_format', NULL),
+        '#rows' => '10',
+        '#default_value' => variable_get('panparks_blocks_join_now_body', ''),
+      );
+      return $form;
+  }
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function panparks_blocks_block_save($delta = '', $edit = array()) {
+
+  switch ($delta) {
+    case 'join_now':
+      variable_set('panparks_blocks_join_now_body', $edit['block_body']['value']);
+      variable_set('panparks_blocks_join_now_format', $edit['block_body']['format']);
+    break;
+  }
+}
+
+
+/**
+ * Implements hook_block_view().
+ */
+function panparks_blocks_block_view($delta = '') {
+  global $user;
+
+  $block = array();
+
+  switch ($delta) {
+    case 'join_now':
+      $block['subject'] = t('Join now');
+      $block['content'][]['#markup'] = check_markup(variable_get('panparks_blocks_join_now_body', ''), variable_get('panparks_blocks_join_now_format', NULL), FALSE);
+      if (!$user->uid && !(arg(0) == 'user' && !is_numeric(arg(1)))) {
+        $block['content'][]['#markup'] = '<div class="join_now_line"></div>';
+
+        $block['content'][]['#markup'] = '<h3>' . t('Register') . '</h3>';
+
+        $user_reg_form = drupal_get_form('user_register_form');
+        $user_reg_form['account']['name']['#description'] = '';
+        $user_reg_form['account']['mail']['#description'] = '';
+        $block['content'][] = $user_reg_form;
+
+        $user_login_form = drupal_get_form('user_login_block');
+        $user_login_form['links']['#markup'] = '';
+        $block['content'][] = $user_login_form;
+      }
+      return $block;
+    break;
+  }
+}
