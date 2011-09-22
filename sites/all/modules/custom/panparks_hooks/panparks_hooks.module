@@ -158,6 +158,55 @@ function panparks_hooks_menu() {
 
   return $items;
 }
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function panparks_hooks_menu_alter(&$items) {
+  $items['taxonomy/term/%taxonomy_term/edit']['access callback'] = 'panparks_hooks_taxonomy_term_edit_access';
+
+  $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access callback'] = 'panparks_hooks_taxonomy_access';
+  $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access arguments'][] = 3;
+
+  $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access callback'] = 'panparks_hooks_taxonomy_access';
+  $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access arguments'][] = 4;
+
+  // move user menu path
+  $items['get-involved/join-now'] = $items['user/register'];
+  $items['get-involved/join-now']['type'] = MENU_NORMAL_ITEM;
+  $items['get-involved/join-now']['weight'] = -10;
+  $items['get-involved/join-now']['title'] = t('Join now');
+
+  $items['get-involved/join-now/register'] = $items['user/register'];
+  $items['get-involved/join-now/register']['type'] = MENU_DEFAULT_LOCAL_TASK;
+  $items['get-involved/join-now/register']['weight'] = -10;
+  $items['get-involved/join-now/register']['title'] = t('Join now');
+
+  $items['get-involved/join-now/password'] = $items['user/password'];
+
+  $items['get-involved/join-now/login'] = $items['user'];
+  $items['get-involved/join-now/login']['title'] = 'Log in';
+  $items['get-involved/join-now/login']['access callback'] = 'user_is_anonymous';
+  $items['get-involved/join-now/login']['type'] = MENU_LOCAL_TASK;
+  $items['get-involved/join-now/login']['weight'] = 5;
+  unset($items['get-involved/join-now/login']['title callback']);
+  unset($items['get-involved/join-now/login']['menu_name']);
+
+
+  // Redirect /user paths.
+  $items['user']['page callback'] = 'panparks_hooks_user_goto';
+  $items['user']['page arguments'] = array('get-involved/join-now');
+
+  $items['user/login']['page callback'] = 'drupal_goto';
+  $items['user/login']['page arguments'] = array('get-involved/join-now/login');
+
+  $items['user/register']['page callback'] = 'drupal_goto';
+  $items['user/register']['page arguments'] = array('get-involved/join-now/register');
+
+  $items['user/password']['page callback'] = 'drupal_goto';
+  $items['user/password']['page arguments'] = array('get-involved/join-now/password');
+}
+
 function panparks_hooks_page_home(){
   return '';
 }
@@ -397,54 +446,6 @@ function panparks_hooks_form_taxonomy_overview_terms_alter(&$form, $form_state) 
     $form['actions']['reset_alphabetical']['#type'] = 'value';
     $form['#submit'] = array();
   }
-}
-
-/**
- * Implementation of hook_menu_alter().
- */
-function panparks_hooks_menu_alter(&$items) {
-  $items['taxonomy/term/%taxonomy_term/edit']['access callback'] = 'panparks_hooks_taxonomy_term_edit_access';
-
-  $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access callback'] = 'panparks_hooks_taxonomy_access';
-  $items['admin/structure/taxonomy/%taxonomy_vocabulary_machine_name/add']['access arguments'][] = 3;
-
-  $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access callback'] = 'panparks_hooks_taxonomy_access';
-  $items['admin/structure/taxonomy_manager/voc/%taxonomy_vocabulary_machine_name']['access arguments'][] = 4;
-
-  // move user menu path
-  $items['get-involved/join-now'] = $items['user/register'];
-  $items['get-involved/join-now']['type'] = MENU_NORMAL_ITEM;
-  $items['get-involved/join-now']['weight'] = -10;
-  $items['get-involved/join-now']['title'] = t('Join now');
-
-  $items['get-involved/join-now/register'] = $items['user/register'];
-  $items['get-involved/join-now/register']['type'] = MENU_DEFAULT_LOCAL_TASK;
-  $items['get-involved/join-now/register']['weight'] = -10;
-  $items['get-involved/join-now/register']['title'] = t('Join now');
-
-  $items['get-involved/join-now/password'] = $items['user/password'];
-
-  $items['get-involved/join-now/login'] = $items['user'];
-  $items['get-involved/join-now/login']['title'] = 'Log in';
-  $items['get-involved/join-now/login']['access callback'] = 'user_is_anonymous';
-  $items['get-involved/join-now/login']['type'] = MENU_LOCAL_TASK;
-  $items['get-involved/join-now/login']['weight'] = 5;
-  unset($items['get-involved/join-now/login']['title callback']);
-  unset($items['get-involved/join-now/login']['menu_name']);
-
-
-  // Redirect /user paths.
-  $items['user']['page callback'] = 'panparks_hooks_user_goto';
-  $items['user']['page arguments'] = array('get-involved/join-now');
-
-  $items['user/login']['page callback'] = 'drupal_goto';
-  $items['user/login']['page arguments'] = array('get-involved/join-now/login');
-
-  $items['user/register']['page callback'] = 'drupal_goto';
-  $items['user/register']['page arguments'] = array('get-involved/join-now/register');
-
-  $items['user/password']['page callback'] = 'drupal_goto';
-  $items['user/password']['page arguments'] = array('get-involved/join-now/password');
 }
 
 function panparks_hooks_user_goto($uri) {
