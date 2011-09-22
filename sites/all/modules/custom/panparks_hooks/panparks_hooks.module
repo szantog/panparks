@@ -207,6 +207,15 @@ function panparks_hooks_menu_alter(&$items) {
   $items['user/password']['page arguments'] = array('get-involved/join-now/password');
 }
 
+function panparks_hooks_user_goto($uri) {
+  if ($GLOBALS['user']->uid) {
+    return user_page();
+  }
+  else {
+    drupal_goto($uri);
+  }
+}
+
 function panparks_hooks_page_home(){
   return '';
 }
@@ -445,15 +454,6 @@ function panparks_hooks_form_taxonomy_overview_terms_alter(&$form, $form_state) 
     $form['actions']['submit']['#type'] = 'value';
     $form['actions']['reset_alphabetical']['#type'] = 'value';
     $form['#submit'] = array();
-  }
-}
-
-function panparks_hooks_user_goto($uri) {
-  if ($GLOBALS['user']->uid) {
-    return user_page();
-  }
-  else {
-    drupal_goto($uri);
   }
 }
 
