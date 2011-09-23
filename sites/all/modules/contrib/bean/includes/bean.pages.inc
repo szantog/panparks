@@ -65,7 +65,7 @@ function bean_list() {
   }
   else {
     $sql_query->limit($filters['per_page']);
-    if (!empty($filter['types'])) {
+    if (!empty($filters['types'])) {
       $sql_query->condition('type', $filters['types'], 'IN');
     }
   }
