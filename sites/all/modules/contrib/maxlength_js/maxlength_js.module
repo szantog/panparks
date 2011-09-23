@@ -70,7 +70,9 @@ function maxlength_js_field_attach_form($entity_type, $entity, &$form, &$form_st
       $elements[$field_name] = $value;
     }
   }
-  _maxlength_js_children($form, $elements);
+  if (isset($elements)) {
+    _maxlength_js_children($form, $elements);
+  }
 }
 
 /**
