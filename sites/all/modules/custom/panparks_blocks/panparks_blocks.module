@@ -61,16 +61,58 @@ function panparks_blocks_block_view($delta = '') {
 
         $block['content'][]['#markup'] = '<h3>' . t('Register') . '</h3>';
 
-        $user_reg_form = drupal_get_form('user_register_form');
-        $user_reg_form['account']['name']['#description'] = '';
-        $user_reg_form['account']['mail']['#description'] = '';
-        $block['content'][] = $user_reg_form;
+        $block['content'][] = drupal_get_form('panparks_blocks_register_form');
 
+        $block['content'][]['#markup'] = '<h3>' . t('or login') . '</h3>';
         $user_login_form = drupal_get_form('user_login_block');
         $user_login_form['links']['#markup'] = '';
         $block['content'][] = $user_login_form;
       }
       return $block;
     break;
+  }
+}
+
+// Front page registration form
+function panparks_blocks_register_form(&$form) {
+  $form['mail'] = array('#type' => 'textfield',
+    '#title' => t('Your e-mail'),
+    '#maxlength' => EMAIL_MAX_LENGTH,
+    '#size' => 15,
+    '#required' => TRUE,
+  );
+
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Register'),
+  );
+  return $form;
+}
+
+function panparks_blocks_register_form_validate($form, &$form_state) {
+  if (!valid_email_address($form_state['values']['mail'])) {
+    form_set_error('mail', t('The e-mail address %mail is not valid.', array('%mail' => $form_state['values']['mail'])));
+  }
+}
+
+function panparks_blocks_register_form_submit($form, &$form_state) {
+  // redirect user registration page
+  $options = array(
+    'query' => array(
+      'm' => $form_state['values']['mail'],
+    ),
+  );
+  drupal_goto('get-involved/join-now', $options);
+}
+
+/**
+ * Implementation of hook_form_user_register_form_alter().
+ */
+function panparks_blocks_form_user_register_form_alter(&$form, $form_state) {
+  // set default user mail address
+  $url_param = drupal_get_query_parameters();
+  if (isset($url_param['m'])) {
+    $form['account']['mail']['#value'] = $url_param['m'];
   }
 }
