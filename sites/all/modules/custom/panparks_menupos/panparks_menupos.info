@@ -1,0 +1,6 @@
+name = Panparks menu position
+description = Panparks menu position extras.
+package = Panparks
+core = 7.x
+
+dependencies[] = menu_position

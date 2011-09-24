@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function panparks_menupos_menu() {
+  $items['admin/structure/menu-position/massdelete'] = array(
+    'title' => 'Mass delete menu position rule',
+    'description' => 'Deleted all menu position rule.',
+    'access arguments' => array('administer menu positions'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('panparks_menupos_massdelete'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'include/panparks_menupos.inc'
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_menu_position_rule_plugins().
+ */
+function panparks_menupos_menu_position_rule_plugins() {
+  return array(
+    'parknoderef' => array(
+      'form_callback' => 'panparks_menupos_menu_position_rule_parknoderef_form',
+      'condition_callback' => 'panparks_menupos_menu_position_condition_parknoderef',
+      'file' => 'include/panparks_menupos.inc',
+    ),
+  );
+}
+
+/*
+ * Implements panparks_menupos_node_update
+ */
+function panparks_menupos_node_update($node) {
+  module_load_include('inc', 'panparks_menupos', 'include/panparks_menupos');
+  panparks_menupos_set_menu_position($node);
+}
+
+/*
+ * Implements panparks_menupos_node_insert
+ */
+function panparks_menupos_node_insert($node) {
+  module_load_include('inc', 'panparks_menupos', 'include/panparks_menupos');
+  panparks_menupos_set_menu_position($node);
+}
