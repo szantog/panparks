@@ -195,7 +195,7 @@ function panparks_hooks_menu_alter(&$items) {
 
   // Redirect /user paths.
   $items['user']['page callback'] = 'panparks_hooks_user_goto';
-  $items['user']['page arguments'] = array('get-involved/join-now');
+  $items['user']['page arguments'] = array('get-involved/join-now/login');
 
   $items['user/login']['page callback'] = 'drupal_goto';
   $items['user/login']['page arguments'] = array('get-involved/join-now/login');
