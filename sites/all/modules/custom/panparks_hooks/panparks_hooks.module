@@ -403,3 +403,17 @@ function panparks_hooks_file_displays_alter(&$displays, &$file, $view_mode) {
   }
   //dsm(get_defined_vars());
 }
+
+/**
+ * Implements hook_contextual_links_view_alter().
+ */
+function panparks_hooks_contextual_links_view_alter(&$element, $items) {
+  if (is_array($element['#contextual_links']['block']) && $element['#contextual_links']['block'][1][0] == 'bean') {
+    $bean_id = $element['#contextual_links']['block'][1][1];
+    $element['#links']['bean-edit'] = array(
+      'title' => t('Edit block'),
+      'href' => 'block/' . $bean_id . '/edit',
+      'query' => $element['#links']['block-configure']['query'],
+    );
+  }
+}
