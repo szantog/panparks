@@ -223,6 +223,25 @@ function panparks_hooks_page_home(){
  * Implements hook_node_presave
  */
 function panparks_hooks_node_presave($node) {
+  // auto meta description
+  if (isset($node->meta_description)) {
+    $summary = text_summary($node->body['und'][0]['value'], $node->body['und'][0]['format'], 240);
+
+    if (empty($node->meta_description['und'])) {
+      // create description
+      $node->meta_description['und'][0]['metatags_quick'] = $summary;
+    }
+    else {
+      $original_summary = text_summary($node->original->body['und'][0]['value'], $node->original->body['und'][0]['format'], 240);
+
+      // auto save changed body and not changed description
+      if ($original_summary == $node->original->meta_description['und'][0]['metatags_quick']) {
+        if ($node->meta_description['und'][0]['metatags_quick'] == $node->original->meta_description['und'][0]['metatags_quick']) {
+          $node->meta_description['und'][0]['metatags_quick'] = $summary;
+        }
+      }
+    }
+  }
   //
   // Workaround for Feeds module setting text format to Plain Text instead of Full HTML or Filtered HTML
   //
