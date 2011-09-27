@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ *   panparks_photo.module
+ * Project:panparks.org
+ *    Photo share functions for panparks.org
+ *
+ * @developers:
+ *    Tamas Pinter <tamas@netstandard.hu>
+ *    http://netstandard.hu
+ *
+ */
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
+  if (!empty($form['#node']->nid)) {
+    if ($form['#node']->field_approved['und'][0]['value'] > 0) {
+      $form['field_approved']['#access'] = FALSE;
+    }
+  }
+//    $form['field_ps_geo']['#access'] = FALSE;
+    $form['#after_build'][] = 'panparks_photo_after_build';
+}
+
+
+function panparks_photo_after_build($form, $form_state) {
+  $form['field_ps_date']['und'][0]['all_day']['#title'] .= ' atirhato';
+  return $form;
+}
+
+
+/**
+ * Implements hook_node_validate().
+ */
+function panparks_photo_node_validate($node, $form, $form_state) {
+  if ($node->type == 'photo_shared') {
+    if ($node->nid) {
+      if ($form_state['values']['field_approved']['und'][0]['value'] < 1) {
+        form_set_error('field_approved', t('A kep nem lett moderalva!'));
+      }
+    }
+    else {
+      $link = !empty($form_state['values']['field_ps_link']['und'][0]['url']);
+      $photo = $form_state['values']['field_ps_photo']['und'][0]['fid'];
+
+      if ($link && $photo) {
+        form_set_error('field_ps_photo_via', t('Csak az egyik kep mezot kell kitolteni!'));
+      }
+
+      if (!$link && !$photo) {
+        form_set_error('field_ps_photo_via', t('Adjon meg kepet!'));
+      }
+    }
+  }
+}
+
+

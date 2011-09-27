@@ -1,0 +1,4 @@
+name = Panparks Photo share
+description = Photo Share for panparks.org
+package = Panparks
+core = 7.x
