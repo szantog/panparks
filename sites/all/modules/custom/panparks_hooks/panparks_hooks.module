@@ -439,6 +439,8 @@ function panparks_hooks_preprocess_node(&$variables, $hook) {
  * Implements panparks_hooks_preprocess_panparks_hooks_contextual_links
  */
 function panparks_hooks_preprocess_panparks_hooks_contextual_links(&$variables) {
-  $variables['classes_array'][] = $variables['element']['class'];
+  if (isset($variables['element']['class'])) {
+    $variables['classes_array'][] = $variables['element']['class'];
+  }
   $variables['content'] = $variables['element']['#children'];
 }
