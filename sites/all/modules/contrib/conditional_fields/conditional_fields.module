@@ -433,6 +433,9 @@ function conditional_fields_form_after_build($form, $form_state) {
 
     foreach ($dependent_info['dependees'] as $dependency) {
       $dependee = $dependency['dependee'];
+      if (!isset($form['#conditional_fields'][$dependee])) {
+        continue;
+      }
       $dependee_info = $form['#conditional_fields'][$dependee];
       $dependee_form_field = drupal_array_get_nested_value($form, $dependee_info['parents']);
       $options = $dependency['options'];
