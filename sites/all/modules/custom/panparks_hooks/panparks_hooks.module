@@ -19,7 +19,6 @@ function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
   //dsm($form);
 }
 
-
 /**
  * Implementation of hook_form_media_edit_alter().
  * Add some custom description
