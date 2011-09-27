@@ -353,14 +353,28 @@ function panparks_hooks_entity_info_alter(&$entity_info) {
 function panparks_hooks_entity_view_alter(&$build, $type) {
   //Build contextual links on fields, if field type is image
   foreach (element_children($build) as $field) {
-    if (isset($build[$field]['#field_type']) && $build[$field]['#field_type'] == 'image') {
+    if (isset($build[$field]['#field_type']) && ($build[$field]['#field_type'] == 'image' || $build[$field]['#field_type'] == 'media') && $build['#bundle'] != 'media_gallery') {
       foreach (element_children($build[$field]) as $delta) {
         if (is_numeric($delta)) {
-          $build[$field][$delta]['#contextual_links']['field_image'] = array('media', array($build['field_image'][0]['#item']['fid']));
+          $build[$field][$delta]['#contextual_links']['field_image'] = array('media', array($build[$field]['#items'][$delta]['fid']));
           $build[$field][$delta]['#theme_wrappers'] = array('panparks_hooks_contextual_links');
         }
       }
     }
+  }
+}
+
+function panparks_hooks_contextual_links_view_alter(&$element, $items) {
+  if (isset($element['#contextual_links']['block']) && $element['#contextual_links']['block'][1][0] == 'bean') {
+    $bean_id = $element['#contextual_links']['block'][1][1];
+    $element['#links']['bean-edit'] = array(
+      'title' => t('Edit block'),
+      'href' => 'block/' . $bean_id . '/edit',
+      'query' => $element['#links']['block-configure']['query'],
+    );
+  }
+  if (isset($element['#contextual_links']['field_image']) && isset($element['#links']['field-image-edit'])) {
+    $element['#links']['field-image-edit']['title'] = t('Edit image');
   }
 }
 
