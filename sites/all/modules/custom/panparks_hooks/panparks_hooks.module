@@ -251,67 +251,6 @@ function panparks_hooks_node_presave($node) {
 }
 
 /**
- * Theme preprocess function for theme_field() and field.tpl.php.
- *
- * @see theme_field()
- * @see field.tpl.php
- */
-function panparks_hooks_preprocess_field(&$variables, $hook) {
-  $element = $variables['element'];
-  if ($element['#formatter'] == 'image') {
-    foreach (element_children($element) as $item) {
-      $element[$item]['#prefix'] ='test';
-    }
-  $variables['element'] = $element;
-  //kpr(get_defined_vars());
-  }
-
-}
-
-/*
- * Preprocess variables for page.tpl.php
- */
-function panparks_hooks_preprocess_page(&$variables, $hook) {
-  //Change the register page title
-  if (arg(0) == 'user' && arg(1) == 'register' && !arg(2)) {
-    drupal_set_title(t('Join now'));
-  }
-}
-
-/*
- * Preprocess variables for node.tpl.php
- */
-function panparks_hooks_preprocess_node(&$variables, $hook) {
-  $content = $variables['content'];
-  //Temporary solution to add own image edit link to media images.
-  foreach (element_children($content) as $key) {
-    if (isset($content[$key]['#field_type']) && ($content[$key]['#field_type'] == 'image' || $content[$key]['#field_type'] == 'media')) {
-      foreach (element_children($content[$key]) as $delta) {
-        if (is_numeric($delta)) {
-          $path = 'media/' . $content[$key]['#items'][$delta]['fid'] . '/edit';
-          $menu_item = menu_get_item($path);
-          if ($menu_item['access']) {
-          $link = array(
-            '#type' => 'link',
-            '#href' => $path,
-            '#title' => t('Edit image'),
-            '#options' => array(
-              'attributes' => array('class' => array('media-edit-link'), 'id' => 'cool-id'),
-              'html' => FALSE,
-              'query' => array('destination' => $_GET['q']),
-            ),
-          );
-          $content[$key][$delta]['#prefix'] = drupal_render($link);
-          }
-        }
-      }
-    }
-  }
-  //kpr(get_defined_vars());
-  $variables['content'] = $content;
-}
-
-/**
  * Implementation of hook_form_taxonomy_overview_terms_alter().
  */
 function panparks_hooks_form_taxonomy_overview_terms_alter(&$form, $form_state) {
@@ -408,31 +347,84 @@ function panparks_hooks_entity_info_alter(&$entity_info) {
   $entity_info['file']['view modes']['panparks_square'] = array('label' => t('Square thumbnail'), 'custom settings' => TRUE);
 }
 
-function panparks_hooks_file_displays_alter(&$displays, &$file, $view_mode) {
-  if ($file->type == 'image') {
-    $file->override['media_title'] = field_view_field('file', $file, 'media_title');
-    $file->override['title'] = 'hahó';
-    $file->override['attributes']['title'] = 'hahó';
-    foreach ($displays as &$display) {
-      $display['settings']['attributes'] = array(
-        'alt' => 'alt',
-        'title' => 'title',
-      );
+/*
+ * Implements hook_view_entity_alter
+ */
+function panparks_hooks_entity_view_alter(&$build, $type) {
+  //Build contextual links on fields, if field type is image
+  foreach (element_children($build) as $field) {
+    if (isset($build[$field]['#field_type']) && $build[$field]['#field_type'] == 'image') {
+      foreach (element_children($build[$field]) as $delta) {
+        if (is_numeric($delta)) {
+          $build[$field][$delta]['#contextual_links']['field_image'] = array('media', array($build['field_image'][0]['#item']['fid']));
+          $build[$field][$delta]['#theme_wrappers'] = array('panparks_hooks_contextual_links');
+        }
+      }
     }
   }
-  //dsm(get_defined_vars());
 }
 
 /**
- * Implements hook_contextual_links_view_alter().
+ * Implements hook_theme().
  */
-function panparks_hooks_contextual_links_view_alter(&$element, $items) {
-  if (isset($element['#contextual_links']['block']) && is_array($element['#contextual_links']['block']) && $element['#contextual_links']['block'][1][0] == 'bean') {
-    $bean_id = $element['#contextual_links']['block'][1][1];
-    $element['#links']['bean-edit'] = array(
-      'title' => t('Edit block'),
-      'href' => 'block/' . $bean_id . '/edit',
-      'query' => $element['#links']['block-configure']['query'],
-    );
+function panparks_hooks_theme() {
+  $items = array(
+    'panparks_hooks_contextual_links' => array(
+      'render element' => 'element',
+      'template' => 'contextual_links_wrapper',
+    ),
+  );
+  return $items;
+}
+
+/*
+ * Preprocess variables for page.tpl.php
+ */
+function panparks_hooks_preprocess_page(&$variables, $hook) {
+  //Change the register page title
+  if (arg(0) == 'user' && arg(1) == 'register' && !arg(2)) {
+    drupal_set_title(t('Join now'));
   }
+}
+
+/*
+ * Preprocess variables for node.tpl.php
+ */
+function panparks_hooks_preprocess_node(&$variables, $hook) {
+  $content = $variables['content'];
+  //Temporary solution to add own image edit link to media images.
+  foreach (element_children($content) as $key) {
+    if (isset($content[$key]['#field_type']) && ($content[$key]['#field_type'] == 'image' || $content[$key]['#field_type'] == 'media')) {
+      foreach (element_children($content[$key]) as $delta) {
+        if (is_numeric($delta)) {
+          $path = 'media/' . $content[$key]['#items'][$delta]['fid'] . '/edit';
+          $menu_item = menu_get_item($path);
+          if ($menu_item['access']) {
+          $link = array(
+            '#type' => 'link',
+            '#href' => $path,
+            '#title' => t('Edit image'),
+            '#options' => array(
+              'attributes' => array('class' => array('media-edit-link'), 'id' => 'cool-id'),
+              'html' => FALSE,
+              'query' => array('destination' => $_GET['q']),
+            ),
+          );
+          //$content[$key][$delta]['#prefix'] = '<div class="contextual-links-wrapper"><ul class="contextual-links"><li>' . drupal_render($link) . '</li></ul></div>';
+
+          }
+        }
+      }
+    }
+  }
+  //kpr(get_defined_vars());
+  $variables['content'] = $content;
+}
+
+/**
+ * Implements panparks_hooks_preprocess_panparks_hooks_contextual_links
+ */
+function panparks_hooks_preprocess_panparks_hooks_contextual_links(&$variables) {
+  $variables['classes_array'][] = $variables['element']['class'];
+  $variables['content'] = $variables['element']['#children'];
 }
