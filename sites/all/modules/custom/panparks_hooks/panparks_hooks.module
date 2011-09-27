@@ -427,7 +427,7 @@ function panparks_hooks_file_displays_alter(&$displays, &$file, $view_mode) {
  * Implements hook_contextual_links_view_alter().
  */
 function panparks_hooks_contextual_links_view_alter(&$element, $items) {
-  if (is_array($element['#contextual_links']['block']) && $element['#contextual_links']['block'][1][0] == 'bean') {
+  if (isset($element['#contextual_links']['block']) && is_array($element['#contextual_links']['block']) && $element['#contextual_links']['block'][1][0] == 'bean') {
     $bean_id = $element['#contextual_links']['block'][1][1];
     $element['#links']['bean-edit'] = array(
       'title' => t('Edit block'),
