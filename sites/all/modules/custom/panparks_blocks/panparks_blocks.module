@@ -8,6 +8,9 @@ function panparks_blocks_block_info() {
   $blocks['join_now']['info'] = t('Join now');
   // Not worth caching.
   $blocks['join_now']['cache'] = DRUPAL_NO_CACHE;
+  $blocks['panparks_twitter']['info'] = t('Twitter Panparks');
+  // Not worth caching.
+  $blocks['panparks_twitter']['cache'] = DRUPAL_NO_CACHE;
 
   return $blocks;
 }
@@ -16,6 +19,7 @@ function panparks_blocks_block_info() {
  * Implements hook_block_configure().
  */
 function panparks_blocks_block_configure($delta = '') {
+  $form = null;
   switch ($delta) {
     case 'join_now':
       $form['block_body'] = array(
@@ -27,18 +31,69 @@ function panparks_blocks_block_configure($delta = '') {
         '#default_value' => variable_get('panparks_blocks_join_now_body', ''),
       );
       return $form;
+    case 'panparks_twitter':
+      $default = variable_get('panparks_blocks_twitter', array());
+      $form['twitter_block'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Twitter Block Configuration'),
+        '#collapsible' => TRUE,
+        '#collapsed' => FALSE,
+        '#tree' => TRUE,
+        '#element_validate' => array('twitter_block_form_validate'),
+      );
+
+      $form['twitter_block']['search_string'] = array(
+        '#type' => 'textfield',
+        '#title' => 'The string or username to search.',
+        '#size' => 32,
+        '#default_value' => isset($default['search_string']) ? array($default['search_string']) : NULL,
+      );
+
+      $form['twitter_block']['search_type'] = array(
+        '#type' => 'select',
+        '#title' => t('Choose the type of Tweets to return.'),
+        '#options' => array(
+          'searchHashtag' => t('Tweets mentioning #hashtag or search string.'),
+          'getTweetsFrom' => t('Tweets sent from the Twitter user.'),
+          'getReplies' => t('Replies to the Twitter user.'),
+          'getMentions' => t('Tweets mentioning the Twitter user.'),
+        ),
+        '#default_value' => isset($default['search_type']) ? array($default['search_type']) : NULL,
+      );
+
+      $form['twitter_block']['results_per_page'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Number of tweets to return',
+        '#description' => t('Please enter the number of tweets to return per page up to a maximum of 100.'),
+        '#size' => 3,
+        '#default_value' => isset($default['results_per_page']) ? array($default['results_per_page']) : NULL,
+      );
+
+      $form['twitter_block']['cache_time'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Block cache time',
+        '#description' => t('Add block cache time seconds.'),
+        '#size' => 3,
+        '#default_value' => isset($default['results_per_page']) ? array($default['results_per_page']) : 300,
+      );
   }
+  return $form;
 }
+
+
+
 
 /**
  * Implements hook_block_save().
  */
 function panparks_blocks_block_save($delta = '', $edit = array()) {
-
   switch ($delta) {
     case 'join_now':
       variable_set('panparks_blocks_join_now_body', $edit['block_body']['value']);
       variable_set('panparks_blocks_join_now_format', $edit['block_body']['format']);
+    break;
+    case 'panparks_twitter':
+      variable_set('panparks_blocks_twitter', $edit['twitter_block']);
     break;
   }
 }
@@ -70,8 +125,54 @@ function panparks_blocks_block_view($delta = '') {
       }
       return $block;
     break;
+    case 'panparks_twitter':
+      module_load_include( 'php', 'twitter_block', 'twitter.class' );
+
+      $block = array();
+      $config = variable_get('panparks_blocks_twitter', array());
+      if (!empty($config['search_string'])) {
+        $twitter_reply = cache_get('panparks_blocks_twitter', 'cache');
+
+        if($twitter_reply == null){
+          $twitter_reply = _panparks_blocks_twitter_refresh($config);
+          if ($twitter_reply) {
+            $block['content'] = theme('twitter_block', $twitter_reply->results );
+          }
+        }
+        else{
+          $twitter_new_reply = FALSE;
+          if ((time() - $twitter_reply->created) > $config['cache_time'] ) {
+            $twitter_new_reply = _panparks_blocks_twitter_refresh($config);
+          }
+          if ($twitter_new_reply) {
+            $block['content'] = theme('twitter_block', $twitter_new_reply->results );
+          }
+          else {
+            $block['content'] = theme('twitter_block', $twitter_reply->data->results );
+          }
+        }
+      }
+      return $block;
+    break;
   }
 }
+
+function _panparks_blocks_twitter_refresh($config) {
+  $twitter = new TwitterSearch($config);
+  $twitter_reply = json_decode($twitter->getJSON());
+  if (!isset( $twitter_reply -> results) ) {
+    watchdog('Panparks Twitter Block', 'Recieved an unexpected reply from Twitter. ' .
+                                       'Perhaps just a fail whale? Our search url with query:<br/>' .
+                                       '@url_query', array( 'url_query' => $twitter -> url_query),
+             WATCHDOG_NOTICE);
+  }
+  else{
+    cache_set('panparks_blocks_twitter', $twitter_reply, 'cache', CACHE_TEMPORARY);
+    return $twitter_reply;
+  }
+  return FALSE;
+}
+
 
 // Front page registration form
 function panparks_blocks_register_form(&$form) {

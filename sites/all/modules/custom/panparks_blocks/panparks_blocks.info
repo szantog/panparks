@@ -4,3 +4,4 @@ package = Panparks
 core = 7.x
 
 dependencies[] = block
+dependencies[] = twitter_block
