@@ -13,21 +13,42 @@
  */
 
 /**
- * Implementation of hook_form_alter().
+ * Implementation of hook_form_photo_shared_node_form_alter().
  */
 function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
-  if (!empty($form['#node']->nid)) {
+  // Get involved -  get-involved
+//  We love wildlife - get-involved/we-love-wildlife
+  $bc = drupal_get_breadcrumb();
+  $end = array_pop($bc);
+  $bc[] = l('Get involved', 'get-involved');
+  $bc[] = l('We love wildlife', 'get-involved/we-love-wildlife');
+
+  if (empty($form['#node']->nid)) {
+    //    $form['field_ps_geo']['#access'] = FALSE;
+    $form['field_gallery']['#access'] = FALSE;
+    $form['field_species']['#access'] = FALSE;
+    $form['field_general']['#access'] = FALSE;
+    $form['field_orientation']['#access'] = FALSE;
+    $form['field_subject']['#access'] = FALSE;
+    $form['field_ps_individual']['#access'] = FALSE;
+    $form['field_approved']['#access'] = FALSE;
+  }
+  else {
+    $bc[] = $end;
+    $form['field_ps_legal']['#disabled'] = TRUE;
+
     if ($form['#node']->field_approved['und'][0]['value'] > 0) {
-      $form['field_approved']['#access'] = FALSE;
+      $form['field_approved']['#disabled'] = TRUE;
     }
   }
-//    $form['field_ps_geo']['#access'] = FALSE;
-    $form['#after_build'][] = 'panparks_photo_after_build';
+  $form['#after_build'][] = 'panparks_photo_after_build';
+
+  drupal_set_breadcrumb($bc);
 }
 
 
 function panparks_photo_after_build($form, $form_state) {
-  $form['field_ps_date']['und'][0]['all_day']['#title'] .= ' atirhato';
+  $form['field_ps_date']['und'][0]['all_day']['#title'] = t('I am not sure what time the photo was taken');
   return $form;
 }
 
@@ -39,7 +60,7 @@ function panparks_photo_node_validate($node, $form, $form_state) {
   if ($node->type == 'photo_shared') {
     if ($node->nid) {
       if ($form_state['values']['field_approved']['und'][0]['value'] < 1) {
-        form_set_error('field_approved', t('A kep nem lett moderalva!'));
+        form_set_error('field_approved', t('The image has not been moderated!'));
       }
     }
     else {
@@ -47,11 +68,11 @@ function panparks_photo_node_validate($node, $form, $form_state) {
       $photo = $form_state['values']['field_ps_photo']['und'][0]['fid'];
 
       if ($link && $photo) {
-        form_set_error('field_ps_photo_via', t('Csak az egyik kep mezot kell kitolteni!'));
+        form_set_error('field_ps_photo_via', t("Don't fill both Photo and Link field!"));
       }
 
       if (!$link && !$photo) {
-        form_set_error('field_ps_photo_via', t('Adjon meg kepet!'));
+        form_set_error('field_ps_photo_via', t('Photo or Link field is required'));
       }
     }
   }
