@@ -16,7 +16,13 @@
  * Implementation of hook_form_photo_shared_node_form_alter().
  */
 function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
-  dpm(menu_get_item());
+  // Get involved -  get-involved
+//  We love wildlife - get-involved/we-love-wildlife
+  $bc = drupal_get_breadcrumb();
+  $end = array_pop($bc);
+  $bc[] = l('Get involved', 'get-involved');
+  $bc[] = l('We love wildlife', 'get-involved/we-love-wildlife');
+
   if (empty($form['#node']->nid)) {
     //    $form['field_ps_geo']['#access'] = FALSE;
     $form['field_gallery']['#access'] = FALSE;
@@ -28,6 +34,7 @@ function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
     $form['field_approved']['#access'] = FALSE;
   }
   else {
+    $bc[] = $end;
     $form['field_ps_legal']['#disabled'] = TRUE;
 
     if ($form['#node']->field_approved['und'][0]['value'] > 0) {
@@ -35,6 +42,8 @@ function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
     }
   }
   $form['#after_build'][] = 'panparks_photo_after_build';
+
+  drupal_set_breadcrumb($bc);
 }
 
 
