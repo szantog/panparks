@@ -27,7 +27,7 @@ function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
 
 
 function panparks_photo_after_build($form, $form_state) {
-  $form['field_ps_date']['und'][0]['all_day']['#title'] .= ' atirhato';
+  $form['field_ps_date']['und'][0]['all_day']['#title'] = t('I am not sure what time the photo was taken');
   return $form;
 }
 
