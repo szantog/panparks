@@ -42,6 +42,7 @@ function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
     }
   }
 //  $form['#after_build'][] = 'panparks_photo_after_build';
+  $form['field_ps_moderated']['#access'] = FALSE;
 
   drupal_set_breadcrumb($bc);
 }
