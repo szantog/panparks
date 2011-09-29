@@ -68,8 +68,16 @@ function panparks_photo_node_validate($node, $form, $form_state) {
       if (!$link && !$photo) {
         form_set_error('field_ps_photo_via', t('Photo or Link field is required'));
       }
+
+      $errors = drupal_get_messages('error');
+      foreach ($errors['error'] AS $message) {
+        if ($message == t('I accept the Terms and Conditions field is required.')) {
+          drupal_set_message('Without acceptance of terms and conitions upload of pictures is not allowed.', 'error');
+        }
+        else {
+          drupal_set_message($message, 'error');
+        }
+      }
     }
   }
 }
-
-
