@@ -4,9 +4,6 @@
 [submodule "sites/all/modules/custom/fieldgroup_menu"]
 	path = sites/all/modules/custom/fieldgroup_menu
 	url = http://git.drupal.org/sandbox/szantog/1263502.git
-[submodule "sites/all/modules/patched/geocode"]
-	path = sites/all/modules/patched/geocode
-	url = http://git.drupal.org/project/geocoder.git
 [submodule "sites/all/modules/patched/media_browser_plus"]
 	path = sites/all/modules/patched/media_browser_plus
 	url = http://github.com/szantog/panparks-media-browser-plus.git
@@ -25,3 +22,6 @@
 [submodule "sites/all/modules/patched/birdbox"]
 	path = sites/all/modules/patched/birdbox
 	url = http://git.drupal.org/sandbox/balint.kleri/1267834.git
+[submodule "sites/all/modules/patched/geocoder"]
+	path = sites/all/modules/patched/geocoder
+	url = http://git.drupal.org/project/geocoder.git
