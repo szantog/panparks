@@ -72,7 +72,7 @@ function panparks_photo_node_validate($node, $form, $form_state) {
       $errors = drupal_get_messages('error');
       foreach ($errors['error'] AS $message) {
         if ($message == t('I accept the Terms and Conditions field is required.')) {
-          drupal_set_message('Without acceptance of terms and conitions upload of pictures is not allowed.', 'error');
+          drupal_set_message(t('Without acceptance of terms and conitions upload of pictures is not allowed.'), 'error');
         }
         else {
           drupal_set_message($message, 'error');
