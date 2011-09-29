@@ -25,3 +25,6 @@
 [submodule "sites/all/modules/patched/geocoder"]
 	path = sites/all/modules/patched/geocoder
 	url = http://git.drupal.org/project/geocoder.git
+[submodule "sites/all/modules/patched/views"]
+	path = sites/all/modules/patched/views
+	url = http://github.com/szantog/panparks-views.git
