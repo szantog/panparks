@@ -6,7 +6,7 @@
 	url = http://git.drupal.org/sandbox/szantog/1263502.git
 [submodule "sites/all/modules/patched/geocode"]
 	path = sites/all/modules/patched/geocode
-	url = http://github.com/phayes/geocode.git
+	url = http://git.drupal.org/project/geocoder.git
 [submodule "sites/all/modules/patched/media_browser_plus"]
 	path = sites/all/modules/patched/media_browser_plus
 	url = http://github.com/szantog/panparks-media-browser-plus.git
