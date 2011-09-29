@@ -1078,7 +1078,7 @@ function quiz_form(&$node, &$form_state) {
       t('No randomization'),
       t('Random order'),
       t('Random questions'),
-      t('Categorized random questions'),
+      //t('Categorized random questions'),
     ),
     '#description' => t('The difference between "random order" and "random questions" is that with "random questions" questions are drawn randomly from a pool of questions. With "random order" the quiz will always consist of the same questions. With "Categorized random questions" you can choose several terms questions should be drawn from, and you can also choose how many questions that should be drawn from each, and max score for each term.'),
     '#default_value' => $node->randomization,
@@ -1190,7 +1190,7 @@ function quiz_form(&$node, &$form_state) {
     );
   }
 
-  if (module_exists('userpoints') && variable_get('quiz_has_userpoints', 0)) {
+  if (function_exists('userpoints_userpointsapi') && variable_get('quiz_has_userpoints', 1)) {
     $form['has_userpoints'] = array(
       '#type' => 'checkbox',
       '#default_value' => (isset($node->has_userpoints) ? $node->has_userpoints : 1),
@@ -2347,6 +2347,7 @@ function quiz_quiz_finished($quiz, $score, $rid) {
       'points' => $score['numeric_score'],
       'description' => t('Attened @title @quiz on @time', $variables),
       'tid' => $selected_tid,
+      'uid' => $taker->uid,
     );
     userpoints_userpointsapi($params);
   }
@@ -3920,18 +3921,20 @@ function _quiz_maintain_results($quiz, $rid) {
   switch ($quiz->keep_results) {
     case QUIZ_KEEP_ALL:
       return FALSE;
-    case QUIZ_KEEP_BEST: //I'm afraid of what this might do to performance...
-      // TODO Change it to JOIN SQL query
-      $res = db_query('SELECT result_id
-              FROM {quiz_node_results}
-              WHERE nid = :nid AND uid = :uid AND is_evaluated = :is_evaluated AND result_id != (
-                SELECT result_id
-                FROM {quiz_node_results}
-                WHERE score = (
-                  SELECT MAX(score) FROM {quiz_node_results}
-                  WHERE nid = :nid AND uid = :uid
-                )
-                AND nid = :nid AND uid = :uid LIMIT 1', array(':nid' => $quiz->nid, ':uid' => $user->uid, ':is_evaluated' => 1));
+    case QUIZ_KEEP_BEST:
+      $best_result_id = db_query('SELECT result_id FROM {quiz_node_results}
+          WHERE nid = :nid AND uid = :uid AND is_evaluated = :is_evaluated
+          ORDER BY score DESC',
+          array(':nid' => $quiz->nid, ':uid' => $user->uid, ':is_evaluated' => 1)
+        )
+        ->fetchField();
+      if (!$best_result_id) {
+        return;
+      }
+      $res = db_query('SELECT result_id FROM {quiz_node_results}
+          WHERE nid = :nid AND uid = :uid AND result_id != :best_rid AND is_evaluated = :is_evaluated',
+          array(':nid' => $quiz->nid, ':uid' => $user->uid, ':is_evaluated' => 1, ':best_rid' => $best_result_id)
+        );
       $rids = array();
       while ($rid2 = $res->fetchField()) {
         $rids[] = $rid2;

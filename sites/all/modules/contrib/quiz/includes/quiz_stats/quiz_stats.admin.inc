@@ -1,7 +1,7 @@
 <?php
 
 
-/*
+/**
  * @file
  * Administration file for Quiz stats Module
  *
@@ -16,11 +16,10 @@
  *  Themed html
  */
 function quiz_stats_revision_selector_page($quiz) {
-  $sql = 'SELECT vid FROM {node_revisions} WHERE nid = %d ORDER BY vid';
-  $res = db_query('SELECT vid FROM {node_revisions} WHERE nid = :nid ORDER BY vid', array(':nid' => $quiz->nid));
+  $res = db_query('SELECT vid FROM {node_revision} WHERE nid = :nid ORDER BY vid', array(':nid' => $quiz->nid));
   $count = 0; //uses this variable to slightly increase performance
   $vids = array();
-  while ($res_o = db_fetch_object($res)) {
+  while ($res_o = $res->fetch()) {
     $vids[] = $res_o->vid;
     $count++;
   }
@@ -94,17 +93,19 @@ function quiz_stats_get_adv_stats($vid, $uid = 0) {
  */
 function _get_quiz_grade_range_chart($vid, $uid = 0) {
   // @todo: make the ranges configurable
-  $sql = "SELECT SUM(score >= 0 && score < 20) AS zero_to_twenty,
+  $sql = 'SELECT SUM(score >= 0 && score < 20) AS zero_to_twenty,
     SUM(score >= 20 && score < 40) AS twenty_to_fourty,
     SUM(score >= 40 && score < 60) AS fourty_to_sixty,
     SUM(score >= 60 && score < 80) AS sixty_to_eighty,
     SUM(score >= 80 && score <= 100) AS eighty_to_hundred
     FROM {quiz_node_results}
-    WHERE vid = %d";
+    WHERE vid = :vid';
+  $arg[':vid'] = $vid;
   if ($uid != 0) {
-    $sql .= " AND uid = %d";
+    $sql .= ' AND uid = :uid';
+    $arg[':uid'] = $uid;
   }
-  $range = db_fetch_object(db_query($sql, $vid, $uid));
+  $range = db_query($sql, $arg)->fetch();
   $count = $range->zero_to_twenty + $range->twenty_to_fourty + $range->fourty_to_sixty + $range->sixty_to_eighty + $range->eighty_to_hundred;
   if ($count < 2) {
     return FALSE;
@@ -137,13 +138,15 @@ function _get_quiz_top_scorers_chart($vid, $uid = 0) {
   $top_scorers = array();
   $sql = 'SELECT name, score FROM {quiz_node_results} qnr
     LEFT JOIN {users} u ON (u.uid = qnr.uid)
-    WHERE vid = %d';
+    WHERE vid = :vid';
+  $arg[':vid'] = $vid;
   if ($uid != 0) {
-    $sql .= " AND qnr.uid = %d";
+    $sql .= ' AND qnr.uid = :uid';
+    $arg[':uid'] = $uid;
   }
   $sql .= ' ORDER by score DESC';
-  $results = db_query_range($sql, $vid, $uid);
-  while ($result = db_fetch_array($results)) {
+  $results = db_query($sql, $arg);
+  while ($result = $results->fetchAssoc()) {
     $key = $result['name'] . '-' . $result['score'];
     $top_scorers[$key] = $result;
   }
@@ -179,9 +182,8 @@ function _get_quiz_status_chart($vid, $uid = 0) {
     return;
   }
   // get the count value of results row above and below pass rate
-  $sql = "SELECT SUM(score > $pass_rate) AS no_pass, SUM(score < $pass_rate) AS no_fail, SUM(score = 0) AS no_incomplete FROM {quiz_node_results} WHERE vid = %d";
-  // TODO Please convert this statement to the D7 database API syntax.
-  $quiz = db_fetch_array(db_query($sql, intval($vid)));
+  $quiz = db_query("SELECT SUM(score > $pass_rate) AS no_pass, SUM(score < $pass_rate) AS no_fail, SUM(score = 0) AS no_incomplete FROM {quiz_node_results} WHERE vid = :vid", array(':vid' => $vid))
+    ->fetchAssoc();
   if (($quiz['no_pass'] + $quiz['no_fail'] + $quiz['no_incomplete']) < 3) {
     return FALSE; // no sufficient data
   }
@@ -213,23 +215,26 @@ function _get_date_vs_takeup_count_chart($vid, $uid = 0) {
   $sql = "SELECT COUNT(result_id) AS count,
             DATE_FORMAT(FROM_UNIXTIME(time_start), '%Y.%m.%e') AS date
             FROM {quiz_node_results}
-            WHERE vid = %d";
-  $sql_args = array($vid);
+            WHERE vid = :vid";
+  $sql_args[':vid'] = $vid;
   if ($uid != 0) {
-    $sql .= " AND uid = %d";
-    $sql_args[] = $uid;
+    $sql .= " AND uid = :uid";
+    $sql_args[':uid'] = $uid;
   }
   $sql .= " GROUP BY date ORDER BY time_start DESC";
-  $results = db_query_range($sql, $sql_args);
   $days = _quiz_get_last_days($end);
-  $res_o = db_fetch_object($results);
+  $results = db_query($sql, $sql_args);
+  $res_o = $results->fetch();
+  if (!is_object($res_o)) {
+    return FALSE;
+  }
   foreach ($days as $date => &$value) {
-    if ($date == $res_o->date) {
+    if (isset($res_o->date) && $date == $res_o->date) {
       $value->value = $res_o->count;
       if ($res_o->count > 0) {
         $valid_data = TRUE;
       }
-      $res_o = db_fetch_object($results);
+      $res_o = $results->fetch();
     }
   }
   if (!$valid_data) {
@@ -251,19 +256,21 @@ function _get_date_vs_takeup_count_chart($vid, $uid = 0) {
  * Computes quiz attempt count
  *
  * @param $vid
- *   quiz revision id
+ *   quiz node id
  * @param $uid
  *   user id for filtering
  * @return
  *   Integer containing number of times that a quiz has
  *   been attended, can be filtered by uid.
  */
-function _quiz_get_attempt_count($vid, $uid = 0) {
-  $sql = "SELECT COUNT(result_id) FROM {quiz_node_results} WHERE nid = %d";
+function _quiz_get_attempt_count($nid, $uid = 0) {
+  $sql = 'SELECT COUNT(result_id) FROM {quiz_node_results} WHERE nid = :nid';
+  $arg[':nid'] = $nid;
   if ($uid != 0) {
-    $sql .= " AND uid = %d";
+    $sql .= ' AND uid = :uid';
+    $arg[':uid'] = $uid;
   }
-  return db_query($sql, $vid, $uid)->fetchField();
+  return db_query($sql, $arg)->fetchField();
 }
 
 // Theme functions
@@ -289,6 +296,7 @@ function theme_quiz_grade_range($variables) {
     '#grid_lines' => chart_grid_lines(10, 10),
     '#bar_size' => chart_bar_size(20, 15),
     '#adjust_resolution' => TRUE,
+    '#title' => '',
   );
   // chart data
   $chart['#data'][][] = $range->eighty_to_hundred;
@@ -319,8 +327,7 @@ function theme_quiz_grade_range($variables) {
   $chart['#legends'][] = t('40 to 60 % - ') . $range->fourty_to_sixty;
   $chart['#legends'][] = t('20 to 40 % - ') . $range->twenty_to_fourty;
   $chart['#legends'][] = t('0 to 20 % - ') . $range->zero_to_twenty;
-
-  return chart_render($chart);
+  return theme('chart', array('chart' => $chart));
 }
 
 /**
@@ -336,7 +343,7 @@ function theme_quiz_top_scorers($variables) {
   $attendees = $variables['scorer'];
   $chart = array(
     '#chart_id' => 'quiz_top_scorers',
-    //'#title' => t('Quiz Top Scorers'),
+    '#title' => t('Quiz Top Scorers'),
     '#type' => CHART_TYPE_BAR_V_GROUPED,
     '#size' => chart_size(600, 400),
     '#grid_lines' => chart_grid_lines(10, 10),
@@ -350,7 +357,7 @@ function theme_quiz_top_scorers($variables) {
   }
   $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][1][] = chart_mixed_axis_label(t('Score') . ' (%)', 100);
   $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][0][] = chart_mixed_axis_range_label(0, 100);
-  return chart_render($chart);
+  return theme('chart', array('chart' => $chart));
 }
 
 /**
@@ -367,7 +374,7 @@ function theme_get_quiz_status_chart($variables) {
   $quiz['total'] = $quiz['no_pass'] + $quiz['no_fail'] + $quiz['no_incomplete'];
   $chart = array(
     '#chart_id' => 'quiz_status_chart',
-    //'#title' => t('Quiz Status Chart'),
+    '#title' => t('Quiz Status Chart'),
     '#type' => CHART_TYPE_PIE_3D,
     '#size' => chart_size(500, 200),
     '#adjust_resolution' => TRUE,
@@ -388,7 +395,7 @@ function theme_get_quiz_status_chart($variables) {
     'incomplete' => ($quiz['no_incomplete'] / $quiz['total']) * 100 . t('% incomplete'),
     'fail' => ($quiz['no_fail'] / $quiz['total']) * 100 . t('% fail'),
   );
-  return chart_render($chart);
+  return theme('chart', array('chart' => $chart));
 }
 
 /**
@@ -405,6 +412,7 @@ function theme_date_vs_takeup_count($variables) {
   $max_count = 0;
   $chart = array(
     '#chart_id' => 'test_chart',
+    '#title' => '',
     '#type' => CHART_TYPE_LINE,
     '#size' => chart_size(600, 400),
     //'#chart_fill' => chart_fill('c', 'eeeeee'),
@@ -429,8 +437,7 @@ function theme_date_vs_takeup_count($variables) {
   // The chart module has some bugs. If we have the time we should provide patches instead of tricking it to work...
   $chart['#mixed_axis_labels'][CHART_AXIS_Y_LEFT][1] = array('|', chart_mixed_axis_label(t('Attempts')));
   $chart['#mixed_axis_labels'][CHART_AXIS_X_BOTTOM][1] = array('|', chart_mixed_axis_label(t('Date')), '|');
-
-  return chart_render($chart);
+  return theme('chart', array('chart' => $chart));
 }
 
 /**
