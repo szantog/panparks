@@ -24,7 +24,8 @@ function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
   $bc[] = l('We love wildlife', 'get-involved/we-love-wildlife');
 
   if (empty($form['#node']->nid)) {
-    //    $form['field_ps_geo']['#access'] = FALSE;
+    // create node, hidden field element
+//    $form['field_ps_geo']['#access'] = FALSE;
     $form['field_gallery']['#access'] = FALSE;
     $form['field_species']['#access'] = FALSE;
     $form['field_general']['#access'] = FALSE;
@@ -34,7 +35,9 @@ function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
     $form['field_approved']['#access'] = FALSE;
   }
   else {
+    // update node
     $bc[] = $end;
+    // disabled some field element
     $form['field_ps_legal']['#disabled'] = TRUE;
 
     if ($form['#node']->field_approved['und'][0]['value'] > 0) {
@@ -53,11 +56,15 @@ function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
 function panparks_photo_node_validate($node, $form, $form_state) {
   if ($node->type == 'photo_shared') {
     if ($node->nid) {
+      // node update
       if ($form_state['values']['field_approved']['und'][0]['value'] < 1) {
-        form_set_error('field_approved', t('The image has not been moderated!'));
+        // after moderation
+        form_set_error('field_approved', t('The photo has not been moderated!'));
       }
     }
     else {
+      // node create
+      // photo validation
       $link = !empty($form_state['values']['field_ps_link']['und'][0]['url']);
       $photo = $form_state['values']['field_ps_photo']['und'][0]['fid'];
 
@@ -69,6 +76,7 @@ function panparks_photo_node_validate($node, $form, $form_state) {
         form_set_error('field_ps_photo_via', t('Photo or Link field is required'));
       }
 
+      // Change error message
       $errors = drupal_get_messages('error');
       foreach ($errors['error'] AS $message) {
         if ($message == t('I accept the Terms and Conditions field is required.')) {
