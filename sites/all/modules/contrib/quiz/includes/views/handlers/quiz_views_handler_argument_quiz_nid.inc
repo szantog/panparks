@@ -56,8 +56,8 @@ class quiz_views_handler_argument_quiz_nid extends views_handler_argument_numeri
     $placeholders = implode(', ', array_fill(0, count($this->corresponding_vids), '%d'));
 
     // TODO Please convert this statement to the D7 database API syntax.
-    $result = db_query("SELECT n.title FROM {node_revisions} n WHERE n.vid IN ($placeholders)", $this->corresponding_vids);
-    while ($term = db_fetch_object($result)) {
+    $result = db_query("SELECT n.title FROM {node_revision} n WHERE n.vid IN ($placeholders)", $this->corresponding_vids);
+    while ($term = $result->fetch()) {
       $titles[] = check_plain($term->title);
     }
     return $titles;
@@ -77,7 +77,7 @@ class quiz_views_handler_argument_quiz_nid extends views_handler_argument_numeri
       $this->query->add_where(0, "$this->table_alias.$this->nid_field IN ($placeholders)", $this->corresponding_vids);
     }
     else {
-      $this->query->add_where(0, "$this->table_alias.$this->nid_field = %d", $this->corresponding_vids);
+      $this->query->add_where(0, "$this->table_alias.$this->nid_field", $this->corresponding_vids);
     }
   }
 
@@ -136,7 +136,7 @@ class quiz_views_handler_argument_quiz_nid extends views_handler_argument_numeri
       $use_group_by = !empty($this->options['not']);
 
       $operator = empty($this->options['not']) ? '=' : '!=';
-      $where = "WHERE qnp.nid $operator %d";
+      $where = "WHERE qnp.nid $operator :nid";
     }
 
     switch ($this->options['which_vid']) {
@@ -148,7 +148,7 @@ class quiz_views_handler_argument_quiz_nid extends views_handler_argument_numeri
         $where .= ($use_group_by) ? ' GROUP BY qnp.nid' : '';
 
         // TODO Please convert this statement to the D7 database API syntax.
-        $result = db_query("SELECT $operation(qnp.vid) AS vid $from $where", $this->value);
+        $result = db_query("SELECT $operation(qnp.vid) AS vid $from $where", array(':nid' => $this->value));
         break;
 
       case 'all':
@@ -160,7 +160,7 @@ class quiz_views_handler_argument_quiz_nid extends views_handler_argument_numeri
     $this->nid_field = $this->vid_field;
 
     $this->corresponding_vids = array();
-    while ($item = db_fetch_object($result)) {
+    while ($item = $result->fetch()) {
       $this->corresponding_vids[] = $item->vid;
     }
     return (count($this->corresponding_vids) > 1);

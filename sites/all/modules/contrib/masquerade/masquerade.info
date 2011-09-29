@@ -4,9 +4,9 @@ core = 7.x
 files[] = masquerade.test
 configure = admin/config/people/masquerade
 
-; Information added by drupal.org packaging script on 2011-03-24
-version = "7.x-1.0-rc3"
+; Information added by drupal.org packaging script on 2011-09-17
+version = "7.x-1.0-rc4"
 core = "7.x"
 project = "masquerade"
-datestamp = "1300939868"
+datestamp = "1316220424"
 

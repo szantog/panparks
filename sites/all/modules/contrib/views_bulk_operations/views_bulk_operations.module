@@ -354,6 +354,11 @@ function views_bulk_operations_form($form, &$form_state, $vbo) {
       $context = array(
         'settings' => $operation->getAdminOption('settings', array()),
         'selection' => $dummy_selection,
+        // Pass the View along. Needed by views_send 7.x-1.x.
+        // Has no performance penalty since objects are passed by reference,
+        // but needing the full views object in a core action is in most cases
+        // a sign of a wrong implementation. Do it only if you have to.
+        'view' => $vbo->view,
       );
       $form += $operation->form($form, $form_state, $context);
     }
@@ -432,6 +437,11 @@ function views_bulk_operations_config_form($form, &$form_state, $view, $output) 
   $context = array(
     'settings' => $operation->getAdminOption('settings', array()),
     'selection' => $form_state['selection'],
+    // Pass the View along. Needed by views_send 7.x-1.x.
+    // Has no performance penalty since objects are passed by reference,
+    // but needing the full views object in a core action is in most cases
+    // a sign of a wrong implementation. Do it only if you have to.
+    'view' => $view,
   );
   $form += $operation->form($form, $form_state, $context);
 
