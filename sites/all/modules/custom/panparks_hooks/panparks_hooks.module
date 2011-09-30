@@ -218,6 +218,7 @@ function panparks_hooks_user_goto($uri) {
 function panparks_hooks_page_home(){
   return '';
 }
+
 /*
  * Implements hook_node_presave
  */
@@ -246,6 +247,35 @@ function panparks_hooks_node_presave($node) {
   //
   if ($node->type == 'transferred_blog_posts') {
     $node->body['und'][0]['format'] = 'full_html';
+  }
+}
+
+/*
+ * Implements hook_process_breadcrumb
+ */
+function panparks_hooks_process_breadcrumb(&$variables) {
+  if (arg(0) == 'node' && is_numeric(arg(1))) {
+    $arg2 = arg(2);
+    if (empty($arg2)) {
+      $node = node_load(arg(1));
+
+      if (isset($node->field_park) && isset($node->field_park['und'][0]['node'])) {
+        $park_node = $node->field_park['und'][0]['node'];
+      }
+
+      if (isset($node->field_parks) && isset($node->field_parks['und'][0]['node'])) {
+        $park_node = $node->field_parks['und'][0]['node'];
+      }
+
+      if (isset($park_node)) {
+        if ($node->type == 'accommodation') {
+          $variables['breadcrumb'][] = l('Accommodation, services', 'node/' . $park_node->nid . '/accomodation-services');
+        }
+        elseif ($node->type == 'tours_and_holdiays') {
+          $variables['breadcrumb'][] = l('Tours and Holidays', 'node/' . $park_node->nid . '/tours-holidays');
+        }
+      }
+    }
   }
 }
 
