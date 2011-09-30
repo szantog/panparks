@@ -153,6 +153,16 @@ function _panparks_api_get_tmp_main_picture_old_nid($old_nid, $bundle) {
   }
 }
 
+/*
+ * Helper function to get only addresse from geofield
+ * It is used on views: park_additional_data
+ * admin/structure/views/view/park_additional_data
+ *
+ * @param $item array
+ *   The array of geofield value
+ *
+ * TMP DEPRICATED
+ */
 function panparks_api_get_addresse($item) {
   geofield_load_geophp();
   $geometry = geoPHP::load($item['wkt'], 'wkt');
