@@ -158,7 +158,7 @@ function panparks_api_get_addresse($item) {
   $geometry = geoPHP::load($item['wkt'], 'wkt');
   $centroid = new Point($item['lon'], $item['lat']);
   $info = _geofield_formatter_get_info($geometry, $centroid, TRUE);
-
+  dsm(get_defined_vars());
   if (isset($info['addresse'])) {
     return $info['addresse'];
   }
