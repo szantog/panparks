@@ -152,3 +152,15 @@ function _panparks_api_get_tmp_main_picture_old_nid($old_nid, $bundle) {
     return $return;
   }
 }
+
+function panparks_api_get_addresse($item) {
+  geofield_load_geophp();
+  $geometry = geoPHP::load($item['wkt'], 'wkt');
+  $centroid = new Point($item['lon'], $item['lat']);
+  $info = _geofield_formatter_get_info($geometry, $centroid, TRUE);
+
+  if (isset($info['addresse'])) {
+    return $info['addresse'];
+  }
+}
+
