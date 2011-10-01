@@ -28,3 +28,6 @@
 [submodule "sites/all/modules/patched/views"]
 	path = sites/all/modules/patched/views
 	url = http://github.com/szantog/panparks-views.git
+[submodule "sites/all/modules/patched/wysiwyg"]
+	path = sites/all/modules/patched/wysiwyg
+	url = http://github.com/szantog/panparks-wysiwyg.git
