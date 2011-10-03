@@ -1,0 +1,14 @@
+name = "Node displays"
+description = "Extended node build and display modes"
+core = "7.x"
+dependencies[] = ds
+package = "Display suite"
+files[] = nd.module
+files[] = nd.install
+
+; Information added by drupal.org packaging script on 2011-02-25
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "nd"
+datestamp = "1298619705"
+

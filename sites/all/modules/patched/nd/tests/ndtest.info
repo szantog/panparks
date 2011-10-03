@@ -1,0 +1,15 @@
+name = "Node displays TEST"
+description = "Test module for Node Displays, do not enable this on production sites."
+core = "7.x"
+dependencies[] = ds
+package = "Display suite"
+files[] = ndtest.module
+files[] = ndtest.ds_default.inc
+hidden = TRUE
+
+; Information added by drupal.org packaging script on 2011-02-25
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "nd"
+datestamp = "1298619705"
+
