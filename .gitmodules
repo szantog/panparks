@@ -31,3 +31,6 @@
 [submodule "sites/all/modules/patched/wysiwyg"]
 	path = sites/all/modules/patched/wysiwyg
 	url = http://github.com/szantog/panparks-wysiwyg.git
+[submodule "sites/all/modules/patched/draggableviews"]
+	path = sites/all/modules/patched/draggableviews
+	url = http://github.com/szantog/panparks-draggableviews.git
