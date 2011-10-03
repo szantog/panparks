@@ -16,7 +16,17 @@
  * Implementation of hook_form_alter().
  */
 function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
-  //dsm($form);
+  //dsm($form_id);
+}
+
+/**
+ * Implementation of hook_form_media_gallery_node_form_alter().
+ * Set off the download original checkbox on node add page
+ */
+function panparks_hooks_form_media_gallery_node_form_alter(&$form, &$form_state) {
+  if (arg(1) == 'add') {
+    $form['settings_wrapper']['presentation']['media_gallery_allow_download']['und']['#default_value'] = 0;
+  }
 }
 
 /**
