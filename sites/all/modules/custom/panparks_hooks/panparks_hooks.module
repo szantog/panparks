@@ -13,6 +13,31 @@
  */
 
 /**
+ * Implementation of hook_element_info_alter().
+ */
+function panparks_hooks_element_info_alter(&$type) {
+  if (isset($type['date_text'])) {
+    //We need a custom process function to modify some text
+    $type['date_text']['#process'][] = 'panparks_hooks_text_element_process';
+  }
+ }
+
+/**
+ * Modify default description was set in date date_text process
+ *
+ * @param array $element
+ * @return array
+ *   the timezone form element
+ *
+ * @see date_text_element_process($element, $form_state, $form)
+ */
+function panparks_hooks_text_element_process($element, $form_state, $form) {
+  $element['date']['#description'] = ' ' . t('Format: mm/yyyy (eg. @date)', array('@date' => date_now()->format($element['#date_format'])));
+  //dsm(get_defined_vars());
+  return $element;
+}
+
+/**
  * Implementation of hook_form_alter().
  */
 function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
