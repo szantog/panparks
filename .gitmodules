@@ -37,3 +37,6 @@
 [submodule "sites/all/modules/patched/media_gallery"]
 	path = sites/all/modules/patched/media_gallery
 	url = http://github.com/szantog/panparks-media-gallery.git
+[submodule "sites/all/modules/custom/panparks_donate"]
+	path = sites/all/modules/custom/panparks_donate
+	url = http://github.com/szantog/panparks-donate.git
