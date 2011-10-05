@@ -34,3 +34,6 @@
 [submodule "sites/all/modules/patched/draggableviews"]
 	path = sites/all/modules/patched/draggableviews
 	url = http://github.com/szantog/panparks-draggableviews.git
+[submodule "sites/all/modules/patched/media_gallery"]
+	path = sites/all/modules/patched/media_gallery
+	url = http://github.com/szantog/panparks-media-gallery.git
