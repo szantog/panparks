@@ -32,7 +32,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       'file_managed' => 'fid',
       'micro' => 'mid',
     );
-    return $base_table_fields[$this->base_table];
+    return isset($base_table_fields[$this->base_table]) ? $base_table_fields[$this->base_table] : 'nid';
   }
 
   function option_definition() {

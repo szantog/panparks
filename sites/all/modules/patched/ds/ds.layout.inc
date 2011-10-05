@@ -11,10 +11,6 @@
 function ds_layout_list() {
   $build = array();
 
-  // Info
-  $info = '<p>' . t('This is a list of all entities available in your Drupal website. Clicking on "Manage display" will bring you to the "Manage display" screens if the Field UI module is enabled.') . '</p>';
-  $build['info'] = array('#markup' => $info);
-
   // All entities.
   $rows = array();
   $entities = entity_get_info();
@@ -51,8 +47,23 @@ function ds_layout_list() {
   }
   else {
     // This will probably never happen.
-    $build['list'] = array('#markup' => t('No entities found'));
+    $build['list'] = array('#markup' => t('No content found'));
   }
 
   return $build;
+}
+
+/**
+ * Emergency page
+ */
+function ds_emergency() {
+
+  $form['ds_disable'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable adding fields through Display suite'),
+    '#description' => t('In case you get an error after configuring a layout with DS which prints something like "Fatal error: Unsupported operand types", you can temporarily disable adding fields from DS by toggling this checkbox. You probably are trying to render an node inside a node, for instance through a view, which is simply not possible. See <a href="http://drupal.org/node/1264386">http://drupal.org/node/1264386</a>.'),
+    '#default_value' => variable_get('ds_disable', FALSE),
+  );
+
+  return system_settings_form($form);
 }

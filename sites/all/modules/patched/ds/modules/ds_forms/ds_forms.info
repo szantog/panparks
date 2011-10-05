@@ -1,9 +1,9 @@
-name = "Display suite Test"
-description = "Test module for display suite"
+name = "Forms"
+description = "Manage the layout of forms."
 core = "7.x"
 package = "Display suite"
-dependencies[] = ds_extras
-hidden = TRUE
+dependencies[] = ds
+dependencies[] = rel
 ; Information added by drupal.org packaging script on 2011-10-05
 version = "7.x-1.x-dev"
 core = "7.x"

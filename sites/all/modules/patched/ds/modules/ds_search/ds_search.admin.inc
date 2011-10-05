@@ -99,7 +99,7 @@ function ds_search_settings($form, $form_state) {
   $form['ds_search_group_by_type_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Group by type settings'),
-    '#description' => t('Set the order of the node types which can be grouped. Node types which are not enabled will be showed into a "Other group".'),
+    '#description' => t('Set the order of the node types which can be grouped. Node types which are not enabled will be showed into a "Other group". Note that this does not work with Apache Solr multisite support.'),
     '#theme' => 'ds_search_group_by_type_settings',
     '#states' => array(
       'visible' => array(
@@ -226,6 +226,37 @@ function ds_search_settings($form, $form_state) {
       '#title' => t('Hide Retain filters'),
       '#description' => t('Hide the "Retain current filters" checkbox on search results.'),
       '#default_value' => variable_get('ds_search_apachesolr_hide_current_filters'),
+    );
+
+    $form['apachesolr_search']['ds_search_apachesolr_multisite'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Multisite support'),
+      '#description' => t('Enable this in case multiple sites share one index. Note that sometimes you need to make sure that your formatters are creating absolute paths for links or images. Implementing hook_url_outbound_alter() is a good option in which you can set $options[\'absolute\'] to TRUE.'),
+      '#default_value' => variable_get('ds_search_apachesolr_multisite'),
+    );
+
+    $form['apachesolr_search']['ds_search_apachesolr_multisite_group'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Group results by site'),
+      '#default_value' => variable_get('ds_search_apachesolr_multisite_group'),
+      '#states' => array(
+        'visible' => array(
+          'input[name="ds_search_apachesolr_multisite"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
+
+    $form['apachesolr_search']['ds_search_apachesolr_multisite_group_config'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Group by site configuration'),
+      '#default_value' => variable_get('ds_search_apachesolr_multisite_group_config'),
+      '#description' => t('Enter sites line by line with following configuration: site-hash|label|wrapper. The <em>site-hash</em> is per site which you can get from Solr. The <em>label</em> is translatable per site. Use !total_per_site in this label for number of results per site. Depending on the number, you will either get "1 result" or "x results" which are translatable. The <em>wrapper</em> can either be "fieldset" or "div".'),
+      '#states' => array(
+        'visible' => array(
+          'input[name="ds_search_apachesolr_multisite_group"]' => array('checked' => TRUE),
+          'input[name="ds_search_apachesolr_multisite"]' => array('checked' => TRUE),
+        ),
+      ),
     );
   }
 

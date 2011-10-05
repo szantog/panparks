@@ -1,4 +1,53 @@
 -------------------------------------------------------------------------------------
+7.x-1.4 xx/xx/2011
+-------------------------------------------------------------------------------------
+- #1294686 by attiks: Fix empty region to block error.
+- #1295586 by Johnny vd Laar: Fix strict warnings in ds_views_row_render_taxonomy_term_data().
+- #1242620 by swentel: hide limit textfield on formatter settings form.
+- #1283714 by swentel: hide format and label for views layouting.
+- #1264386 by swentel: add option to temporarily disable theming through DS.
+- #1244514 by dub4u: long description in info file segfaults apache on PHP 5.3.4
+                     and windows.
+- #1283910 by swentel: hide() is not always respected.
+- #1283256 by swentel: form layouts show up on manage display.
+- #1279478 by fadeddata: only add preprocess function if there is a theming function.
+- #1267050 by swentel: PDOException: Table ds_view_modes doesn't exist.
+- #1272508 by swentel: add support for File Entity.
+- #1262706 by swentel: remove notices from enabling views displays.
+- #1258086 by swentel: Add layout as class in template files.
+- #1265920 by swentel: The theme's field.tpl.php should be found as well.
+- #1261582 by swentel: default to nid so views doesn't crash.
+- #1270634 by swentel: check on #view_mode index in contextual links.
+- #1269004 by adf1969 and swentel: use $base_root for subdir installs in ds_source.
+- #1259454 by swentel: add more help text for a preprocess field.
+- #1266400 by pfrenssen: Provide a default setting for the 'Retain filters' checkbox 
+                         if this is hidden in solr search.
+- #1264508 by pfrenssen: Browser freezes on empty search and highlighting enabled.
+- #1263438 by pfrenssen: Apache Solr filter conditions need to be updated.
+- #1255710 by avr: API example "hook_ds_custom_fields_info" should not use object.
+- #1238132 by swentel: Embedding view with term references in fields results in errors.
+- #1254224 by swentel: search snippet (only solr) and info field.
+- #1254736 by swentel: do not affect non configured default view mode with disabled view mode.
+- #1254894 by swentel: Extra fields was limited to one per bundle.
+- #1244336 by swentel: ds_field_attach_view_alter() should not run for panels.
+- #1251076 by swentel: fix notices on simply changing field UI when a layout was
+                       already configured.
+- #1251330 by swentel: set title on revision view mode.
+- #1239436 by swentel: fix PDO exceptions on rare occasions.
+- #1252792 by swentel: Menu titles should be in hook_menu().
+- #1250862 by pfrenssen: Call to undefined method SolrBaseQuery::add_filter(). 
+- #1244896 by Jax: Fix reference error in layout revert form.
+- #1242058 by swentel: fivestar is no longer available on the content type.
+- #1241936 by swentel: add missing tests.
+- #1240510 by swentel: Views row options missing in views export.
+- #1227790 by swentel: fix various subtle problems with panels layouts.
+- #1239658 by tjhellmann and swentel: remove double quote when using custom label el.
+- #1238710 by swentel: do not conflict with core overlay css.
+- #1237064 by swentel: do not conflict with revisioning module.
+- by swentel: Apache Solr multisite support.
+- by jyve: New minimal Field Template added.
+
+-------------------------------------------------------------------------------------
 7.x-1.3 03/08/2011
 -------------------------------------------------------------------------------------
 - #1238048 by stalski: Moving fieldsets into another region leaves children behind.

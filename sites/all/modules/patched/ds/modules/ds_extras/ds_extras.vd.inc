@@ -259,6 +259,14 @@ function ds_extras_vd_bundle_remove_submit($form, &$form_state) {
     ->condition('bundle', $bundle)
     ->execute();
 
+  // Remove from bundle settings.
+  $bundle_settings = variable_get('field_bundle_settings', array());
+  unset($bundle_settings['ds_views'][$bundle]);
+  if (empty($bundle_settings['ds_views'])) {
+    unset($bundle_settings['ds_views']);
+  }
+  variable_set('field_bundle_settings', $bundle_settings);
+
   // Clear entity cache and field info fields cache.
   cache_clear_all('field_info_fields', 'cache_field');
   cache_clear_all('entity_info', 'cache', TRUE);
