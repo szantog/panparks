@@ -290,7 +290,14 @@ function panparks_hooks_node_presave($node) {
   // Workaround for Feeds module setting text format to Plain Text instead of Full HTML or Filtered HTML
   //
   if ($node->type == 'transferred_blog_posts') {
-    $node->body['und'][0]['format'] = 'full_html';
+    $node->body[$node->language][0]['format'] = 'full_html';
+  }
+
+  //
+  // Set default image to wilderness and resources ct.
+  //
+  if ($node->type == 'wilderness_resources' && isset($node->field_image)) {
+    $node->field_image[$node->language][0]['fid'] = 1392;
   }
 }
 
