@@ -299,6 +299,22 @@ function panparks_hooks_node_presave($node) {
   if ($node->type == 'wilderness_resources' && isset($node->field_image)) {
     $node->field_image[$node->language][0]['fid'] = 1392;
   }
+
+  //
+  // Set default alt && title text to images.
+  //
+  foreach($node as $field_name => &$field) {
+    if (is_array($field) && !empty($field[$node->language])) {
+      foreach ($field[$node->language] as &$field_item) {
+        if (isset($field_item['fid']) && (isset($field_item['alt']) || $field_item['alt'] == null)) {
+          $field_item['alt'] = $node->title;
+        }
+        if (isset($field_item['fid']) && (isset($field_item['title']) || $field_item['title'] == null)) {
+          $field_item['title'] = $node->title;
+        }
+      }
+    }
+  }
 }
 
 /*
