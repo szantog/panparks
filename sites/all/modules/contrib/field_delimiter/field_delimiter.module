@@ -1,0 +1,138 @@
+<?php
+
+/**
+ * @file
+ * Provides settings for delimiter on multi-value fields.
+ *
+ * @todo create a hook, to have different delimiter handling for each field
+ *   type, like term reference? would it work for any field that didn't
+ *   have the hook? how to provide default? is this overkill?
+ *
+ * @todo choice of div/span/ol/ul/li wrappers - separate module?
+ */
+
+/**
+ * Implements hook_field_formatter_info_alter().
+ */
+function field_delimiter_field_formatter_info_alter(&$info) {
+  // added to ALL formatters...
+  foreach ($info as $formatter_key => &$formatter) {
+    $formatter['settings'] += array(
+      'field_delimiter' => '',
+    );
+  }
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary_alter().
+ */
+function field_delimiter_field_formatter_settings_summary_alter(&$summary, $context) {
+
+  if ($context['field']['cardinality'] == 1 ) {
+    return; // do nothing, not a multivalue field
+  }
+
+  $display = $context['instance']['display'][$context['view_mode']];
+  $settings = $display['settings'];
+
+  if (!empty($summary)) {
+    $summary .= '<br />';
+  }
+
+  if (!empty($settings['field_delimiter'])) {
+    $summary .= t('Delimited by @delimiter', array('@delimiter' => $settings['field_delimiter']));
+  }
+  else {
+    $summary .= t('No Delimiter');
+  }
+}
+
+/**
+ * Implements hook_field_formatter_settings_form_alter().
+ *
+ *
+ * @todo should this be a drop-down for common types + other?
+ *
+ * @todo dependency module 'or other' ? find out name of module that provides
+ *   it or just code that myself to avoid dependency?
+ */
+function field_delimiter_field_formatter_settings_form_alter(&$settings_form, $context) {
+
+  if ($context['field']['cardinality'] == 1 ) {
+    return; // do nothing, not a multivalue field
+  }
+
+  $display = $context['instance']['display'][$context['view_mode']];
+  $settings = $display['settings'];
+
+  $settings_form['field_delimiter'] = array(
+    '#type' => 'textfield',
+    '#size' => 5,
+    '#title' => t('Field Delimiter'),
+    '#default_value' => $settings['field_delimiter'],
+ 	);
+}
+
+/**
+ * Implements hook_field_attach_view_alter().
+ *
+ * add a delimiter after every field value...
+ */
+function field_delimiter_field_attach_view_alter(&$output, $context) {
+
+ 	foreach (element_children($output) as $field_name) {
+
+    if (count($output[$field_name]['#items']) < 2) {
+      continue; // do nothing, no need for delimiter
+    }
+  
+    $element = &$output[$field_name];
+ 	  $info = field_delimiter_formatter_info($field_name, $output['#entity_type'], $output['#bundle'], $context['view_mode']);
+
+   	if (!empty($info['field_delimiter'])) {
+      foreach ($element['#items'] as $delta => $item ) {
+        if ($delta +1 < count($element['#items'])) {
+          $element[$delta]['#suffix'] = $info['field_delimiter'];
+        }
+      }
+   	}
+ 	}
+}
+
+/**
+ * Get the formatter settings for a field instance and display.
+ *
+ * @param string $field_name
+ * @param string $display
+ * @param string $bundle
+ * @param string $display
+ *
+ * @return array
+ */
+function field_delimiter_formatter_info($field_name, $entity_type, $bundle, $display) {
+
+  $info =_field_info_collate_fields();
+  // There is no bundle for this entity type so the bundle name is the
+  // entity_type name.
+  if (empty($bundle)) {
+    $bundle = $entity_type;
+  }
+
+  $field_display = $info['instances'][$entity_type][$bundle][$field_name]['display'];
+  $default = $field_display['default']['settings'];
+  if (isset($field_display[$display]['settings'])) {
+    return $field_display[$display]['settings'] + $default;
+  }
+  return $default;
+}
+
+
+/**
+ * Implements hook_preprocess_field().
+ *
+ * @todo make $delimiter available as a template variable?
+ *    combine with count($items) to determine if multivalue
+ *    provide a new field.tpl.php ?
+ */
+function field_delimiter_preprocess_field(&$variables, $hook) {
+}
