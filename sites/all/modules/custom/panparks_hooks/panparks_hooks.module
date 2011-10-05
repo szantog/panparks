@@ -48,6 +48,15 @@ function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
  * Implementation of hook_form_media_gallery_node_form_alter().
  * Set off the download original checkbox on node add page
  */
+function panparks_hooks_form_search_form_alter(&$form, &$form_state) {
+  $form['basic']['keys']['#title'] = t('search..');
+  //dsm(get_defined_vars());
+}
+
+/**
+ * Implementation of hook_form_media_gallery_node_form_alter().
+ * Set off the download original checkbox on node add page
+ */
 function panparks_hooks_form_media_gallery_node_form_alter(&$form, &$form_state) {
   if (arg(1) == 'add') {
     $form['settings_wrapper']['presentation']['media_gallery_allow_download']['und']['#default_value'] = 0;
