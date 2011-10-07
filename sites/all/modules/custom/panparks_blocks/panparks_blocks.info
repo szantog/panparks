@@ -5,3 +5,5 @@ core = 7.x
 
 dependencies[] = block
 dependencies[] = twitter_block
+dependencies[] = hashtag_counter
+

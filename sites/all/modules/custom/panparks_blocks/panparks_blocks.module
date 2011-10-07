@@ -218,3 +218,17 @@ function panparks_blocks_form_user_register_form_alter(&$form, $form_state) {
     $form['account']['mail']['#value'] = $url_param['m'];
   }
 }
+
+/*
+ * Implements hook_block_MODULE_BLOCK_ID_alter
+ * Insert hashtag counter into #onemilliontweets block
+ */
+function panparks_donate_block_view_bean_46_alter(&$data, $block) {
+  $data['content']['bean'][46]['hashtag'] = array(
+    '#prefix' => '<div class="hashtag-count"><div class="hashtag-count-number">',
+    '#suffix' => '</div><div class="hashtag-count-text">' . t('Tweets donated so far') . '</div></div>',
+    '#markup' => _get_hashtag_count(),
+    '#weight' => 1,
+  );
+  //$data['content']['bean'][45]['field_image']['#weight'] = 99;
+}
