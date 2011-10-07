@@ -175,8 +175,9 @@ function _panparks_blocks_twitter_refresh($config) {
 
 
 // Front page registration form
-function panparks_blocks_register_form(&$form) {
-  $form['mail'] = array('#type' => 'textfield',
+function panparks_blocks_register_form($form) {
+  $form['mail'] = array(
+    '#type' => 'textfield',
     '#title' => t('Your e-mail'),
     '#maxlength' => EMAIL_MAX_LENGTH,
     '#size' => 15,
