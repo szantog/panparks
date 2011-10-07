@@ -9,7 +9,7 @@
  * @developers:
  *    Gabor Szanto <hello@szantogabor.com>
  *    http://szantogabor.com
- * 
+ *
  *    Tamas Pinter <tamas@netstandard.hu>
  *    http://netstandard.hu
  *
@@ -164,8 +164,8 @@ function panparks_hooks_form_media_internet_add_alter(&$form, &$form_state) {
 }
 
 /**
- * Implementation of hook_form_media_edit_alter().
- * Change alt text field's title
+ * Implementation of hook_form_media_format_form_alter().
+ * Remove some display type when inserting image to wysiwyg
  */
 function panparks_hooks_form_media_format_form_alter(&$form, &$form_state) {
   if (isset($form['options']['alt'])) {
@@ -183,6 +183,9 @@ function panparks_hooks_form_media_format_form_alter(&$form, &$form_state) {
     }
     if (isset($form['options']['format']['#options']['media_link'])) {
       unset($form['options']['format']['#options']['media_link']);
+    }
+    if (isset($form['options']['format']['#options']['full'])) {
+      unset($form['options']['format']['#options']['full']);
     }
     $form['options']['format']['#options'] = array_reverse($form['options']['format']['#options'], TRUE);
   }
