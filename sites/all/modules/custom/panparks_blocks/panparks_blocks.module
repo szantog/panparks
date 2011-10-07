@@ -232,3 +232,45 @@ function panparks_donate_block_view_bean_46_alter(&$data, $block) {
   );
   //$data['content']['bean'][45]['field_image']['#weight'] = 99;
 }
+
+/*
+ * Implements hook_block_MODULE_BLOCK_ID_alter
+ * Insert form after visit page join now block content
+ */
+function panparks_donate_block_view_bean_44_alter(&$data, $block) {
+  $user_login_form = drupal_get_form('user_login_block');
+  $user_login_form['links']['#markup'] = '';
+  $data['content']['bean'][44]['form'] = array(
+    'register' => array(
+      'register_form' => drupal_get_form('panparks_blocks_register_form'),
+      '#prefix' => '<h3>' . t('Register') . '</h3>',
+    ),
+    'login-form' => array(
+      'register_form' => $user_login_form,
+      '#prefix' => '<h3>' .  t('or login'). '</h3>',
+    ),
+    '#prefix' => '<div class="join_now_line"></div>',
+    '#weight' => 100,
+  );
+}
+
+/*
+ * Implements hook_block_MODULE_BLOCK_ID_alter
+ * Insert forms after front page join now
+ */
+function panparks_donate_block_view_bean_47_alter(&$data, $block) {
+  $user_login_form = drupal_get_form('user_login_block');
+  $user_login_form['links']['#markup'] = '';
+  $data['content']['bean'][47]['form'] = array(
+    'register' => array(
+      'register_form' => drupal_get_form('panparks_blocks_register_form'),
+      '#prefix' => '<h3>' . t('Register') . '</h3>',
+    ),
+    'login-form' => array(
+      'register_form' => $user_login_form,
+      '#prefix' => '<h3>' .  t('or login'). '</h3>',
+    ),
+    '#prefix' => '<div class="join_now_line"></div>',
+    '#weight' => 100,
+  );
+}
