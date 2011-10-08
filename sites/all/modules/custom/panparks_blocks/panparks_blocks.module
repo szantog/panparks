@@ -249,7 +249,8 @@ function panparks_donate_block_view_bean_44_alter(&$data, $block) {
       'register_form' => $user_login_form,
       '#prefix' => '<h3>' .  t('or login'). '</h3>',
     ),
-    '#prefix' => '<div class="join_now_line"></div>',
+    '#prefix' => '<div class="join-now-forms clearfix">',
+    '#suffix' => '</div>',
     '#weight' => 100,
   );
 }
@@ -270,7 +271,8 @@ function panparks_donate_block_view_bean_47_alter(&$data, $block) {
       'register_form' => $user_login_form,
       '#prefix' => '<h3>' .  t('or login'). '</h3>',
     ),
-    '#prefix' => '<div class="join_now_line"></div>',
+    '#prefix' => '<div class="join-now-forms clearfix">',
+    '#suffix' => '</div>',
     '#weight' => 100,
   );
 }
