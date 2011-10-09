@@ -40,3 +40,6 @@
 [submodule "sites/all/modules/custom/panparks_donate"]
 	path = sites/all/modules/custom/panparks_donate
 	url = http://github.com/szantog/panparks-donate.git
+[submodule "tokenized_overlay"]
+	path = tokenized_overlay
+	url = http://git.drupal.org/sandbox/balint.kleri/1286426.git
