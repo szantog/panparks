@@ -472,7 +472,7 @@ function panparks_hooks_contextual_links_view_alter(&$element, $items) {
     $element['#links']['bean-edit'] = array(
       'title' => t('Edit block'),
       'href' => 'block/' . $bean_id . '/edit',
-      'query' => $element['#links']['block-configure']['query'],
+      'query' => isset($element['#links']['block-configure']['query']) ? $element['#links']['block-configure']['query']  : NULL,
     );
   }
   if (isset($element['#contextual_links']['field_image']) && isset($element['#links']['field-image-edit'])) {
