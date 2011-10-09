@@ -237,7 +237,7 @@ function panparks_donate_block_view_bean_46_alter(&$data, $block) {
  * Implements hook_block_MODULE_BLOCK_ID_alter
  * Insert form after visit page join now block content
  */
-function panparks_donate_block_view_bean_44_alter(&$data, $block) {
+function panparks_donate_block_view_bean_48_alter(&$data, $block) {
   $user_login_form = drupal_get_form('user_login_block');
   $user_login_form['links']['#markup'] = '';
   $user_login_form['#action'] = '/what-you-can-do?destination=node/56';
@@ -260,7 +260,7 @@ function panparks_donate_block_view_bean_44_alter(&$data, $block) {
  * Implements hook_block_MODULE_BLOCK_ID_alter
  * Insert forms after front page join now
  */
-function panparks_donate_block_view_bean_47_alter(&$data, $block) {
+function panparks_donate_block_view_bean_50_alter(&$data, $block) {
   $user_login_form = drupal_get_form('user_login_block');
   $user_login_form['links']['#markup'] = '';
   $user_login_form['#action'] = '/what-you-can-do?destination=node/56';
