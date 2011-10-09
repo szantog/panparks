@@ -241,7 +241,7 @@ function panparks_donate_block_view_bean_48_alter(&$data, $block) {
   $user_login_form = drupal_get_form('user_login_block');
   $user_login_form['links']['#markup'] = '';
   $user_login_form['#action'] = '/what-you-can-do?destination=node/56';
-  $data['content']['bean'][44]['form'] = array(
+  $data['content']['bean'][48]['form'] = array(
     'register' => array(
       'register_form' => drupal_get_form('panparks_blocks_register_form'),
       '#prefix' => '<h3>' . t('Register') . '</h3>',
@@ -264,7 +264,7 @@ function panparks_donate_block_view_bean_50_alter(&$data, $block) {
   $user_login_form = drupal_get_form('user_login_block');
   $user_login_form['links']['#markup'] = '';
   $user_login_form['#action'] = '/what-you-can-do?destination=node/56';
-  $data['content']['bean'][47]['form'] = array(
+  $data['content']['bean'][50]['form'] = array(
     'register' => array(
       'register_form' => drupal_get_form('panparks_blocks_register_form'),
       '#prefix' => '<h3>' . t('Register') . '</h3>',
