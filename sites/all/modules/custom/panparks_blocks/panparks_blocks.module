@@ -220,13 +220,13 @@ function panparks_blocks_form_user_register_form_alter(&$form, $form_state) {
 }
 
 /*
- * Implements hook_block_MODULE_BLOCK_ID_alter
+ * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
  * Insert hashtag counter into #onemilliontweets block
  */
 function panparks_donate_block_view_bean_46_alter(&$data, $block) {
   $data['content']['bean'][46]['hashtag'] = array(
     '#prefix' => '<div class="hashtag-count"><div class="hashtag-count-number">',
-    '#suffix' => '</div><div class="hashtag-count-text">' . t('Tweets donated so far') . '</div></div>',
+    '#suffix' => '</div><div class="hashtag-count-text">' . t('Tweets donated so far!') . '</div></div>',
     '#markup' => _get_hashtag_count(),
     '#weight' => 1,
   );
@@ -234,7 +234,7 @@ function panparks_donate_block_view_bean_46_alter(&$data, $block) {
 }
 
 /*
- * Implements hook_block_MODULE_BLOCK_ID_alter
+ * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
  * Insert form after visit page join now block content
  */
 function panparks_donate_block_view_bean_48_alter(&$data, $block) {
@@ -257,7 +257,7 @@ function panparks_donate_block_view_bean_48_alter(&$data, $block) {
 }
 
 /*
- * Implements hook_block_MODULE_BLOCK_ID_alter
+ * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
  * Insert forms after front page join now
  */
 function panparks_donate_block_view_bean_50_alter(&$data, $block) {

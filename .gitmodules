@@ -46,3 +46,6 @@
 [submodule "sites/all/modules/custom/tokenized_overlay"]
 	path = sites/all/modules/custom/tokenized_overlay
 	url = http://git.drupal.org/sandbox/balint.kleri/1286426.git
+[submodule "sites/all/modules/custom/style_usage"]
+	path = sites/all/modules/custom/style_usage
+	url = http://git.drupal.org/sandbox/szantog/1305076.git
