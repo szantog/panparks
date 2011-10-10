@@ -49,3 +49,6 @@
 [submodule "sites/all/modules/custom/style_usage"]
 	path = sites/all/modules/custom/style_usage
 	url = http://git.drupal.org/sandbox/szantog/1305076.git
+[submodule "sites/all/modules/patched/file_entity"]
+	path = sites/all/modules/patched/file_entity
+	url = http://git.drupal.org/project/file_entity.git
