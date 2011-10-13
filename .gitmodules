@@ -21,7 +21,7 @@
 	url = http://github.com/szantog/panparks-theme.git
 [submodule "sites/all/modules/patched/birdbox"]
 	path = sites/all/modules/patched/birdbox
-	url = http://git.drupal.org/sandbox/balint.kleri/1267834.git
+	url = http://github.com/szantog/panparks-birdbox.git
 [submodule "sites/all/modules/patched/geocoder"]
 	path = sites/all/modules/patched/geocoder
 	url = http://git.drupal.org/project/geocoder.git
