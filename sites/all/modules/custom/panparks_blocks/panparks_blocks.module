@@ -292,3 +292,28 @@ function panparks_blocks_block_view_birdbox_tweet_alter(&$data, $block) {
     '#Weight' => 101,
   );
 }
+
+/*
+ * Implements hook_block_view_alter
+ * Override not than one block
+ */
+function panparks_blocks_block_view_alter(&$data, $block) {
+  if ($block->module == 'bean') {
+    // eg. in learn page's bean blocks we need to render image as a link to the field_website value
+    foreach ($data['content']['bean'] as &$block) {
+      if ($block['#bundle'] == 'learn_blocks' && isset($block['field_website']['#items'][0]['url'])) {
+        $block['field_image'][0] = array(
+          '#theme' => 'link',
+          '#text' => drupal_render($block['field_image'][0]),
+          '#path' => $block['field_website']['#items'][0]['url'],
+          '#options' => array(
+            'attributes' => array(
+              'title' => $block['field_website']['#items'][0]['title'],
+            ),
+           'html' => TRUE,
+           ),
+        );
+      }
+    }
+  }
+}
