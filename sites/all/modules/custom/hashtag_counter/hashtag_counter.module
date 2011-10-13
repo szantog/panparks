@@ -68,7 +68,6 @@ function hashtag_counter_preprocess_hashtag_counter_recent_tweets(&$vars) {
   foreach ($tweets as $delta => $tweet) {
     $tweets[$delta] = (array) $tweet;
   }
-  kpr(get_defined_vars());
 }
 
 

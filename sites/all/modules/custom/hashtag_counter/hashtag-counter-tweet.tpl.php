@@ -1,8 +1,3 @@
-<?php
-
-dsm(get_defined_vars());
-//kpr($tweets);
-?>
 
 <div class="tweet-user-image"><?php print $image; ?></div>
 <div class="tweet-data-wrapper">
