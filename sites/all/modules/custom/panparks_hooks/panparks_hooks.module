@@ -553,3 +553,17 @@ function panparks_hooks_preprocess_panparks_hooks_contextual_links(&$variables) 
 function panparks_hooks_preprocess_field_collection_view($vars) {
   //dsm($vars);
 }
+
+/*
+ * Implements hook_page_alter
+ */
+function panparks_hooks_page_alter(&$page) {
+  //Tried to play with weight, but nothing to happend
+  //Need to direct reorder the array
+  if (isset($page['content']['bean_54'])) {
+    $tmp = $page['content']['system_main'];
+    unset($page['content']['system_main']);
+    $page['content']['bean_54']['#weight'] = 0;
+    $page['content']['system_main'] = $tmp;
+  }
+}
