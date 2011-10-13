@@ -1,6 +1,6 @@
 <?php
 
-define('HASHTAG_COUNTER_SEARCH_STRING', "#onemilliontweets");
+define('HASHTAG_COUNTER_SEARCH_STRING', "Panparks");
 define('HASHTAG_COUNTER_DISPLAY_TWEETS_LIMIT', 4);
 
 function hashtag_counter_block_info()
@@ -37,10 +37,10 @@ function hashtag_counter_block_view($delta = '')
 function hashtag_counter_theme($tweets) {
   return array(
     'hashtag_counter_recent_tweets' => array(
-      'arguments' => array('tweets' => $tweets), 'template' => 'hashtag-recent-tweets-block'
+      'arguments' => array('tweets'), 'template' => 'hashtag-recent-tweets-block'
      ),
     'hashtag_counter_tweet' => array(
-      'arguments' => array('tweets' => $tweet), 'template' => 'hashtag-counter-tweet'
+      'arguments' => array('tweet'), 'template' => 'hashtag-counter-tweet'
      ),
   );
 }
@@ -98,6 +98,7 @@ function count_hashtags() {
 
     $last_tweet_id = _get_last_tweet_id();
     $a = array();
+
     for ($i = 1; $i <= 15; $i++) {
         $querystring = http_build_query(array(
             'q' => HASHTAG_COUNTER_SEARCH_STRING,
@@ -118,6 +119,7 @@ function count_hashtags() {
         $query = db_insert('hashtag_counter')->fields(
             array('tweet_id', 'username', 'text', 'tweet', 'created_at')
         );
+
         foreach ($json->results as $tweet)
         {
             $query->values(array(
