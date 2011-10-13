@@ -285,4 +285,10 @@ function panparks_blocks_block_view_bean_50_alter(&$data, $block) {
  */
 function panparks_blocks_block_view_birdbox_tweet_alter(&$data, $block) {
   $data['content']['tweet_description']['#weight'] = 100;
+  $data['content']['donate_now'] = array(
+    '#markup' => l('', 'node/2637'),
+    '#prefix' => '<div id="donate-now">',
+    '#suffix' => '</div>',
+    '#Weight' => 101,
+  );
 }
