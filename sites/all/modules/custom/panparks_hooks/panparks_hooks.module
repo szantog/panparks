@@ -48,7 +48,15 @@ function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
- * Implementation of hook_form_media_gallery_node_form_alter().
+ * Implementation of hook_form_birdbox_tweet_form_alter().
+ * Increase the weight of description.
+ */
+function panparks_hooks_form_birdbox_tweet_form_alter(&$form, &$form_state) {
+  $form['tweet_description']['#weight'] = 100;
+}
+
+/**
+ * Implementation of hook_form_search_form_alter().
  * Set off the download original checkbox on node add page
  */
 function panparks_hooks_form_search_form_alter(&$form, &$form_state) {
