@@ -23,7 +23,11 @@ function panparks_hooks_element_info_alter(&$type) {
     //We need a custom process function to modify some text
     $type['date_text']['#process'][] = 'panparks_hooks_text_element_process';
   }
- }
+
+  if (isset($type['managed_file'])) {
+    $type['managed_file']['#pre_render'][] = 'panparks_hooks_sources_field_pre_render';
+  }
+}
 
 /**
  * Modify default description was set in date date_text process
@@ -40,6 +44,19 @@ function panparks_hooks_text_element_process($element, $form_state, $form) {
   return $element;
 }
 
+/*
+ * Add access rule to filefield remote source
+ */
+function panparks_hooks_sources_field_pre_render($element)  {
+  global $user;
+  if (isset($element['filefield_remote'])) {
+    if (empty($user->roles[4]) && empty($user->roles[3])) {
+      $element['filefield_sources_list']['#access'] = FALSE;
+      $element['filefield_remote']['#access'] = FALSE;
+    }
+  }
+  return $element;
+}
 /**
  * Implementation of hook_form_alter().
  */
