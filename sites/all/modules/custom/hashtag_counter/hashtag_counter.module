@@ -23,7 +23,7 @@ function hashtag_counter_block_view($delta = '')
     switch ($delta) {
         case 'hashtag_count':
             $block['subject'] = t('Hashtag count');
-            $block['content'] = _get_hashtag_count();
+            $block['content'] = theme('hashtag_counter', array('count' => _get_hashtag_count()));
         break;
         case 'hashtag_recent_tweets':
             $block['subject'] = t('Recent tweets with hashtag');
@@ -41,6 +41,9 @@ function hashtag_counter_theme($tweets) {
      ),
     'hashtag_counter_tweet' => array(
       'arguments' => array('tweet'), 'template' => 'hashtag-counter-tweet'
+     ),
+    'hashtag_counter' => array(
+      'variables' => array('count' => 0),
      ),
   );
 }
@@ -68,6 +71,10 @@ function hashtag_counter_preprocess_hashtag_counter_recent_tweets(&$vars) {
   foreach ($tweets as $delta => $tweet) {
     $tweets[$delta] = (array) $tweet;
   }
+}
+
+function theme_hashtag_counter($variables) {
+  return number_format('123456' . $variables['count'], NULL, ',', ',');
 }
 
 
