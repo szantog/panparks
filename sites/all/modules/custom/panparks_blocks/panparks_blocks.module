@@ -227,7 +227,7 @@ function panparks_blocks_block_view_bean_46_alter(&$data, $block) {
   $data['content']['bean'][46]['hashtag'] = array(
     '#prefix' => '<div class="hashtag-count"><div class="hashtag-count-number">',
     '#suffix' => '</div><div class="hashtag-count-text">' . t('Tweets donated so far!') . '</div></div>',
-    '#markup' => _get_hashtag_count(),
+    '#markup' => theme('hashtag_counter', array('count' => _get_hashtag_count())),
     '#weight' => 1,
   );
   //$data['content']['bean'][45]['field_image']['#weight'] = 99;
