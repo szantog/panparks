@@ -1,6 +1,6 @@
 <?php
 
-define('HASHTAG_COUNTER_SEARCH_STRING', "#drupal");
+define('HASHTAG_COUNTER_SEARCH_STRING', "#onemilliontweets");
 define('HASHTAG_COUNTER_DISPLAY_TWEETS_LIMIT', 4);
 
 function hashtag_counter_block_info()
@@ -8,7 +8,7 @@ function hashtag_counter_block_info()
     $block['hashtag_count'] = array(
         'info' => t('Hashtag count'),
     );
-    
+
     $block['hashtag_recent_tweets'] = array(
         'info' => t('Recent tweets with hashtag'),
     );
@@ -34,12 +34,14 @@ function hashtag_counter_block_view($delta = '')
     return $block;
 }
 
-function hashtag_counter_theme($tweets)
-{
-    return array(
-        'hashtag_counter_recent_tweets' => array(
-            'arguments' => array('tweets' => $tweets), 'template' => 'hashtag-recent-tweets-block'
-         )
+function hashtag_counter_theme($tweets) {
+  return array(
+    'hashtag_counter_recent_tweets' => array(
+      'arguments' => array('tweets' => $tweets), 'template' => 'hashtag-recent-tweets-block'
+     ),
+    'hashtag_counter_tweet' => array(
+      'arguments' => array('tweets' => $tweet), 'template' => 'hashtag-counter-tweet'
+     ),
   );
 }
 
@@ -59,8 +61,29 @@ function _get_recent_tweets() {
     return $tweets;
 }
 
-function hashtag_counter_cron()
-{
+function hashtag_counter_preprocess_hashtag_counter_recent_tweets(&$vars) {
+  $tweets =  &$vars['tweets'];
+  $tweets_array = array();
+
+  foreach ($tweets as $delta => $tweet) {
+    $tweets[$delta] = (array) $tweet;
+  }
+  kpr(get_defined_vars());
+}
+
+
+function hashtag_counter_preprocess_hashtag_counter_tweet(&$vars) {
+  $username = $vars['from_user'];
+  $image = array (
+    'path' => $vars['profile_image_url'],
+    'alt' => $username,
+  );
+  $vars['image'] = l(theme('image', $image), "http://twitter.com/$username", array('html' => true));
+  $vars['time'] = format_interval(time() - strtotime($vars['created_at']) , 2) . t(' ago');
+  unset($vars['created_at']);
+}
+
+function hashtag_counter_cron() {
     count_hashtags();
 }
 
@@ -73,7 +96,7 @@ function hashtag_counter_menu() {
 }
 
 function count_hashtags() {
-    
+
     $last_tweet_id = _get_last_tweet_id();
     $a = array();
     for ($i = 1; $i <= 15; $i++) {
@@ -84,7 +107,7 @@ function count_hashtags() {
             'rpp' => 100,
             'page' => $i
         ));
-        
+
         $curlhandle = curl_init();
         curl_setopt($curlhandle, CURLOPT_URL, "http://search.twitter.com/search.json?" . $querystring);
         curl_setopt($curlhandle, CURLOPT_RETURNTRANSFER, 1);
@@ -104,7 +127,7 @@ function count_hashtags() {
                 'text'     => $tweet->text,
                 'tweet'    => serialize($tweet),
                 'created_at' => date('Y-m-d H:i:s', strtotime($tweet->created_at)),
-            ));        
+            ));
             $query->execute();
       }
     }
