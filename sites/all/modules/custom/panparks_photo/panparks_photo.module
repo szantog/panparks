@@ -13,6 +13,16 @@
  */
 
 /**
+ * Implementation of hook_init().
+ */
+function panparks_photo_init() {
+  // path: get-involved/we-love-wilderness (node/57)
+  if (arg(0) == 'node' && arg(1) == 57) {
+    drupal_add_js(drupal_get_path('module', 'panparks_photo') . '/panparks_photo.js');
+  }
+}
+
+/**
  * Implementation of hook_form_photo_shared_node_form_alter().
  */
 function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
