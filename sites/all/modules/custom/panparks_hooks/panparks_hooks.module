@@ -583,4 +583,18 @@ function panparks_hooks_page_alter(&$page) {
     $page['content']['bean_54']['#weight'] = 0;
     $page['content']['system_main'] = $tmp;
   }
+
+  if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'photo-shared' && !empty($page['content']['system_main']['main']['#markup'])) {
+    $item = menu_get_item();
+    $output = array();
+    if ($item['access'] == FALSE) {
+      $output = array(
+        'text' => array(
+          '#markup' => t('To use this function you need to login or register.')
+        ),
+        'form' => drupal_get_form('user_login_block'),
+      );
+      $page['content']['system_main']['main']['#markup'] = drupal_render($output);
+    }
+  }
 }
