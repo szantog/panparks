@@ -84,6 +84,9 @@ function hashtag_counter_preprocess_hashtag_counter_tweet(&$vars) {
     'path' => $vars['profile_image_url'],
     'alt' => $username,
   );
+  if (function_exists('twitter_block_linkify')) {
+    $vars['text'] = twitter_block_linkify($vars['text']);
+  }
   $vars['image'] = l(theme('image', $image), "http://twitter.com/$username", array('html' => true));
   $vars['time'] = format_interval(time() - strtotime($vars['created_at']) , 2) . t(' ago');
   unset($vars['created_at']);
