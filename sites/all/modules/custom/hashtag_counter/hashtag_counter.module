@@ -73,8 +73,17 @@ function hashtag_counter_preprocess_hashtag_counter_recent_tweets(&$vars) {
   }
 }
 
+/*
+ * Need the format of tweet's number: 0,000,001
+ */
 function theme_hashtag_counter($variables) {
-  return number_format('123456' . $variables['count'], NULL, ',', ',');
+  $count = $variables['count'];
+  //Convert count to 9 digit text and create an array from 3 digits items
+  $count_array = str_split(sprintf('%1$09d', $count), 3);
+  //Remove the first two digit from first item;
+  $count_array[0] = substr($count_array[0], 2);
+
+  return implode($count_array, ',');
 }
 
 
