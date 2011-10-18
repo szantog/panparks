@@ -235,6 +235,42 @@ function panparks_blocks_block_view_bean_46_alter(&$data, $block) {
 
 /*
  * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
+ * Change facebook widge size in get involved page
+ */
+function panparks_blocks_block_view_bean_6_alter(&$data, $block) {
+  if (arg(0) == 'node' && arg(1) == 56) {
+  $html = <<<EOHTML
+<div id="fb-root"></div> <script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) {return;} js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1"; fjs.parentNode.insertBefore(js, fjs); }(document, 'script', 'facebook-jssdk'));</script> <div class="fb-like-box" data-href="http://www.facebook.com/panparks" data-width="300" data-height="392" data-show-faces="true" data-stream="true" data-header="true"></div>
+EOHTML;
+  $data['content']['bean'][6]['field_body'][0]['#markup'] = $html;
+  }
+}
+
+/*
+ * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
+ * Change youtube title to image in get-involved page
+ */
+function panparks_blocks_block_view_bean_57_alter(&$data, $block) {
+  if (arg(0) == 'node' && arg(1) == 56) {
+    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/youtube-block-title.png'));
+    //dsm(get_defined_vars());
+  }
+}
+
+/*
+ * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
+ * Change twitter title to image in get-involved page
+ */
+function panparks_blocks_block_view_panparks_blocks_panparks_twitter_alter(&$data, $block) {
+  if (arg(0) == 'node' && arg(1) == 56) {
+    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/twitter-block-title.png'));
+  }
+  else {
+    $data['subject'] = t('Twitter');
+  }
+}
+/*
+ * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
  * Insert form after visit page join now block content
  */
 function panparks_blocks_block_view_bean_48_alter(&$data, $block) {
