@@ -61,7 +61,9 @@ function panparks_hooks_sources_field_pre_render($element)  {
  * Implementation of hook_form_alter().
  */
 function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
-  dsm($form_id);
+  //dsm($form_id);
+  //dsm($form_state);
+  //dsm($form);
 }
 
 /**
@@ -94,40 +96,6 @@ function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
   if (isset($form['media_description'])) {
     $form['media_description'][LANGUAGE_NONE][0]['#description'] = t('Description appears under the image.');
   }
-}
-
-/**
- * Implementation of hook_form_media_add_upload_alter().
- */
-function panparks_hooks_form_media_add_upload_alter(&$form, &$form_state) {
-  //If file does'nt exist, set default folder to Images
-  $types = array();
-
-//  if (!isset($form['media_title'])) {
-//    $form['media_title'] = array(
-//      '#type' => 'textfield',
-//      '#title' => t('Title'),
-//      '#description' => t('Title is used on colorbox, and in the alt/title attributes of image.'),
-//    );
-//  }
-//  if (!isset($form['media_description'])) {
-//    $form['media_description'] = array(
-//      '#title' => t('Description'),
-//      '#type' => 'textarea',
-//      //'#type' => 'text_format',
-//      //'#format' => 'editor',
-//      '#description' => t('Description appears under the image.'),
-//    );
-//  }
-//  if (!isset($form['field_photographer'])) {
-//    $form['field_photographer'] = array(
-//      //'#prefix' => '<div style="float: left;">',
-//      //'#suffix' => '</div>',
-//      '#type' => 'textfield',
-//      '#title' => t('Photographer'),
-//    );
-  //}
-  dsm($form);
 }
 
 /**
@@ -321,11 +289,11 @@ function panparks_hooks_node_presave($node) {
   foreach($node as $field_name => &$field) {
     if (is_array($field) && !empty($field[$node->language])) {
       foreach ($field[$node->language] as &$field_item) {
-        if (isset($field_item['fid']) && (isset($field_item['alt']) || $field_item['alt'] == null)) {
-          $field_item['alt'] = $node->title;
-        }
-        if (isset($field_item['fid']) && (isset($field_item['title']) || $field_item['title'] == null)) {
-          $field_item['title'] = $node->title;
+        if (isset($field_item['fid']) && $file = file_load($field_item['fid'])) {
+          if ($file->type == 'image') {
+            $field_item['alt'] = $node->title;
+            $field_item['title'] = $node->title;
+          }
         }
       }
     }

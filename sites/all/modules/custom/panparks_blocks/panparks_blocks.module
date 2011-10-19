@@ -151,7 +151,7 @@ function panparks_blocks_block_view($delta = '') {
             $block['content'] = theme('twitter_block', $twitter_new_reply->results );
           }
           else {
-            if (arg(0) == 'node' && arg(1) == 56) {
+            if (arg(0) == 'node' && arg(1) == 56 && is_object($twitter_new_reply->$data)) {
               array_splice($twitter_new_reply->$data->results, 3);
             }
             $block['content'] = theme('twitter_block', $twitter_reply->data->results );
