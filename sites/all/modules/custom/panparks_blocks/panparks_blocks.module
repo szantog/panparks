@@ -334,7 +334,7 @@ function panparks_blocks_block_view_birdbox_tweet_alter(&$data, $block) {
  * Override not than one block
  */
 function panparks_blocks_block_view_alter(&$data, $block) {
-  if ($block->module == 'bean' && isset($data['content']['bean'])) {
+  if (is_object($block) && $block->module == 'bean' && isset($data['content']['bean'])) {
     // eg. in learn page's bean blocks we need to render image as a link to the field_website value
     foreach ($data['content']['bean'] as &$block) {
       if ($block['#bundle'] == 'learn_blocks' && isset($block['field_website']['#items'][0]['url'])) {
@@ -363,8 +363,8 @@ function panparks_blocks_block_view_alter(&$data, $block) {
       }
     }
   }
-  //Add a subtitle to recent blog post 
-  if ($block->bid == 'views-recent_blog_post-block_1') {
-    $data['subject'] .= '<span class="block clear subtitle">' . t('Stories of wilderness') . '</span>';
+  //Add a subtitle to recent blog post
+  if (is_object($block) && $block->bid == 'views-recent_blog_post-block_1') {
+    $data['subject'] .= '<span class="block no-margin clear subtitle">' . t('Stories of wilderness') . '</span>';
   }
 }
