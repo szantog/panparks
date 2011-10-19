@@ -145,9 +145,15 @@ function panparks_blocks_block_view($delta = '') {
             $twitter_new_reply = _panparks_blocks_twitter_refresh($config);
           }
           if ($twitter_new_reply) {
+            if (arg(0) == 'node' && arg(1) == 56) {
+              array_splice($twitter_new_reply->results, 3);
+            }
             $block['content'] = theme('twitter_block', $twitter_new_reply->results );
           }
           else {
+            if (arg(0) == 'node' && arg(1) == 56) {
+              array_splice($twitter_new_reply->$data->results, 3);
+            }
             $block['content'] = theme('twitter_block', $twitter_reply->data->results );
           }
         }
