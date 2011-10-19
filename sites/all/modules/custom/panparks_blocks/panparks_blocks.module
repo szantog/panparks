@@ -227,20 +227,6 @@ function panparks_blocks_form_user_register_form_alter(&$form, $form_state) {
 
 /*
  * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
- * Insert hashtag counter into #onemilliontweets block
- */
-function panparks_blocks_block_view_bean_46_alter(&$data, $block) {
-  $data['content']['bean'][46]['hashtag'] = array(
-    '#prefix' => '<div class="hashtag-count"><div class="hashtag-count-number">',
-    '#suffix' => '</div><div class="hashtag-count-text">' . t('Tweets donated so far!') . '</div></div>',
-    '#markup' => theme('hashtag_counter', array('count' => _get_hashtag_count())),
-    '#weight' => 1,
-  );
-  //$data['content']['bean'][45]['field_image']['#weight'] = 99;
-}
-
-/*
- * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
  * Change facebook widge size in get involved page
  */
 function panparks_blocks_block_view_bean_6_alter(&$data, $block) {
@@ -254,27 +240,21 @@ EOHTML;
 
 /*
  * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
- * Change youtube title to image in get-involved page
+ * Insert hashtag counter into #onemilliontweets block
  */
-function panparks_blocks_block_view_bean_57_alter(&$data, $block) {
+function panparks_blocks_block_view_bean_46_alter(&$data, $block) {
+  $data['content']['bean'][46]['hashtag'] = array(
+    '#prefix' => '<div class="hashtag-count"><div class="hashtag-count-number">',
+    '#suffix' => '</div><div class="hashtag-count-text">' . t('Tweets donated so far!') . '</div></div>',
+    '#markup' => theme('hashtag_counter', array('count' => _get_hashtag_count())),
+    '#weight' => 1,
+  );
+  //Change 1million block title in get involved pages
   if (arg(0) == 'node' && arg(1) == 56) {
-    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/youtube-block-title.png'));
-    //dsm(get_defined_vars());
+    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/onemilliontweets.jpg'));
   }
 }
 
-/*
- * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
- * Change twitter title to image in get-involved page
- */
-function panparks_blocks_block_view_panparks_blocks_panparks_twitter_alter(&$data, $block) {
-  if (arg(0) == 'node' && arg(1) == 56) {
-    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/twitter-block-title.png'));
-  }
-  else {
-    $data['subject'] = t('Twitter');
-  }
-}
 /*
  * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
  * Insert form after visit page join now block content
@@ -319,6 +299,30 @@ function panparks_blocks_block_view_bean_50_alter(&$data, $block) {
     '#suffix' => '</div>',
     '#weight' => 100,
   );
+}
+
+/*
+ * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
+ * Change twitter title to image in get-involved page
+ */
+function panparks_blocks_block_view_panparks_blocks_panparks_twitter_alter(&$data, $block) {
+  if (arg(0) == 'node' && arg(1) == 56) {
+    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/twitter-block-title.png'));
+  }
+  else {
+    $data['subject'] = t('Twitter');
+  }
+}
+
+/*
+ * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
+ * Change youtube title to image in get-involved page
+ */
+function panparks_blocks_block_view_bean_57_alter(&$data, $block) {
+  if (arg(0) == 'node' && arg(1) == 56) {
+    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/youtube-block-title.png'));
+    //dsm(get_defined_vars());
+  }
 }
 
 /*
