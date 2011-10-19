@@ -136,6 +136,9 @@ function panparks_blocks_block_view($delta = '') {
         if($twitter_reply == null){
           $twitter_reply = _panparks_blocks_twitter_refresh($config);
           if ($twitter_reply) {
+            if (arg(0) == 'node' && arg(1) == 56) {
+              array_splice($twitter_reply->results, 3);
+            }
             $block['content'] = theme('twitter_block', $twitter_reply->results );
           }
         }
@@ -151,8 +154,8 @@ function panparks_blocks_block_view($delta = '') {
             $block['content'] = theme('twitter_block', $twitter_new_reply->results );
           }
           else {
-            if (arg(0) == 'node' && arg(1) == 56 && is_object($twitter_new_reply->$data)) {
-              array_splice($twitter_new_reply->$data->results, 3);
+            if (arg(0) == 'node' && arg(1) == 56 && is_object($twitter_reply->$data)) {
+              array_splice($twitter_reply->$data->results, 3);
             }
             $block['content'] = theme('twitter_block', $twitter_reply->data->results );
           }

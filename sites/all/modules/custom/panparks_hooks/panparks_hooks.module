@@ -98,7 +98,6 @@ function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
   }
 }
 
-
 /**
  * Implementation of hook_form_media_format_form_alter().
  * Remove some display type when inserting image to wysiwyg
