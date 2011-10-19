@@ -98,47 +98,6 @@ function panparks_hooks_form_media_edit_alter(&$form, &$form_state) {
   }
 }
 
-/**
- * Implementation of hook_form_media_internet_add_alter().
- */
-function panparks_hooks_form_media_internet_add_alter(&$form, &$form_state) {
-  //If file does'nt exist, set default folder to Images
-  $types = array();
-  if (!empty($form['#validators']['media_file_validate_types'])) {
-    foreach ($form['#validators']['media_file_validate_types'] as $key => $value) {
-      foreach ($value as $type_key => $type) {
-        $types[] = $type;
-      }
-    }
-    if (!isset($form['field_folder']['#default_value']) && in_array('image', $types)) {
-      $form['field_folder']['#default_value'] = '24';
-    }
-  }
-  if (!isset($form['media_title'])) {
-    $form['media_title'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Title'),
-      '#description' => t('Title is used on colorbox, and in the alt/title attributes of image.'),
-    );
-  }
-  if (!isset($form['media_description'])) {
-    $form['media_description'] = array(
-      '#title' => t('Description'),
-      '#type' => 'textarea',
-      //'#type' => 'text_format',
-      //'#format' => 'editor',
-      '#description' => t('Description appears under the image.'),
-    );
-  }
-  if (!isset($form['field_photographer'])) {
-    $form['field_photographer'] = array(
-      //'#prefix' => '<div style="float: left;">',
-      //'#suffix' => '</div>',
-      '#type' => 'textfield',
-      '#title' => t('Photographer'),
-    );
-  }
-}
 
 /**
  * Implementation of hook_form_media_format_form_alter().

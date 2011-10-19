@@ -57,4 +57,4 @@
 	url = http://github.com/szantog/field-collection.git
 [submodule "sites/all/modules/custom/media_upload_plus"]
 	path = sites/all/modules/custom/media_upload_plus
-	url = https://szantog@github.com/szantog/media_upload_plus.git
+	url = http://github.com/szantog/media_upload_plus.git
