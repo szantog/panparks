@@ -363,4 +363,8 @@ function panparks_blocks_block_view_alter(&$data, $block) {
       }
     }
   }
+  //Add a subtitle to recent blog post 
+  if ($block->bid == 'views-recent_blog_post-block_1') {
+    $data['subject'] .= '<span class="block clear subtitle">' . t('Stories of wilderness') . '</span>';
+  }
 }
