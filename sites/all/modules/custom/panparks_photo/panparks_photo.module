@@ -43,6 +43,8 @@ function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
     $form['field_subject']['#access'] = FALSE;
     $form['field_ps_individual']['#access'] = FALSE;
     $form['field_approved']['#access'] = FALSE;
+    $form['field_ps_gallery']['#access'] = FALSE;
+
   }
   else {
     // update node
