@@ -530,3 +530,4 @@ function panparks_preprocess_views_view_fields(&$vars) {
     $vars['contextual_links'] = drupal_render($cont_links);
   }
 }
+
