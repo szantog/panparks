@@ -394,7 +394,7 @@ function panparks_hooks_entity_view_alter(&$build, $type) {
     if (isset($build[$field]['#field_type']) && ($build[$field]['#field_type'] == 'image' || $build[$field]['#field_type'] == 'media') && $build['#bundle'] != 'media_gallery') {
 
       foreach (element_children($build[$field]) as $delta) {
-        if (is_numeric($delta) && user_access('use contextual links')) {
+        if (is_numeric($delta) && user_access('access contextual links')) {
           $build[$field][$delta]['#contextual_links']['field_image'] = array('file', array($build[$field]['#items'][$delta]['fid']));
           $build[$field][$delta]['#theme_wrappers'] = array('panparks_hooks_contextual_links');
         }
