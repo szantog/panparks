@@ -524,7 +524,7 @@ function panparks_preprocess_views_view_fields(&$vars) {
   $view = $vars['view'];
   $row_index = $vars['id'] - 1;
   //Add contextual links to visit page blocks rendered by views
-  if ($view->name == 'visit_page_sidebar' && user_access('use contextual links')) {
+  if ($view->name == 'visit_page_sidebar' && user_access('access contextual links')) {
     $cont_links['#contextual_links']['view_block'] = array('block', array($view->result[$row_index]->bid));
     $cont_links['#theme_wrappers'] = array('panparks_hooks_contextual_links');
     $vars['contextual_links'] = drupal_render($cont_links);
