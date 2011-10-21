@@ -11,7 +11,7 @@ function panparks_slideshow_views_default_views() {
   $view->base_table = 'panparks_slideshow';
   $view->human_name = 'Slideshow';
   $view->core = 7;
-  $view->api_version = '3.0-alpha1';
+  $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
   /* Display: Master */
@@ -72,6 +72,7 @@ function panparks_slideshow_views_default_views() {
   $handler->display->display_options['style_options']['views_slideshow_cycle']['items_per_slide'] = '1';
   $handler->display->display_options['style_options']['views_slideshow_cycle']['cleartype'] = 0;
   $handler->display->display_options['style_options']['views_slideshow_cycle']['cleartypenobg'] = 0;
+  $handler->display->display_options['style_options']['views_slideshow_cycle']['advanced_options'] = '{"startingSlide":"2"}';
   $handler->display->display_options['row_plugin'] = 'fields';
   /* Field: Panparks slideshow: Link */
   $handler->display->display_options['fields']['slideshow_link']['id'] = 'slideshow_link';
@@ -188,17 +189,18 @@ function panparks_slideshow_views_default_views() {
   $handler->display->display_options['fields']['slideshow_body']['label'] = '';
   $handler->display->display_options['fields']['slideshow_body']['exclude'] = TRUE;
   $handler->display->display_options['fields']['slideshow_body']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['slideshow_body']['alter']['make_link'] = 1;
+  $handler->display->display_options['fields']['slideshow_body']['alter']['make_link'] = 0;
   $handler->display->display_options['fields']['slideshow_body']['alter']['path'] = '[slideshow_link]';
   $handler->display->display_options['fields']['slideshow_body']['alter']['absolute'] = 0;
   $handler->display->display_options['fields']['slideshow_body']['alter']['external'] = 0;
   $handler->display->display_options['fields']['slideshow_body']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['slideshow_body']['alter']['trim_whitespace'] = 0;
+  $handler->display->display_options['fields']['slideshow_body']['alter']['trim_whitespace'] = 1;
   $handler->display->display_options['fields']['slideshow_body']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['slideshow_body']['alter']['word_boundary'] = 1;
+  $handler->display->display_options['fields']['slideshow_body']['alter']['max_length'] = '80';
+  $handler->display->display_options['fields']['slideshow_body']['alter']['word_boundary'] = 0;
   $handler->display->display_options['fields']['slideshow_body']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['slideshow_body']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['slideshow_body']['alter']['trim'] = 0;
+  $handler->display->display_options['fields']['slideshow_body']['alter']['strip_tags'] = 1;
+  $handler->display->display_options['fields']['slideshow_body']['alter']['trim'] = 1;
   $handler->display->display_options['fields']['slideshow_body']['alter']['html'] = 0;
   $handler->display->display_options['fields']['slideshow_body']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['slideshow_body']['element_default_classes'] = 1;
