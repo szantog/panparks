@@ -37,12 +37,18 @@ function panparks_photo_form_gallery_photo_share_node_form_alter(&$form, $form_s
  * Implementation of hook_form_photo_shared_node_form_alter().
  */
 function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
-  // Get involved -  get-involved
-//  We love wildlife - get-involved/we-love-wildlife
+  global $user;
+
+// Get involved -  get-involved
+// We love wildlife - get-involved/we-love-wildlife
   $bc = drupal_get_breadcrumb();
   $end = array_pop($bc);
   $bc[] = l('Get involved', 'get-involved');
   $bc[] = l('We love wildlife', 'get-involved/we-love-wildlife');
+
+  if ( (!in_array('editor', $user->roles)) || (!in_array('administrator', $user->roles))) {
+    $form['revision_information']['#access'] = FALSE;
+  }
 
   if (empty($form['#node']->nid)) {
     // create node, hidden field element
