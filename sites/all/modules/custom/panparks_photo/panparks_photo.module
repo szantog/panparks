@@ -23,6 +23,17 @@ function panparks_photo_init() {
 }
 
 /**
+ * Implementation of hook_form_gallery_photo_share_node_form_alter().
+ */
+function panparks_photo_form_gallery_photo_share_node_form_alter(&$form, $form_state) {
+  global $user;
+
+  if (!in_array('administrator', $user->roles)) {
+    $form['field_psg_photos']['#access'] = FALSE;
+  }
+}
+
+/**
  * Implementation of hook_form_photo_shared_node_form_alter().
  */
 function panparks_photo_form_photo_shared_node_form_alter(&$form, $form_state) {
