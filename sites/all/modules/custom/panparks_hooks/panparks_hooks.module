@@ -373,6 +373,34 @@ function panparks_hooks_media_file_build_alter(&$file, &$context) {
   }
 }
 
+/*
+ * Implements hook_page_alter
+ */
+function panparks_hooks_page_alter(&$page) {
+  //Tried to play with weight, but nothing to happend
+  //Need to direct reorder the array
+  if (isset($page['content']['bean_54'])) {
+    $tmp = $page['content']['system_main'];
+    unset($page['content']['system_main']);
+    $page['content']['bean_54']['#weight'] = 0;
+    $page['content']['system_main'] = $tmp;
+  }
+
+  if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'photo-shared' && !empty($page['content']['system_main']['main']['#markup'])) {
+    $item = menu_get_item();
+    $output = array();
+    if ($item['access'] == FALSE) {
+      $output = array(
+        'text' => array(
+          '#markup' => t('To use this function you need to login or register.')
+        ),
+        'form' => drupal_get_form('user_login_block'),
+      );
+      $page['content']['system_main']['main']['#markup'] = drupal_render($output);
+    }
+  }
+}
+
 /**
  * Implements hook_entity_info_alter().
  *
@@ -401,6 +429,27 @@ function panparks_hooks_entity_view_alter(&$build, $type) {
       }
     }
   }
+
+  //In park before visiting pages we need to add wrapper with id to create anchored links block
+  if ($build['#entity_type'] == 'node' && $build['#bundle'] == 'park') {
+    $nid = isset($build['#node']->nid) ? $build['#node']->nid : NULL;
+    //The fields where need wrapper around
+    $add_id = array(
+      'field_park_bvtp_bvtp',
+      'field_park_bvtp_htgt',
+      'field_park_bvtp_vc',
+      'field_park_bvtp_pf',
+      'field_park_bvtp_ositp',
+      'field_park_bvtp_rules',
+    );
+    foreach ($add_id as $key) {
+      if (!is_null($nid) && !empty($build[$key][0]['#markup'])) {
+        $build[$key]['#prefix'] = '<div id="' . str_replace('_', '-', $key) . '">';
+        $build[$key]['#suffix'] = '</div>';
+      }
+    }
+  }
+  //dsm($build);
 }
 
 function panparks_hooks_contextual_links_view_alter(&$element, $items) {
@@ -487,34 +536,6 @@ function panparks_hooks_preprocess_panparks_hooks_contextual_links(&$variables) 
 
 function panparks_hooks_preprocess_field_collection_view($vars) {
   //dsm($vars);
-}
-
-/*
- * Implements hook_page_alter
- */
-function panparks_hooks_page_alter(&$page) {
-  //Tried to play with weight, but nothing to happend
-  //Need to direct reorder the array
-  if (isset($page['content']['bean_54'])) {
-    $tmp = $page['content']['system_main'];
-    unset($page['content']['system_main']);
-    $page['content']['bean_54']['#weight'] = 0;
-    $page['content']['system_main'] = $tmp;
-  }
-
-  if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'photo-shared' && !empty($page['content']['system_main']['main']['#markup'])) {
-    $item = menu_get_item();
-    $output = array();
-    if ($item['access'] == FALSE) {
-      $output = array(
-        'text' => array(
-          '#markup' => t('To use this function you need to login or register.')
-        ),
-        'form' => drupal_get_form('user_login_block'),
-      );
-      $page['content']['system_main']['main']['#markup'] = drupal_render($output);
-    }
-  }
 }
 
 /*
