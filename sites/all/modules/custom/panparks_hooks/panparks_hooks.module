@@ -159,12 +159,12 @@ function panparks_hooks_menu_alter(&$items) {
   $items['get-involved/join-now'] = $items['user/register'];
   $items['get-involved/join-now']['type'] = MENU_NORMAL_ITEM;
   $items['get-involved/join-now']['weight'] = -10;
-  $items['get-involved/join-now']['title'] = t('Join now');
+  $items['get-involved/join-now']['title'] = t('Join us today!');
 
   $items['get-involved/join-now/register'] = $items['user/register'];
   $items['get-involved/join-now/register']['type'] = MENU_DEFAULT_LOCAL_TASK;
   $items['get-involved/join-now/register']['weight'] = -10;
-  $items['get-involved/join-now/register']['title'] = t('Join now');
+  $items['get-involved/join-now/register']['title'] = t('Join us today!');
 
   $items['get-involved/join-now/password'] = $items['user/password'];
 
@@ -484,8 +484,8 @@ function panparks_hooks_theme() {
  */
 function panparks_hooks_preprocess_page(&$variables, $hook) {
   //Change the register page title
-  if (arg(0) == 'user' && arg(1) == 'register' && !arg(2)) {
-    drupal_set_title(t('Join now'));
+  if (arg(0) == 'get-involved' && arg(1) == 'join-now' && !arg(2)) {
+    drupal_set_title(t('Join us today!'));
   }
 }
 
