@@ -58,3 +58,6 @@
 [submodule "sites/all/modules/custom/media_upload_plus"]
 	path = sites/all/modules/custom/media_upload_plus
 	url = http://github.com/szantog/media_upload_plus.git
+[submodule "sites/all/modules/patched/colorbox"]
+	path = sites/all/modules/patched/colorbox
+	url = http://github.com/szantog/panparks-colorbox.git
