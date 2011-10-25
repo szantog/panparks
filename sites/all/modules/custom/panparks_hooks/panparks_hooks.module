@@ -449,7 +449,11 @@ function panparks_hooks_entity_view_alter(&$build, $type) {
       }
     }
   }
-  //dsm($build);
+  if ($build['#entity_type'] == 'bean' && $build['#entity']->bid == 21) {
+    $build['field_website']['#items'][0]['attributes']['class'] = 'colorbox-load';
+    $build['field_website']['#items'][0]['query'] = array('width' => '970', 'height' => '300', 'iframe' => 'true');
+    $build['field_website'][0]['#markup'] = theme('link_formatter_link_default', array('element' => $build['field_website']['#items'][0]));
+  }
 }
 
 function panparks_hooks_contextual_links_view_alter(&$element, $items) {
