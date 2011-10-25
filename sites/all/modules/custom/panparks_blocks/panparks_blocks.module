@@ -319,17 +319,6 @@ function panparks_blocks_block_view_panparks_blocks_panparks_twitter_alter(&$dat
 
 /*
  * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
- * Change youtube title to image in get-involved page
- */
-function panparks_blocks_block_view_bean_57_alter(&$data, $block) {
-  if (arg(0) == 'node' && arg(1) == 56) {
-    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/youtube-block-title.png'));
-    //dsm(get_defined_vars());
-  }
-}
-
-/*
- * Implements hook_block_view_MODULE_BLOCK_DELTA_alter
  * Insert forms after front page join now
  */
 function panparks_blocks_block_view_birdbox_tweet_alter(&$data, $block) {
