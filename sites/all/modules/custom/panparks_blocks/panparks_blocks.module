@@ -254,7 +254,7 @@ function panparks_blocks_block_view_bean_46_alter(&$data, $block) {
   );
   //Change 1million block title in get involved pages
   if (arg(0) == 'node' && arg(1) == 56) {
-    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/onemilliontweets.jpg'));
+    $data['subject'] = theme('image', array('path' => drupal_get_path('theme', 'panparks') . '/images/onemilliontweets.png'));
   }
 }
 
