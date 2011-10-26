@@ -16,6 +16,17 @@
  */
 
 /**
+ * Implements hook_init().
+ */
+function panparks_hooks_init() {
+  //This need because of there are some page view with this end argument, what is used only in node view field.
+  //With this just prevent duplacted content
+  if (last(arg()) == 'not-found') {
+    return drupal_not_found();
+  }
+}
+
+/**
  * Implementation of hook_element_info_alter().
  */
 function panparks_hooks_element_info_alter(&$type) {
