@@ -140,6 +140,15 @@ function panparks_hooks_menu() {
     'access arguments' => array('access content'),
   );
 
+  $items['node/%node/teaser'] = array(
+    'title callback' => 'node_page_title',
+    'title arguments' => array(1),
+    'page callback' => 'panparks_hooks_node_page_view',
+    'page arguments' => array(1),
+    'access callback' => 'node_access',
+    'access arguments' => array('view', 1),
+  );
+
   return $items;
 }
 
@@ -202,6 +211,36 @@ function panparks_hooks_user_goto($uri) {
 
 function panparks_hooks_page_home(){
   return '';
+}
+
+/**
+ * Menu callback; view a single node teaser in colorbox.
+ * This is forked from core's node_page_view() function, embed an also forked node_show() to render teaser in this pages
+ */
+function panparks_hooks_node_page_view($node) {
+  if ($node->type == 'photo_shared' && arg(3) == 'colorbox-photo') {
+    drupal_set_title($node->title);
+    $uri = entity_uri('node', $node);
+    // Set the node path as the canonical URL to prevent duplicate content.
+    drupal_add_html_head_link(array('rel' => 'canonical', 'href' => url($uri['path'], $uri['options'])), TRUE);
+    // Set the non-aliased path as a default shortlink.
+    drupal_add_html_head_link(array('rel' => 'shortlink', 'href' => url($uri['path'], array_merge($uri['options'], array('alias' => TRUE)))), TRUE);
+
+    if ($message) {
+      drupal_set_title(t('Revision of %title from %date', array('%title' => $node->title, '%date' => format_date($node->revision_timestamp))), PASS_THROUGH);
+    }
+
+    // For markup consistency with other pages, use node_view_multiple() rather than node_view().
+    $nodes = node_view_multiple(array($node->nid => $node), 'teaser');
+
+    // Update the history table, stating that this user viewed this node.
+    node_tag_new($node);
+
+    return $nodes;
+  }
+
+  //We only need this display, if the content type is photo_share, and try to show in colorbox
+  return drupal_not_found ();
 }
 
 /*
