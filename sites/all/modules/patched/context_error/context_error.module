@@ -38,7 +38,7 @@ function context_error_context_registry() {
  * Implements of hook_context_page_condition().
  */
 function context_error_context_page_condition() {
-  if (isset($headers['status']) && $this->is_error_known($headers['status'])) {
+  if ($plugin = context_get_plugin('condition', 'error')) {
     $plugin->execute();
   }
 }

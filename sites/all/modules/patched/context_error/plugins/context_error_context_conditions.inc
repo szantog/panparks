@@ -33,7 +33,7 @@ class context_error_context_condition_error extends context_condition {
         $errors = $this->fetch_from_context($context, 'values');
 
         foreach ($errors as $error) {
-          if($this->is_error_known($headers['status'])) {
+          if (isset($headers['status']) && $this->is_error_known($headers['status'])) {
             $this->condition_met($context);
           }
         }
