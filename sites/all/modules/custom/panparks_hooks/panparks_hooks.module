@@ -254,24 +254,9 @@ function panparks_hooks_node_page_view($node) {
     else {
       $node_view = node_view($node, 'full');
     }
-
-    $rendered = drupal_render($node_view);
-//Need to pre-count the colorbox width and height
-    $style = $node_view['field_ps_photo'][0]['#image_style'];
-    $image_path = $node_view['field_ps_photo'][0]['#item']['uri'];
-    $style_path = image_style_path($style, $image_path);
-    $info = image_get_info($style_path);
-    $width = $info['width'];
-
-    //$output = '<div class="m-bottom" style="width: ' . $width . 'px; min-height: ' . $info['height'] . 'px; overflow: hidden !important;">';
-
-    $output .= $rendered;
-    //$output .= '</div>';
-    dsm(get_defined_vars());
-    print $output;
+    print drupal_render($node_view);;
     exit();
   }
-  dsm(get_defined_vars());
   //We only need this display, if the content type is photo_share, and try to show in colorbox
   return drupal_not_found ();
 }
