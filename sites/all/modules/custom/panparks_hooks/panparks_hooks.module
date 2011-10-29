@@ -24,22 +24,34 @@ function panparks_hooks_init() {
   if (end(arg()) == 'not-found') {
     return drupal_not_found();
   }
-  $urlParts = explode('.', $_SERVER['HTTP_HOST']);
-
-  //header("Location: " . 'http://panparks.loc/test', TRUE, 301);
-  //dsm($urlParts);
+  // If we are in every page of onemilliontweets.* set to active item the original onemilliontweets page node.
+  if (panparks_api_is_omt()) {
+    menu_set_active_item('node/2597');
+    //No, we are not on front page
+    $front = &drupal_static('drupal_is_front_page');
+    $front = FALSE;
+  }
 }
 
 /**
- * Outbound URL rewrite helper
- * Rewrite URLs: attach/remove subdmain as appropriate
+ * Implements hook_url_outbund_alter
+ * Rewrite URL's in onemilliontweets page all links need to point to main domain
+ * And in main domain all links to original node need to point to subdomain.
  */
 function panparks_hooks_url_outbound_alter(&$path, &$options, $original_path) {
-  if ($path == 'node/2597') {
-    $path = 'http://panparks.loc/xyz';
-    dsm(get_defined_vars());
+  global $base_url;
+  if ($path == 'node/2597' && !panparks_api_is_omt()) {
+    $options['absolute'] = TRUE;
+    $options['base_url'] = 'http://onemilliontweets.panparks.org';
+    $path = '';
+  }
+
+  if ($options['absolute'] == FALSE && panparks_api_is_omt()) {
+    $options['base_url'] = $base_url;
+    $options['absolute'] = TRUE;
   }
 }
+
 /**
  * Implementation of hook_element_info_alter().
  */
