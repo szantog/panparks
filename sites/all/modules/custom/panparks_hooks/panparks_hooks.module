@@ -52,6 +52,22 @@ function panparks_hooks_url_outbound_alter(&$path, &$options, $original_path) {
   }
 }
 
+/*
+ * Implements hook_context_load_alter
+ * If we are in subdomain, the context condition path <front> is active, need to prevent activation
+ */
+function panparks_hooks_context_load_alter(&$context) {
+  if (panparks_api_is_omt()) {
+    if (!is_null($context->conditions)) {
+      foreach ($context->conditions as $key => $condition) {
+        if ($key == 'path' && !is_null($condition['values'])) {
+          unset($context->conditions['path']['values']['<front>']);
+        }
+      }
+    }
+  }
+}
+
 /**
  * Implementation of hook_element_info_alter().
  */
