@@ -30,6 +30,8 @@ function panparks_hooks_init() {
     //No, we are not on front page
     $front = &drupal_static('drupal_is_front_page');
     $front = FALSE;
+
+    dsm($GLOBALS);
   }
 }
 
