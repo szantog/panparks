@@ -174,3 +174,9 @@ function panparks_api_get_addresse($item) {
   }
 }
 
+function panparks_api_is_omt() {
+  $urlparts = explode('.', $_SERVER['HTTP_HOST']);
+  if ($urlparts[0] == 'onemilliontweets') {
+    return TRUE;
+  }
+}
