@@ -147,11 +147,30 @@ function panparks_hooks_sources_field_pre_render($element)  {
  * Implementation of hook_form_alter().
  */
 function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
-  //dsm($form_id);
+  dsm($form_id);
   //dsm($form_state);
   //dsm($form);
 }
 
+/**
+ * Implementation of hook_form_views_exposed_form_alter().
+ * Reverse years in news exposed
+ */
+function panparks_hooks_form_views_exposed_form_alter(&$form, &$form_state) {
+  if ($form['#id'] == 'views-exposed-form-news-page') {
+    $form['#after_build'][] = 'panparks_hooks_reverse_date';
+  }
+
+}
+
+/*
+ * Afterbuild function for panparks_hooks_form_views_exposed_form_alter()
+ */
+function panparks_hooks_reverse_date($form, &$form_state) {
+  array_shift($form['date_filter']['value']['year']['#options']);
+  $form['date_filter']['value']['year']['#options'] = array_reverse($form['date_filter']['value']['year']['#options']);
+  return $form;
+}
 /**
  * Implementation of hook_form_search_form_alter().
  * Set off the download original checkbox on node add page
