@@ -20,10 +20,10 @@
  */
 function panparks_hooks_boot() {
   if (panparks_hooks_is_omt()) {
-    drupal_page_is_cacheable(FALSE);
-    $GLOBALS['conf']['cache'] = 0;
+    //drupal_page_is_cacheable(FALSE);
+    //$GLOBALS['conf']['cache'] = 0;
     //@todo (need to bootstrap only the variables??)
-    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL, TRUE);
+    //drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL, TRUE);
   }
 }
 
@@ -325,7 +325,7 @@ function panparks_hooks_menu_alter(&$items) {
 }
 
 function panparks_hooks_user_goto($uri) {
-  if ($GLOBALS['user']->uid) {
+  if ($GLOBALS['user']->uid || variable_get('maintenance_mode')) {
     return user_page();
   }
   else {

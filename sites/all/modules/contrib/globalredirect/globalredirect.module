@@ -250,7 +250,6 @@ function globalredirect_init() {
       'href' => url(drupal_is_front_page() ? '<front>' : $request_path, array('absolute' => TRUE, 'query' => $query_string)),
     ));
   }
-  dsm(get_defined_vars());
 
   // Add the Content-Location header to the page
   if ($settings['content_location_header']) {
