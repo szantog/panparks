@@ -41,6 +41,10 @@ function panparks_hooks_init() {
   if (end(arg()) == 'not-found') {
     return drupal_not_found();
   }
+
+  if (panparks_hooks_is_omt()) {
+    $GLOBALS['conf']['cache'] = 0;
+  }
 }
 
 function panparks_hooks_url_inbound_alter(&$path, $original_path, $path_language) {
