@@ -16,6 +16,20 @@
  */
 
 /**
+ * Implements hook_boot().
+ */
+function panparks_hooks_boot() {
+}
+
+
+function panparks_hooks_is_omt() {
+  $urlparts = explode('.', $_SERVER['HTTP_HOST']);
+  if ($urlparts[0] == 'onemilliontweets') {
+    return TRUE;
+  }
+}
+
+/**
  * Implements hook_init().
  */
 function panparks_hooks_init() {
@@ -24,17 +38,20 @@ function panparks_hooks_init() {
   if (end(arg()) == 'not-found') {
     return drupal_not_found();
   }
-  // If we are in every page of onemilliontweets.* set to active item the original onemilliontweets page node.
-  if (panparks_api_is_omt()) {
-    menu_set_active_item('node/2597');
-    //No, we are not on front page
-    $front = &drupal_static('drupal_is_front_page');
-    $front = FALSE;
-
-    //dsm($GLOBALS);
-  }
 }
 
+function panparks_hooks_url_inbound_alter(&$path, $original_path, $path_language) {
+  $executed = &drupal_static(__FUNCTION__ . '__executed');
+  if (panparks_hooks_is_omt() && !$executed) {
+    if ($original_path == 'home') {
+      $path = 'node/2597';
+      menu_set_active_item($path);
+    }
+    else {
+      drupal_not_found();
+    }
+  }
+}
 /**
  * Implements hook_url_outbund_alter
  * Rewrite URL's in onemilliontweets page all links need to point to main domain
@@ -42,13 +59,13 @@ function panparks_hooks_init() {
  */
 function panparks_hooks_url_outbound_alter(&$path, &$options, $original_path) {
   global $base_url;
-  if ($path == 'node/2597' && !panparks_api_is_omt()) {
+  if ($path == 'node/2597' && !panparks_hooks_is_omt()) {
     $options['absolute'] = TRUE;
     $options['base_url'] = 'http://onemilliontweets.panparks.org';
     $path = '';
   }
 
-  if ($options['absolute'] == FALSE && panparks_api_is_omt()) {
+  if ($options['absolute'] == FALSE && panparks_hooks_is_omt()) {
     $options['base_url'] = $base_url;
     $options['absolute'] = TRUE;
   }
@@ -58,8 +75,8 @@ function panparks_hooks_url_outbound_alter(&$path, &$options, $original_path) {
  * Implements hook_context_load_alter
  * If we are in subdomain, the context condition path <front> is active, need to prevent activation
  */
-function panparks_hooks_context_load_alter(&$context) {
-  if (panparks_api_is_omt()) {
+function p_anparks_hooks_context_load_alter(&$context) {
+  if (panparks_hooks_is_omt()) {
     if (!is_null($context->conditions)) {
       foreach ($context->conditions as $key => $condition) {
         if ($key == 'path' && !is_null($condition['values'])) {
@@ -71,7 +88,7 @@ function panparks_hooks_context_load_alter(&$context) {
 }
 
 function panparks_hooks_file_url_alter(&$uri) {
-  if (panparks_api_is_omt()) {
+  if (panparks_hooks_is_omt()) {
     global $base_url;
     $schemes = array('public', 'private');
     $scheme = file_uri_scheme($uri);
