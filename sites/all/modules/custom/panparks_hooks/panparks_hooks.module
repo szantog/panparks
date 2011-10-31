@@ -19,6 +19,9 @@
  * Implements hook_boot().
  */
 function panparks_hooks_boot() {
+  if (panparks_hooks_is_omt()) {
+    $GLOBALS['conf']['cache'] = 0;
+  }
 }
 
 
@@ -43,13 +46,13 @@ function panparks_hooks_init() {
 function panparks_hooks_url_inbound_alter(&$path, $original_path, $path_language) {
   $executed = &drupal_static(__FUNCTION__ . '__executed');
   if (panparks_hooks_is_omt() && !$executed) {
-    if ($original_path == 'home') {
+    //if ($original_path == 'home') {
       $path = 'node/2597';
       menu_set_active_item($path);
-    }
-    else {
-      drupal_not_found();
-    }
+    //}
+    //else {
+      //drupal_not_found();
+    //}
   }
 }
 /**
