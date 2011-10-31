@@ -20,7 +20,9 @@
  */
 function panparks_hooks_boot() {
   if (panparks_hooks_is_omt()) {
+    drupal_page_is_cacheable(FALSE);
     $GLOBALS['conf']['cache'] = 0;
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL, FALSE);
   }
 }
 
