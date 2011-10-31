@@ -314,7 +314,7 @@ function panparks_hooks_menu_alter(&$items) {
   $items['user']['page callback'] = 'panparks_hooks_user_goto';
   $items['user']['page arguments'] = array('get-involved/join-now/login');
 
-  $items['user/login']['page callback'] = 'drupal_goto';
+  $items['user/login']['page callback'] = 'panparks_hooks_user_goto';
   $items['user/login']['page arguments'] = array('get-involved/join-now/login');
 
   $items['user/register']['page callback'] = 'drupal_goto';
@@ -326,6 +326,7 @@ function panparks_hooks_menu_alter(&$items) {
 
 function panparks_hooks_user_goto($uri) {
   if ($GLOBALS['user']->uid || variable_get('maintenance_mode')) {
+    module_load_include('inc', 'user', 'user.pages');
     return user_page();
   }
   else {
