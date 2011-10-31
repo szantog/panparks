@@ -75,8 +75,14 @@ function globalredirect_init() {
   // Get the request path. We cannot use request_path() as it uses a completely trimmed path.
   // We need just left trimmed.
   $request_path = globalredirect_request_path();
+  if (panparks_hooks_is_omt()) {
+    return FALSE;
+  }
 
-
+  if ($request_path == 'node/2597' && !panparks_hooks_is_omt()) {
+    drupal_goto('http://onemilliontweets.panparks.org');
+    exit;
+    };
   // Let the language_url_rewrite do it's magic, if preset.
   // TODO: Is this needed anymore?
   if (function_exists('language_url_rewrite')) {
@@ -244,7 +250,7 @@ function globalredirect_init() {
       'href' => url(drupal_is_front_page() ? '<front>' : $request_path, array('absolute' => TRUE, 'query' => $query_string)),
     ));
   }
-
+  dsm(get_defined_vars());
 
   // Add the Content-Location header to the page
   if ($settings['content_location_header']) {
@@ -335,10 +341,6 @@ function _globalredirect_is_active($settings) {
    * If menu_check is enabled AND the menu_get_item function is missing, GlobalRedirect is disabled
    */
   if ($settings['menu_check'] && !function_exists('menu_get_item')) return FALSE;
-
-  if (panparks_hooks_is_omt()) {
-    return FALSE;
-  }
 
   /**
    * We seem to have passed all the tests - let say we're active
