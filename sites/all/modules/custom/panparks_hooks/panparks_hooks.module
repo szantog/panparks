@@ -52,7 +52,7 @@ function panparks_hooks_init() {
 
 function panparks_hooks_url_inbound_alter(&$path, $original_path, $path_language) {
   $executed = &drupal_static(__FUNCTION__ . '__executed');
-  if (panparks_hooks_is_omt() && $original_path == 'home' && !$executed) {
+  if ((panparks_hooks_is_omt() && $original_path != 'birdbox/oauth') && !$executed) {
     //if ($original_path == 'home') {
       $path = 'node/2597';
       menu_set_active_item($path);
