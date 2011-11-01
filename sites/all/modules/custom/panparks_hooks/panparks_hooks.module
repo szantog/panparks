@@ -194,8 +194,8 @@ function panparks_hooks_form_views_exposed_form_alter(&$form, &$form_state) {
  * Afterbuild function for panparks_hooks_form_views_exposed_form_alter()
  */
 function panparks_hooks_reverse_date($form, &$form_state) {
-  array_shift($form['date_filter']['value']['year']['#options']);
-  $form['date_filter']['value']['year']['#options'] = array_reverse($form['date_filter']['value']['year']['#options']);
+  $form['date_filter']['value']['year']['#options'] = array_reverse($form['date_filter']['value']['year']['#options'], TRUE);
+  array_pop($form['date_filter']['value']['year']['#options']);
   return $form;
 }
 /**
