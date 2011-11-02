@@ -185,7 +185,7 @@ function panparks_hooks_form_alter(&$form, $form_state, $form_id) {
  */
 function panparks_hooks_form_views_exposed_form_alter(&$form, &$form_state) {
   if ($form['#id'] == 'views-exposed-form-news-page') {
-    //$form['#after_build'][] = 'panparks_hooks_reverse_date';
+    $form['#after_build'][] = 'panparks_hooks_reverse_date';
   }
 
 }
@@ -195,7 +195,7 @@ function panparks_hooks_form_views_exposed_form_alter(&$form, &$form_state) {
  */
 function panparks_hooks_reverse_date($form, &$form_state) {
   $form['date_filter']['value']['year']['#options'] = array_reverse($form['date_filter']['value']['year']['#options'], TRUE);
-  array_pop($form['date_filter']['value']['year']['#options']);
+  //array_pop($form['date_filter']['value']['year']['#options']);
   return $form;
 }
 /**
