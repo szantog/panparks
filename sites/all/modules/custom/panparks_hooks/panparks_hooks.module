@@ -194,12 +194,13 @@ function panparks_hooks_form_views_exposed_form_alter(&$form, &$form_state) {
  * Afterbuild function for panparks_hooks_form_views_exposed_form_alter()
  */
 function panparks_hooks_reverse_date($form, &$form_state) {
+  //In php 5.2 something is wrong with item '-Year'. It has index '', then every change in this item brakes the filter function
   $options = $form['date_filter']['value']['year']['#options'];
-  foreach ($options as $key => $option) {
-    if ($key == '') {
-      unset($options[$key]);
-    }
-  }
+//  foreach ($options as $key => $option) {
+//    if ($key == '') {
+//      unset($options[$key]);
+//    }
+//  }
   $form['date_filter']['value']['year']['#options'] = array_reverse($options, TRUE);
   //array_pop($form['date_filter']['value']['year']['#options']);
   return $form;
