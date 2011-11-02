@@ -201,7 +201,7 @@ function panparks_hooks_reverse_date($form, &$form_state) {
 //      unset($options[$key]);
 //    }
 //  }
-  $form['date_filter']['value']['year']['#options'] = array_reverse($options, TRUE);
+  //$form['date_filter']['value']['year']['#options'] = array_reverse($options, TRUE);
   //array_pop($form['date_filter']['value']['year']['#options']);
   return $form;
 }
