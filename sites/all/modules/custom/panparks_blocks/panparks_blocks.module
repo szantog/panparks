@@ -327,7 +327,7 @@ function panparks_blocks_block_view_birdbox_tweet_alter(&$data, $block) {
     '#markup' => l('', 'node/2637'),
     '#prefix' => '<div id="donate-now">',
     '#suffix' => '</div>',
-    '#Weight' => 101,
+    '#weight' => 101,
   );
 }
 
