@@ -1,13 +1,14 @@
-/**
- *  @file
- */
-
 (function ($) {
 
-  Drupal.behaviors.panparks_photo = {
-    attach: function (context, settings) {
+// We don't need behaviros if using jquery live.
+//  Drupal.behaviors.panparks_photo = {
+//    attach: function (context, settings) {
+  $(function(){
 
       $('#popup .colorbox').live('mouseenter', function() {
+        // Unbind click event to keep off multiple click event.
+        $(this).unbind("click");
+        
         $(this).click(function () {
           if (!$.isFunction($.colorbox)) {
             return;
@@ -15,18 +16,19 @@
 
           $.colorbox({
             href: $(this).attr('href'),
-            opacity: settings.colorbox['opacity'],
-            current: settings.colorbox['current'],
-            previous: settings.colorbox['previous'],
-            next: settings.colorbox['next'],
-            close: settings.colorbox['close'],
-            maxWidth: settings.colorbox['maxWidth'],
-            maxHeight: settings.colorbox['maxHeight'],
-            __drupal_alter_by_ref: settings.colorbox['__drupal_alter_by_ref']
+            opacity: Drupal.settings.colorbox['opacity'],
+            current: Drupal.settings.colorbox['current'],
+            previous: Drupal.settings.colorbox['previous'],
+            next: Drupal.settings.colorbox['next'],
+            close: Drupal.settings.colorbox['close'],
+            maxWidth: Drupal.settings.colorbox['maxWidth'],
+            maxHeight: Drupal.settings.colorbox['maxHeight'],
+            __drupal_alter_by_ref: Drupal.settings.colorbox['__drupal_alter_by_ref']
           });
           return false;
         });
       });
+
 
       $('#popup .openlayers-tooltip-description').live('mouseenter', function() {
         // Original code: ajaxView.js
@@ -94,7 +96,9 @@
           }); // .each Drupal.settings.views.ajaxViews
         } // if
       });
-    }
-  };
+   });
 
+// Unused behaviro end.
+//    }
+//  };
 }(jQuery));
