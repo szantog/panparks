@@ -56,6 +56,7 @@ function _get_hashtag_count() {
 }
 
 function _get_recent_tweets() {
+    count_hashtags();
     $result = db_query_range('SELECT tweet FROM {hashtag_counter} ORDER BY created_at DESC', 0, HASHTAG_COUNTER_DISPLAY_TWEETS_LIMIT);
     $tweets = array();
     foreach ($result as $record) {
