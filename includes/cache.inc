@@ -1,4 +1,4 @@
-40<?php
+<?php
 
 /**
  * Get the cache object for a cache bin.
