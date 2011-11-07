@@ -561,6 +561,7 @@ function panparks_hooks_entity_view_alter(&$build, $type) {
       }
     }
   }
+
   if ($build['#entity_type'] == 'bean' && $build['#entity']->bid == 21) {
     $build['field_website']['#items'][0]['attributes']['class'] = 'colorbox-load';
     $build['field_website']['#items'][0]['query'] = array('width' => '970', 'height' => '300', 'iframe' => 'true');
@@ -579,6 +580,17 @@ function panparks_hooks_contextual_links_view_alter(&$element, $items) {
   }
   if (isset($element['#contextual_links']['field_image']) && isset($element['#links']['field-image-edit'])) {
     $element['#links']['field-image-edit']['title'] = t('Edit image');
+  }
+}
+
+/**
+ * Implements hook_view().
+ */
+
+function panparks_hooks_node_view_alter(&$build)  {
+  //Remove stats table from quiz pages
+  if ($build['#node']->type == 'quiz' && !is_null($build['stats'])) {
+    unset($build['stats']);
   }
 }
 
