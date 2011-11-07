@@ -402,7 +402,8 @@ class DrupalDatabaseCache implements DrupalCacheInterface {
     }
 
     if ($cache->serialized) {
-      dsm($cache);
+
+      print_r($cache);
       $cache->data = unserialize($cache->data);
     }
 
