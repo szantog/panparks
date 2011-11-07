@@ -1,4 +1,4 @@
-<?php
+40<?php
 
 /**
  * Get the cache object for a cache bin.
@@ -402,6 +402,7 @@ class DrupalDatabaseCache implements DrupalCacheInterface {
     }
 
     if ($cache->serialized) {
+      dsm($cache);
       $cache->data = unserialize($cache->data);
     }
 
