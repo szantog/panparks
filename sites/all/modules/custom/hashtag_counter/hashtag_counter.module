@@ -152,6 +152,7 @@ function count_hashtags() {
             $query->execute();
       }
     }
+    return TRUE;
 }
 
 function hashtag_counter_access() {
