@@ -61,3 +61,6 @@
 [submodule "sites/all/modules/patched/colorbox"]
 	path = sites/all/modules/patched/colorbox
 	url = http://github.com/szantog/panparks-colorbox.git
+[submodule "sites/all/modules/patched/redirect"]
+	path = sites/all/modules/patched/redirect
+	url = http://github.com/szantog/panparks-redirect.git
