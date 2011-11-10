@@ -5,30 +5,49 @@
 //    attach: function (context, settings) {
   $(function(){
 
+      $('#popup').live('mouseenter', function() {
+
+        //@todo this is ganyolasajavabol. I haven't jquery skill, I don't know what do this and why, but must do it
+        //This is necessary to render pagers in colorbox. Need to hide the item counter, because the starting item is always the last
+        //It seems, this is independent slideshow, therefore need to play with attribute rel later
+
+        Drupal.settings.colorbox.current = '';
+        Drupal.settings.colorbox.transition = 'none';
+        $('#popup a')
+          .filter('.colorbox')
+          .once('init-colorbox-processed')
+          .colorbox(Drupal.settings.colorbox);
+      });
+
       $('#popup .colorbox').live('mouseenter', function() {
         // Unbind click event to keep off multiple click event.
         $(this).unbind("click");
-        
+
         $(this).click(function () {
           if (!$.isFunction($.colorbox)) {
             return;
           }
+          //This need to prevent double starting item in colorbox
+          $(this).attr('rel', 'nofollow');
 
           $.colorbox({
             href: $(this).attr('href'),
             opacity: Drupal.settings.colorbox['opacity'],
-            current: Drupal.settings.colorbox['current'],
+            current: '',
             previous: Drupal.settings.colorbox['previous'],
             next: Drupal.settings.colorbox['next'],
             close: Drupal.settings.colorbox['close'],
             maxWidth: Drupal.settings.colorbox['maxWidth'],
             maxHeight: Drupal.settings.colorbox['maxHeight'],
-            __drupal_alter_by_ref: Drupal.settings.colorbox['__drupal_alter_by_ref']
+            transition: 'none',
+            __drupal_alter_by_ref: Drupal.settings.colorbox['__drupal_alter_by_ref'],
+            rel: 'gallery'
           });
+          //Add the previous removed attribute back, because after colorbox closed, this item can't render in slideshow
+          $(this).attr('rel', 'gallery');
           return false;
         });
       });
-
 
       $('#popup .openlayers-tooltip-description').live('mouseenter', function() {
         // Original code: ajaxView.js
