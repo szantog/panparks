@@ -132,7 +132,7 @@ function panparks_menupos_set_menu_position($node) {
 
       if ($node->type == 'park') {
         $conditions['pages']['pages'] .= '/*';
-        if (!isset($node->menu)) {
+        if (isset($node->menu) && $node->menu['mlid'] == 0) {
           throw new Exception('Park is not included in the menu.');
         }
       }
@@ -158,7 +158,7 @@ function panparks_menupos_set_menu_position($node) {
         }
 
         menu_node_prepare($park);
-        if (!isset($park->menu)) {
+        if (isset($park->menu) && $park->menu['mlid'] === '0') {
           throw new Exception('Park reference is not included in the menu.');
         }
 
@@ -175,8 +175,6 @@ function panparks_menupos_set_menu_position($node) {
         $rule['plid'] = $park->menu['mlid'];
 //        dpm($rule);
       }
-
-      $rule['conditions'] = serialize($rule['conditions']);
 
       // rule id is loaded
       $rid = db_select('menu_position_rules', 'mp')
@@ -200,6 +198,7 @@ function panparks_menupos_set_menu_position($node) {
     catch (Exception $e) {
       watchdog_exception('panparks_menupos', $e);
     }
+    //dsm(get_defined_vars());
   }
 }
 
