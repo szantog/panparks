@@ -105,16 +105,6 @@ function views_bulk_operations_theme() {
 }
 
 /**
- * Implements hook_init().
- */
-function views_bulk_operations_init() {
-  // Reset selection if we're not in the view anymore.
-  if (isset($_SESSION) && !isset($_SESSION['vbo_values'][$_GET['q']]) && $_GET['q'] != 'views/ajax') {
-    unset($_SESSION['vbo_values']);
-  }
-}
-
-/**
  * Implements hook_ctools_plugin_type().
  */
 function views_bulk_operations_ctools_plugin_type() {
@@ -320,21 +310,11 @@ function views_bulk_operations_form($form, &$form_state, $vbo) {
     drupal_add_http_header('Cache-Control', 'no-store'); // works for Firefox and other browsers
   }
 
-  // If there's a session variable on this view, pre-load the old operation value.
-  if (isset($_SESSION['vbo_values'][$_GET['q']])) {
-    $default_operation = $_SESSION['vbo_values'][$_GET['q']]['operation'];
-    $select_all =  $_SESSION['vbo_values'][$_GET['q']]['rows']['select_all'];
-  }
-  else {
-    $default_operation = NULL;
-    $select_all = FALSE;
-  }
-
   // Set by JS to indicate that all rows on all pages are selected.
   $form['select_all'] = array(
     '#type' => 'hidden',
     '#attributes' => array('class' => 'select-all-rows'),
-    '#default_value' => $select_all,
+    '#default_value' => FALSE,
   );
 
   if (count($vbo->get_selected_operations()) == 1 && $vbo->options['vbo']['merge_single_action']) {
@@ -387,7 +367,6 @@ function views_bulk_operations_form($form, &$form_state, $vbo) {
       $form['select']['operation'] = array(
         '#type' => 'select',
         '#options' => array(0 => t('- Choose an operation -')) + $vbo->get_selected_operations(),
-        '#default_value' => $default_operation,
       );
       $form['select']['submit'] = array(
         '#type' => 'submit',
@@ -613,17 +592,6 @@ function views_bulk_operations_form_submit($form, &$form_state) {
       $form_state['selection'] = _views_bulk_operations_get_selection($vbo, $form_state);
       _views_bulk_operations_adjust_selection($form_state['selection'], $form_state['values']['select_all'], $vbo);
 
-      // Remember form element values.
-      $_SESSION['vbo_values'][$_GET['q']] = array(
-        'rows' => array(
-          'selection' => $form_state['selection'],
-          'select_all' => $form_state['values']['select_all'],
-        ),
-      );
-      if (!$form_state['values']['single_operation']) {
-        $_SESSION['vbo_values'][$_GET['q']]['operation'] = $form_state['values']['operation'];
-      }
-
       if ($form_state['values']['single_operation']) {
         $operation = &$form_state['operation'];
         if ($operation->configurable()) {
@@ -662,9 +630,6 @@ function views_bulk_operations_form_submit($form, &$form_state) {
     case 'views_bulk_operations_confirm_form':
       break;
   }
-
-  // Clean up unneeded SESSION variables.
-  unset($_SESSION['vbo_values'][$_GET['q']]);
 
   // Execute the operation.
   _views_bulk_operations_execute($vbo, $form_state['selection'], $form_state['operation']);

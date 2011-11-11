@@ -153,11 +153,37 @@ function views_bulk_operations_action_load_list_info_alter(&$element_info, Rules
     return;
   }
 
-  $vbo = _views_bulk_operations_rules_get_field($element->settings['view'], $element->settings['args']);
-  $entity_type = $vbo->get_entity_type();
+  $entity_type = _views_bulk_operations_rules_get_entity_type($element->settings['view']);
   if ($entity_type) {
     $element_info['provides']['entity_list']['type'] = "list<$entity_type>";
   }
+}
+
+/**
+ * Helper function that loads and builds (but doesn't execute) the specified view,
+ * then determines the entity type on which the VBO field operates.
+ *
+ * @param $view_target
+ *   A string in the format "$view_name|$display_name".
+ *
+ * @return
+ *   The entity type on which the VBO field operates.
+ */
+function _views_bulk_operations_rules_get_entity_type($view_target) {
+  $entity_types = &drupal_static(__FUNCTION__);
+
+  if (!isset($entity_types[$view_target])) {
+    $views_settings = explode('|', $view_target);
+    $view = views_get_view($views_settings[0]);
+    $view->set_display($views_settings[1]);
+    $view->build();
+
+    $vbo = _views_bulk_operations_get_field($view);
+    $entity_type = !empty($vbo) ? $vbo->get_entity_type() : '';
+    $entity_types[$view_target] = $entity_type;
+  }
+
+  return $entity_types[$view_target];
 }
 
 /**
@@ -198,7 +224,6 @@ function _views_bulk_operations_rules_get_field($view_target, $args) {
   $view = views_get_view($view_name);
   $view->set_display($display_name);
   $view->set_arguments($view_arguments);
-  $view->display_handler->set_option('pager', array('type' => 'none', 'options' => array()));
   $view->build();
   $vbo = _views_bulk_operations_get_field($view);
   // Unset every field except the VBO one (which holds the entity id).

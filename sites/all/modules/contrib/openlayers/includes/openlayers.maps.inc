@@ -28,13 +28,15 @@ function _openlayers_openlayers_maps() {
     'projection' => '900913',
     'width' => 'auto',
     'height' => '400px',
-    'default_layer' => 'osm_mapnik',
+    'default_layer' => 'mapquest_osm',
     'center' => array(
       'initial' => array(
         'centerpoint' => '0,0',
         'zoom' => '2'
       )
     ),
+    'image_path' => drupal_get_path('module', 'openlayers') . '/themes/default_dark/img/',
+    'css_path' => drupal_get_path('module', 'openlayers') . '/themes/default_dark/style.css',
     'displayProjection' => '4326',
     'maxExtent' => openlayers_get_extent('4326'),
     'behaviors' => array(
@@ -45,8 +47,14 @@ function _openlayers_openlayers_maps() {
       'openlayers_behavior_navigation' => array(),
     ),
     'layers' => array(
-      'osm_mapnik' => 'osm_mapnik',
-    )
+      'mapquest_osm' => 'mapquest_osm',
+      'mapquest_openaerial' => 'mapquest_openaerial',
+    ),
+    'styles' => array(
+      'default' => 'default',
+      'select' => 'default_select',
+      'temporary' => 'default',
+    ),
   );
   $items['default'] = $default;
   

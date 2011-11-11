@@ -75,7 +75,7 @@ class ViewsBulkOperationsRulesComponent extends ViewsBulkOperationsBaseOperation
    * @param $form_state
    *   An array containing the current state of the form.
    */
-  public function formSubmit($form, $form_state) {
+  public function formSubmit($form, &$form_state) {
     $this->rulesElement = $form_state['rules_element']->root();
   }
 

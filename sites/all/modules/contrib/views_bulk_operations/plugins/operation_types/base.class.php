@@ -127,7 +127,7 @@ abstract class ViewsBulkOperationsBaseOperation {
    * @param $form_state
    *   An array containing the current state of the form.
    */
-  abstract function formSubmit($form, $form_state);
+  abstract function formSubmit($form, &$form_state);
 
   /**
    * Returns whether the selected entities should be aggregated
