@@ -11,6 +11,7 @@ define('DEVEL_QUERY_SORT_BY_DURATION', 1);
 define('DEVEL_ERROR_HANDLER_NONE', 0);
 define('DEVEL_ERROR_HANDLER_STANDARD', 1);
 define('DEVEL_ERROR_HANDLER_BACKTRACE', 2);
+define('DEVEL_ERROR_HANDLER_BACKTRACE_AND_MESSAGE', 3);
 
 define('DEVEL_MIN_TEXTAREA', 50);
 
@@ -173,7 +174,8 @@ function devel_menu() {
   $items['devel/switch'] = array(
     'title' => 'Switch user',
     'page callback' => 'devel_switch_user',
-    'access arguments' => array('switch users'),
+    'access callback' => '_devel_switch_user_access',
+    'access arguments' => array(2),
     'type' => MENU_CALLBACK,
     'file' => 'devel.pages.inc',
     'menu_name' => 'devel',
@@ -315,6 +317,14 @@ function devel_menu() {
 }
 
 /**
+ * Menu item access callback - check permission and token for Switch User.
+ */
+function _devel_switch_user_access($name) {
+  // Suppress notices when on other pages when menu system still checks access.
+  return user_access('switch users') && drupal_valid_token(@$_GET['token'], "devel/switch/$name|" . @$_GET['destination'], TRUE);
+}
+
+/**
  * Implements hook_admin_paths().
  */
 function devel_admin_paths() {
@@ -441,8 +451,12 @@ function devel_set_message($msg, $type = NULL) {
 // Return boolean. No need for cache here.
 function has_krumo() {
   // see README.txt or just download from http://krumo.sourceforge.net/
-  @include_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'devel') .'/krumo/class.krumo.php';
-  return function_exists('krumo') && !drupal_is_cli();
+  @include_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'devel') . '/krumo/class.krumo.php';
+  if (function_exists('krumo') && !drupal_is_cli()) {
+    drupal_add_js(drupal_get_path('module', 'devel') . '/devel_krumo_path.js');
+    return TRUE;
+  }
+  return FALSE;
 }
 
 /**
@@ -478,7 +492,7 @@ function dfbt($label) {
  * Wrapper for ChromePHP Class log method
  */
 function dcp() {
-  if (class_exists('ChromePhp') && user_access('access devel information')) {
+  if (class_exists('ChromePhp', FALSE) && user_access('access devel information')) {
     $args = func_get_args();
     call_user_func_array(array('ChromePhp', 'log'), $args);
   }
@@ -488,7 +502,7 @@ function dcp() {
  * Implements hook_watchdog().
  */
 function devel_watchdog(array $log_entry) {
-  if (class_exists('FirePHP') && !drupal_is_cli()) {
+  if (class_exists('FirePHP', FALSE) && !drupal_is_cli()) {
     switch ($log_entry['severity']) {
       case WATCHDOG_EMERGENCY:
       case WATCHDOG_ALERT:
@@ -528,6 +542,7 @@ function devel_set_handler($handler) {
       // do nothing
       break;
     case DEVEL_ERROR_HANDLER_BACKTRACE:
+    case DEVEL_ERROR_HANDLER_BACKTRACE_AND_MESSAGE:
       if (has_krumo()) {
         set_error_handler('backtrace_error_handler');
       }
@@ -597,10 +612,48 @@ function devel_boot() {
   drupal_register_shutdown_function('devel_shutdown');
 }
 
+/**
+ * Displays backtrace showing the route of calls to the current error.
+ *
+ * @param $error_level
+ *   The level of the error raised.
+ * @param $message
+ *   The error message.
+ * @param $filename
+ *   The filename that the error was raised in.
+ * @param $line
+ *   The line number the error was raised at.
+ * @param $context
+ *   An array that points to the active symbol table at the point the error
+ *   occurred.
+ */
 function backtrace_error_handler($error_level, $message, $filename, $line, $context) {
   // Hide stack trace and parameters from unqualified users.
   if (!user_access('access devel information')) {
-    return _drupal_error_handler($error_level, $message, $filename, $line, $context);
+    // Do what core does in bootstrap.inc and errors.inc.
+    // (We need to duplicate the core code here rather than calling it
+    // to avoid having the backtrace_error_handler() on top of the call stack.)
+    require_once DRUPAL_ROOT . '/includes/errors.inc';
+    if ($error_level & error_reporting()) {
+      $types = drupal_error_levels();
+      list($severity_msg, $severity_level) = $types[$error_level];
+      $caller = _drupal_get_last_caller(debug_backtrace());
+      if (!function_exists('filter_xss_admin')) {
+        require_once DRUPAL_ROOT . '/includes/common.inc';
+      }
+      // We treat recoverable errors as fatal.
+      _drupal_log_error(array(
+        '%type' => isset($types[$error_level]) ? $severity_msg : 'Unknown error',
+        // The standard PHP error handler considers that the error messages
+        // are HTML. We mimick this behavior here.
+        '!message' => filter_xss_admin($message),
+        '%function' => $caller['function'],
+        '%file' => $caller['file'],
+        '%line' => $caller['line'],
+        'severity_level' => $severity_level,
+      ), $error_level == E_RECOVERABLE_ERROR);
+    }
+    return;
   }
   // Don't respond to the error if it was suppressed with a '@'
   if (error_reporting() == 0) {
@@ -625,20 +678,21 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
     $types = drupal_error_levels();
     $type = $types[$error_level];
     $backtrace = debug_backtrace();
-    array_shift($backtrace);
-    $variables = array('%error' => $type[0], '%message' => $message, '%function' => $backtrace[0]['function'] .'()', '%file' => $filename, '%line' => $line);
-    $counter = count($backtrace);
+    $variables = array('%error' => $type[0], '%message' => $message, '%function' => $backtrace[1]['function'] .'()', '%file' => $filename, '%line' => $line);
 
     // Show message if error_level is ERROR_REPORTING_DISPLAY_SOME or higher.
     // (This is Drupal's error_level, which is different from $error_level,
     // and we purposely ignore the difference between _SOME and _ALL,
     // see #970688!)
     if (variable_get('error_level', 1) >= 1) {
-      foreach ($backtrace as $call) {
-        $nicetrace[--$counter . ': ' . $call['function']] = $call;
-      }
       print t('%error: %message in %function (line %line of %file).', $variables) ." =&gt;\n";
-      krumo($nicetrace);
+      ddebug_backtrace();
+
+      // Also show the standard Drupal message if this was requested via the admin option
+      // for both backtrace and message.
+      if (variable_get('devel_error_handler', DEVEL_ERROR_HANDLER_STANDARD) == DEVEL_ERROR_HANDLER_BACKTRACE_AND_MESSAGE) {
+        drupal_set_message(t('%error: %message in %function (line %line of %file).', $variables), ($type[1] <= WATCHDOG_ERROR ? 'error' : 'warning'));
+      }
     }
 
     watchdog('php', '%error: %message in %function (line %line of %file).', $variables, $type[1]);
@@ -733,6 +787,7 @@ function devel_block_view($delta) {
 function devel_block_switch_user() {
   $links = devel_switch_user_list();
   if (!empty($links) || user_access('switch users')) {
+    drupal_add_css(drupal_get_path('module', 'devel') . '/devel.css');
     $block['subject'] = t('Switch user');
     $build['devel_links'] = array('#theme' => 'links', '#links' => $links);
     if (variable_get('devel_switch_user_show_form', TRUE)) {
@@ -779,10 +834,11 @@ function devel_switch_user_list() {
     $accounts = user_load_multiple($uids);
 
     foreach ($accounts as $account) {
+      $path = 'devel/switch/'. $account->name;
       $links[$account->uid] = array(
         'title' => drupal_placeholder(format_username($account)),
-        'href' => 'devel/switch/'. $account->name,
-        'query' => $dest,
+        'href' => $path,
+        'query' => array($dest, 'token' => drupal_get_token($path . '|' . $dest['destination'])),
         'attributes' => array('title' => t('This user can switch back.')),
         'html' => TRUE,
         'last_access' => $account->access,
@@ -794,10 +850,11 @@ function devel_switch_user_list() {
       $uids = db_query_range('SELECT uid FROM {users} WHERE uid > 0 AND uid NOT IN (:uids) AND status > 0 ORDER BY access DESC', 0, $list_size - $num_links, array(':uids' => array_keys($links)))->fetchCol();
       $accounts = user_load_multiple($uids);
       foreach ($accounts as $account) {
+        $path = 'devel/switch/'. $account->name;
         $links[$account->uid] = array(
           'title' => format_username($account),
-          'href' => 'devel/switch/'. $account->name,
-          'query' => $dest,
+          'href' => $path,
+          'query' => array($dest, 'token' => drupal_get_token($path . '|' . $dest['destination'])),
           'attributes' => array('title' => t('Caution: this user will be unable to switch back.')),
           'last_access' => $account->access,
         );
@@ -805,10 +862,11 @@ function devel_switch_user_list() {
       uasort($links, '_devel_switch_user_list_cmp');
     }
     if ($include_anon) {
+      $path = 'devel/switch';
       $link = array(
         'title' => format_username(drupal_anonymous_user()),
-        'href' => 'devel/switch',
-        'query' => $dest,
+        'href' => $path,
+        'query' => array($dest, 'token' => drupal_get_token($path . '/|' . $dest['destination'])),
         'attributes' => array('title' => t('Caution: the anonymous user will be unable to switch back.')),
       );
       if (user_access('switch users', drupal_anonymous_user())) {
@@ -818,6 +876,9 @@ function devel_switch_user_list() {
       }
       $links[] = $link;
     }
+  }
+  if (array_key_exists($user->uid, $links)) {
+    $links[$user->uid]['title'] = '<strong>' . $links[$user->uid]['title'] . '</strong>';
   }
   return $links;
 }
@@ -842,9 +903,9 @@ function devel_switch_user_form() {
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Switch'),
+    '#suffix' => '<div></div>',
   );
   return $form;
-
 }
 
 function devel_doc_function_form() {
@@ -877,7 +938,14 @@ function devel_switch_user_form_validate($form, &$form_state) {
 }
 
 function devel_switch_user_form_submit($form, &$form_state) {
-  $form_state['redirect'] = 'devel/switch/'. $form_state['values']['username'];
+  $path = 'devel/switch/' . $form_state['values']['username'];
+  $form_state['redirect'] = array(
+    $path,
+    array(
+      'query' => array(
+        'destination' => '',
+        'token' => drupal_get_token($path . '|'),
+  )));
 }
 
 /**
@@ -926,7 +994,10 @@ function devel_library_alter(&$libraries, $module) {
 }
 
 /**
- * See devel_start() which registers this function as a shutdown function.
+ * Runs on shutdown to clean up and display developer information.
+ *
+ * devel_boot() registers this function as a shutdown function.
+ * The bulk of the work is done in devel_shutdown_real().
  */
 function devel_shutdown() {
   // Register the real shutdown function so it runs later than other shutdown functions.
@@ -952,7 +1023,9 @@ function devel_ajax_render_alter() {
 }
 
 /**
- * See devel_shutdown() which registers this function as a shutdown function. Displays developer information in the footer.
+ * Runs on shutdown to display developer information in the footer.
+ *
+ * devel_shutdown() registers this function as a shutdown function.
  */
 function devel_shutdown_real() {
   global $user;
@@ -1558,9 +1631,12 @@ function dargs($always = TRUE) {
  * @param $query
  *   A Query object.
  * @param $return
- *   Whether to return or print the string. Default to FALSE.
+ *   Whether to return the string. Default is FALSE, meaning to print it
+ *   and return $query instead.
  * @param $name
  *   Optional name for identifying the output.
+ * @return
+ *   The $query object, or the query string if $return was TRUE.
  */
 function dpq($query, $return = FALSE, $name = NULL) {
   if (user_access('access devel information')) {
@@ -1575,35 +1651,54 @@ function dpq($query, $return = FALSE, $name = NULL) {
     if ($return) {
       return $sql;
     }
-    else {
-      dpm($sql, $name);
-    }
+    dpm($sql, $name);
   }
+  return ($return ? NULL : $query);
 }
 
 /**
- * Print a variable to the 'message' area of the page. Uses drupal_set_message()
+ * Print a variable to the 'message' area of the page.
+ *
+ * Uses drupal_set_message().
+ *
+ * @param $input
+ *   An arbitrary value to output.
+ * @param $name
+ *   Optional name for identifying the output.
+ * @return
+ *   The unaltered input value.
  */
 function dpm($input, $name = NULL) {
   if (user_access('access devel information')) {
     $export = kprint_r($input, TRUE, $name);
     drupal_set_message($export);
   }
+  return $input;
 }
 
 /**
- * drupal_var_export() a variable to the 'message' area of the page. Uses drupal_set_message()
+ * drupal_var_export() a variable to the 'message' area of the page.
+ *
+ * Uses drupal_set_message().
+ *
+ * @param $input
+ *   An arbitrary value to output.
+ * @param $name
+ *   Optional name for identifying the output.
+ * @return
+ *   The unaltered input value.
  */
 function dvm($input, $name = NULL) {
   if (user_access('access devel information')) {
     $export = dprint_r($input, TRUE, $name, 'drupal_var_export', FALSE);
     drupal_set_message($export);
   }
+  return $input;
 }
 
 // legacy function that was poorly named. use dpm() instead, since the 'p' maps to 'print_r'
 function dsm($input, $name = NULL) {
-  dpm($input, $name);
+  return dpm($input, $name);
 }
 
 /**
@@ -1700,18 +1795,39 @@ function devel_render() {
  */
 function ddebug_backtrace() {
   if (user_access('access devel information')) {
-    $trace = debug_backtrace();
-    array_shift($trace);
-    $count = count($trace);
-    foreach ($trace as $i => $call) {
-      $key = ($count - $i) . ': ' . $call['function'];
-      $rich_trace[$key] = $call;
-    }
-    if (has_krumo()) {
-      print krumo($rich_trace);
-    }
-    else {
-      dprint_r($rich_trace);
+    $backtrace = debug_backtrace();
+    array_shift($backtrace);
+    $counter = count($backtrace);
+    $clip = strlen(DRUPAL_ROOT) + 1;
+    $nbsp = "\xC2\xA0";
+
+    // Show message if error_level is ERROR_REPORTING_DISPLAY_SOME or higher.
+    // (This is Drupal's error_level, which is different from $error_level,
+    // and we purposely ignore the difference between _SOME and _ALL,
+    // see #970688!)
+    if (variable_get('error_level', 1) >= 1) {
+      while (!empty($backtrace)) {
+        $call = array();
+        if (isset($backtrace[0]['file'])) {
+          $call['file'] = substr($backtrace[0]['file'], $clip) . ':' . $backtrace[0]['line'];
+        }
+        if (isset($backtrace[1])) {
+          if (isset($backtrace[1]['class'])) {
+            $function = $backtrace[1]['class'] . $backtrace[1]['type'] . $backtrace[1]['function'] . '()';
+          }
+          else {
+            $function = $backtrace[1]['function'] . '()';
+          }
+          $call['args'] = $backtrace[1]['args'];
+        }
+        else {
+          $function = 'main()';
+          $call['args'] = $_GET;
+        }
+        $nicetrace[($counter <= 10 ? $nbsp : '') . --$counter . ': ' . $function] = $call;
+        array_shift($backtrace);
+      }
+      krumo($nicetrace);
     }
   }
 }
