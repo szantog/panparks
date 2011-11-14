@@ -220,7 +220,7 @@ function _quiz_question_teaser_content($node) {
  *  Object with nid, vid, rid, score, is_correct flags set.
  */
 function quiz_question_evaluate_question($question, $result_id, $answer = NULL) {
-  if (empty($answer)) {
+  if (empty($answer) && !empty($_POST['tries'])) {
     // FIXME this use of POST array is hacky. We will try to use FAPI mor accurately in Quiz 5.x
     $answer = $_POST['tries'];
   }
@@ -771,14 +771,19 @@ function quiz_question_refresh_latest_quizzes($nid) {
     ->execute();
 
   // If we have to many entries for current user, delete the oldest entries...
-  $count = db_query('SELECT COUNT(*) FROM {quiz_question_latest_quizzes}
-          WHERE uid = :uid', array(':uid' => $user->uid))->fetchField();
-  $n_to_delete = (int) $count - QUIZ_QUESTION_NUM_LATEST;
-  if ($n_to_delete > 0) {
+  $min_id = db_select('quiz_question_latest_quizzes', 'lq')
+    ->fields('lq', array('id'))
+    ->condition('uid', $user->uid)
+    ->orderBy('id', 'DESC')
+    ->range(QUIZ_QUESTION_NUM_LATEST - 1, 1)
+    ->execute()
+    ->fetchField();
+
+  // Delete all table entries older than the nth row, if nth row was found.
+  if ($min_id) {
     db_delete('quiz_question_latest_quizzes')
+      ->condition('id', $min_id, '<')
       ->condition('uid', $user->uid)
-      ->orderBy('id')
-      ->range(0, $n_to_delete)
       ->execute();
   }
 }
@@ -812,29 +817,21 @@ function quiz_question_get_max_score($nid, $vid) {
 }
 
 /**
- * Implements hook_content_extra_fields(cck)().
+ * Implements hook_field_extra_fields().
  */
-function quiz_question_content_extra_fields($type_name) {
+function quiz_question_field_extra_fields() {
   $extra = array();
   $question_types = array_keys(_quiz_question_get_implementations());
-  if (in_array($type_name, $question_types)) {
-    $extra['add_directly'] = array(
-      'label' => t('Add directly'),
-      'description' => t('Fieldset for adding a question directly into quizzes'),
-      'weight' => -3,
-    );
+  if (!empty($question_types)) {
+    foreach ($question_types as $type_name) {
+      $extra['node'][$type_name]['form']['add_directly'] = array(
+        'label' => t('Add directly'),
+        'description' => t('Fieldset for adding a question directly into quizzes'),
+        'weight' => -3,
+      );
+    }
   }
   return $extra;
-}
-
-/**
- * Implements hook_content_extra_fields_alter(cck)().
- */
-function quiz_question_content_extra_fields_alter(&$extras, $type_name) {
-  $question_types = array_keys(_quiz_question_get_implementations());
-  if (in_array($type_name, $question_types)) {
-    $extras['body_field']['weight'] = -15;
-  }
 }
 
 /**
