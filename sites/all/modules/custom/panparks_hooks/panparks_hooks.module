@@ -586,11 +586,18 @@ function panparks_hooks_contextual_links_view_alter(&$element, $items) {
 /**
  * Implements hook_view().
  */
-
 function panparks_hooks_node_view_alter(&$build)  {
   //Remove stats table from quiz pages
   if ($build['#node']->type == 'quiz' && !is_null($build['stats'])) {
     unset($build['stats']);
+  }
+
+  if ($build['#node']->type == 'news' && $build['#view_mode'] == 'rss') {
+    foreach ($build['#node']->rss_elements as $key => $rss_element) {
+      if ($rss_element['key'] == 'dc:creator') {
+        unset($build['#node']->rss_elements[$key]);
+      }
+    }
   }
 }
 
