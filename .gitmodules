@@ -67,3 +67,6 @@
 [submodule "sites/all/libraries/glip/glip"]
 	path = sites/all/libraries/glip/glip
 	url = https://github.com/halstead/glip.git
+[submodule "sites/all/modules/patched/quiz"]
+	path = sites/all/modules/patched/quiz
+	url = http://github.com/szantog/panparks-quiz.git
