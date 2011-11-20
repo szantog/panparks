@@ -15,6 +15,7 @@ tmp/*
 files/*
 sites/default/files/*
 sites/default/settings.php
+sites/default/civicrm.settings.php
 lorem.txt
 *~
 \#*
